@@ -1,0 +1,5 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" rx="7" fill="#323437"/>
+  <text x="7" y="23" font-family="'JetBrains Mono','SFMono-Regular',monospace" font-size="18" font-weight="600" fill="#d1d0c5">p</text>
+  <rect x="20" y="9" width="3" height="15" rx="1.5" fill="#e2b714"/>
+</svg>
