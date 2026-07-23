@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     template: "%s · praxis",
   },
   description:
-    "A calm practice journal for classical guitar. Time your sessions, keep your repertoire, and watch the days add up.",
+    "Track your classical guitar practice: time your sessions, keep your repertoire, and check your stats.",
   applicationName: "praxis",
 };
 

@@ -1,11 +1,11 @@
 # praxis
 
-A calm, local-first practice journal for classical guitar — inspired by the
-[Monkeytype](https://monkeytype.com) dark aesthetic (flat surfaces, one gold
-accent, monospace type, lots of breathing room).
+A practice tracker for classical guitar. Time your sessions, keep your
+repertoire, and see where your practice time actually goes.
 
-Time your sessions with a precise, reload-safe timer, keep your repertoire,
-and watch the days add up.
+The look borrows from [Monkeytype](https://monkeytype.com)'s dark theme: flat,
+monospace, one gold accent. Everything runs in the browser — there's no account
+and no server, so your practice history stays on your machine.
 
 ## Features
 
@@ -22,9 +22,9 @@ and watch the days add up.
   log. Edit any session, or log practice you did away from the app.
 - **Stats** — total time, weekly trend, current/longest streak, where your time
   goes (by focus), most-practiced pieces, and a by-day-of-week breakdown.
-- **Your data stays yours** — everything is stored in your browser
-  (`localStorage`). Export a JSON backup any time, import it to restore or move
-  devices, load sample data to explore, or clear everything.
+- **Your data** — everything is kept in your browser (`localStorage`). Export a
+  JSON backup any time, import it to restore or move devices, load sample data to
+  explore, or clear everything.
 
 ## Getting started
 
@@ -52,7 +52,7 @@ example history, then clear it when you're ready to start your own.
 
 - **Next.js** (App Router) + **React 19** + **TypeScript**
 - **Tailwind CSS v4** (CSS-first theme tokens)
-- **Zustand** with `persist` for local-first state
+- **Zustand** with `persist` for browser-stored state
 - **date-fns**, **lucide-react**, **JetBrains Mono**
 
 ## Data & backups

@@ -1,5 +1,5 @@
 // ── Domain model ──────────────────────────────────────────────────────────────
-// A local-first practice journal for classical guitar. Everything below is what
+// A practice journal for classical guitar. Everything below is what
 // we persist; anything derived (streaks, totals, per-piece time) is computed on
 // the fly in lib/stats.ts so there is a single source of truth.
 

@@ -230,8 +230,8 @@ export function SettingsScreen() {
         <div className="flex items-start gap-3 px-1 text-[12px] leading-relaxed text-sub">
           <HardDriveDownload className="mt-0.5 h-4 w-4 shrink-0" />
           <p>
-            praxis is local-first. Your practice history never leaves this browser, so it won't sync
-            across devices — use export/import to move it or keep a backup.
+            Your practice history is kept in this browser and never leaves it, so it won't sync across
+            devices. Use export/import to move it or keep a backup.
           </p>
         </div>
       </div>
