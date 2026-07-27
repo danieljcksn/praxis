@@ -1,40 +1,41 @@
 import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { TopNav } from "@/components/layout/TopNav";
-import { TimerLifecycle } from "@/components/layout/TimerLifecycle";
+import { AppShell } from "@/components/layout/AppShell";
 import { ToastViewport } from "@/components/ui/Toast";
 
-const mono = JetBrains_Mono({
+const sans = Geist({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-jetbrains",
+  variable: "--font-geist-sans",
+});
+
+const mono = Geist_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-geist-mono",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "praxis — classical guitar practice",
+    default: "praxis — your rhythm, made visible",
     template: "%s · praxis",
   },
   description:
-    "Track your classical guitar practice: time your sessions, keep your repertoire, and check your stats.",
+    "A private dashboard for practice, habits, and training.",
   applicationName: "praxis",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#323437",
+  themeColor: "#0b0c0f",
   colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={mono.variable}>
+    <html lang="en" className={`${sans.variable} ${mono.variable}`}>
       <body className="min-h-dvh antialiased">
-        <TimerLifecycle />
-        <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col px-5 sm:px-8">
-          <TopNav />
-          <main className="flex-1 pb-24">{children}</main>
-        </div>
+        <AppShell>{children}</AppShell>
         <ToastViewport />
       </body>
     </html>

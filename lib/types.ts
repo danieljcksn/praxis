@@ -73,6 +73,66 @@ export interface Settings {
   weekStartsOn: 0 | 1;
 }
 
+export type HabitColor = "mint" | "violet" | "coral" | "amber" | "sky";
+
+export type HabitIcon =
+  | "check"
+  | "book"
+  | "code"
+  | "mind"
+  | "music"
+  | "walk"
+  | "water";
+
+export interface Habit {
+  id: string;
+  name: string;
+  description: string;
+  color: HabitColor;
+  icon: HabitIcon;
+  createdAt: number;
+  archived: boolean;
+}
+
+export interface HabitEntry {
+  id: string;
+  habitId: string;
+  /** Epoch ms for the day this habit was completed. */
+  completedAt: number;
+  createdAt: number;
+}
+
+/** The durable payload mirrored to Supabase. The live timer remains local so
+ *  a network hiccup can never interrupt an in-progress practice session. */
+export interface CloudSnapshot {
+  version: 2;
+  sessions: Session[];
+  pieces: Piece[];
+  settings: Settings;
+  habits: Habit[];
+  habitEntries: HabitEntry[];
+}
+
+export interface HevyWorkout {
+  id: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  durationMinutes: number;
+}
+
+export interface StravaActivity {
+  id: string;
+  name: string;
+  type: string;
+  sportType: string;
+  startTime: string;
+  elapsedMinutes: number;
+  movingMinutes: number;
+  distanceMeters: number;
+  elevationMeters: number;
+}
+
 /** Shape of an exported backup file. Versioned so imports can be migrated. */
 export interface BackupFile {
   app: "praxis";
@@ -81,4 +141,6 @@ export interface BackupFile {
   sessions: Session[];
   pieces: Piece[];
   settings: Settings;
+  habits?: Habit[];
+  habitEntries?: HabitEntry[];
 }

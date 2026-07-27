@@ -114,7 +114,7 @@ export function StatsScreen() {
           title="No stats yet"
           description="Once you log a few sessions, this page fills with streaks, trends, and where your time goes."
           action={
-            <Link href="/">
+            <Link href="/practice">
               <Button variant="primary">Start practicing</Button>
             </Link>
           }

@@ -1,7 +1,16 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Download, Upload, Sparkles, Trash2, HardDriveDownload } from "lucide-react";
+import {
+  Activity,
+  Cloud,
+  Download,
+  Dumbbell,
+  LogOut,
+  Sparkles,
+  Trash2,
+  Upload,
+} from "lucide-react";
 import { useStore } from "@/lib/store";
 import { toast } from "@/lib/toast";
 import { toDayKey } from "@/lib/time";
@@ -11,7 +20,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Modal } from "@/components/ui/Modal";
-import { Field, TextField } from "@/components/ui/Field";
+import { TextField } from "@/components/ui/Field";
 
 const GOAL_PRESETS = [15, 30, 45, 60, 90];
 
@@ -67,6 +76,8 @@ export function SettingsScreen() {
   const updateSettings = useStore((s) => s.updateSettings);
   const sessionCount = useStore((s) => s.sessions.length);
   const pieceCount = useStore((s) => s.pieces.length);
+  const habitCount = useStore((s) => s.habits.length);
+  const cloudStatus = useStore((s) => s.cloudStatus);
 
   const fileRef = useRef<HTMLInputElement>(null);
   const [confirm, setConfirm] = useState<Confirm | null>(null);
@@ -169,7 +180,7 @@ export function SettingsScreen() {
 
         <Section
           title="Data"
-          description={`Everything is stored in this browser — ${sessionCount} sessions, ${pieceCount} pieces. Back up regularly.`}
+          description={`${sessionCount} sessions, ${pieceCount} pieces, and ${habitCount} habits are mirrored to Supabase. Cloud status: ${cloudStatus}.`}
         >
           <div className="grid gap-2.5 sm:grid-cols-2">
             <Button variant="subtle" block onClick={handleExport}>
@@ -193,7 +204,7 @@ export function SettingsScreen() {
               onClick={() =>
                 setConfirm({
                   title: "Load sample data?",
-                  body: "This replaces your current sessions and pieces with an example history so you can explore the app. Export a backup first if you want to keep your data.",
+                  body: "This replaces your current practice and habit data with an example history so you can explore the app. Export a backup first if you want to keep your data.",
                   confirmLabel: "Load sample",
                   action: () => {
                     useStore.getState().loadSample();
@@ -211,7 +222,7 @@ export function SettingsScreen() {
               onClick={() =>
                 setConfirm({
                   title: "Clear all data?",
-                  body: "This permanently deletes every session and piece. This cannot be undone. Your settings are kept.",
+                  body: "This permanently deletes every session, piece, habit, and check-in from this app and Supabase. This cannot be undone. Your settings are kept.",
                   confirmLabel: "Delete everything",
                   danger: true,
                   action: () => {
@@ -227,13 +238,49 @@ export function SettingsScreen() {
           </div>
         </Section>
 
-        <div className="flex items-start gap-3 px-1 text-[12px] leading-relaxed text-sub">
-          <HardDriveDownload className="mt-0.5 h-4 w-4 shrink-0" />
-          <p>
-            Your practice history is kept in this browser and never leaves it, so it won't sync across
-            devices. Use export/import to move it or keep a backup.
-          </p>
-        </div>
+        <Section
+          title="Integrations"
+          description="External credentials stay on the server and are never sent to the browser."
+        >
+          <div className="divide-y divide-border">
+            <Row label="Hevy" hint="Workout days, start/end times, and duration.">
+              <span className="inline-flex items-center gap-2 rounded-full border border-hevy/15 bg-hevy/5 px-3 py-1.5 text-[11px] text-hevy">
+                <Dumbbell className="h-3.5 w-3.5" />
+                Connected
+              </span>
+            </Row>
+            <Row label="Strava" hint="Outdoor activity, distance, and moving time.">
+              <a
+                href="/api/strava/connect"
+                className="inline-flex h-9 items-center gap-2 rounded-lg border border-strava/20 bg-strava/5 px-3 text-[11px] text-strava transition-[background-color,transform] duration-150 hover:bg-strava/10 active:scale-[0.97]"
+              >
+                <Activity className="h-3.5 w-3.5" />
+                Reconnect
+              </a>
+            </Row>
+          </div>
+        </Section>
+
+        <Section title="Security" description="Access is protected by the shared Praxis password.">
+          <Row label="Cloud storage" hint="RLS blocks direct public access; the server owns all writes.">
+            <span className="inline-flex items-center gap-2 text-[11px] text-mint">
+              <Cloud className="h-3.5 w-3.5" />
+              Supabase secured
+            </span>
+          </Row>
+          <div className="mt-3 border-t border-border pt-4">
+            <Button
+              variant="subtle"
+              onClick={async () => {
+                await fetch("/api/auth/logout", { method: "POST" });
+                window.location.assign("/login");
+              }}
+            >
+              <LogOut className="h-4 w-4" />
+              Lock Praxis
+            </Button>
+          </div>
+        </Section>
       </div>
 
       <Modal

@@ -90,7 +90,7 @@ export function HistoryScreen() {
           description="Finish a session on the timer and it lands here — or log practice you did away from the app."
           action={
             <div className="flex gap-2">
-              <Link href="/">
+              <Link href="/practice">
                 <Button variant="primary">Go practice</Button>
               </Link>
               <Button variant="subtle" onClick={openAdd}>

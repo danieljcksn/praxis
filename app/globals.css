@@ -1,38 +1,46 @@
 @import "tailwindcss";
 
-/* ───────────────────────────────────────────────────────────────────────────
-   praxis — palette inspired by Monkeytype's "serika dark".
-   Flat by nature: depth comes from a recessed panel color + hairline borders +
-   one reserved accent (gold), never from shadows or gradients.
-   ─────────────────────────────────────────────────────────────────────────── */
+/* Praxis: a quiet, tactile activity dashboard. The near-black canvas keeps
+   contribution colors luminous without turning the interface into a toy. */
 @theme {
-  --color-bg: #323437; /* app background */
-  --color-panel: #2c2e31; /* recessed cards / panels (subAlt) */
-  --color-panel-hover: #34373b; /* interactive row hover */
-  --color-elevated: #35383c; /* floating overlays: modals, toasts */
-  --color-inset: #292b2d; /* deeper wells: inputs, tracks */
-  --color-sub: #808388; /* muted text + icons (nudged up from Monkeytype's
-                            #646669 so essential secondary text stays legible) */
-  --color-sub-strong: #a0a3a7; /* brighter muted — clears AA for small text */
-  --color-text: #d1d0c5; /* primary text */
-  --color-accent: #e2b714; /* the one reserved hue */
-  --color-accent-dim: #b8940f;
-  --color-error: #ca4754;
-  --color-error-dim: #7e2a33;
+  --color-bg: #0b0c0f;
+  --color-panel: #121418;
+  --color-panel-hover: #1a1d22;
+  --color-elevated: #181b20;
+  --color-inset: #0e1013;
+  --color-grid-empty: #202329;
+  --color-sub: #858a94;
+  --color-sub-strong: #aeb2b9;
+  --color-text: #f2f0e9;
+  --color-accent: #f0c458;
+  --color-accent-dim: #d9aa3f;
+  --color-mint: #54d6ad;
+  --color-hevy: #70a7ff;
+  --color-strava: #fc4c02;
+  --color-error: #ff737d;
+  --color-error-dim: #a33a44;
 
-  --color-border: rgba(209, 208, 197, 0.08);
-  --color-border-strong: rgba(209, 208, 197, 0.15);
+  --color-border: rgba(242, 240, 233, 0.075);
+  --color-border-strong: rgba(242, 240, 233, 0.13);
 
-  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", "Menlo", monospace;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
 
-  --animate-fade-in: praxis-fade-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.025), 0 18px 45px rgba(0, 0, 0, 0.13);
+  --shadow-nav: 0 18px 50px rgba(0, 0, 0, 0.42);
+  --shadow-login: 0 30px 100px rgba(0, 0, 0, 0.48);
+
+  --animate-fade-in: praxis-fade-in 0.28s cubic-bezier(0.23, 1, 0.32, 1) both;
   --animate-fade: praxis-fade 0.2s ease-out both;
-  --animate-pop: praxis-pop 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-pop: praxis-pop 0.18s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
 @layer base {
   :root {
     color-scheme: dark;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   }
 
   * {
@@ -45,8 +53,12 @@
 
   body {
     background-color: var(--color-bg);
+    background-image:
+      radial-gradient(circle at 15% -10%, rgba(240, 196, 88, 0.045), transparent 30rem),
+      radial-gradient(circle at 90% 10%, rgba(84, 214, 173, 0.025), transparent 26rem);
+    background-attachment: fixed;
     color: var(--color-text);
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     font-size: 15px;
@@ -99,6 +111,7 @@
 @layer utilities {
   .tabnum {
     font-variant-numeric: tabular-nums;
+    font-family: var(--font-mono);
   }
 
   /* Skeleton: a ghosted preview well with a slow, subtle sheen. */

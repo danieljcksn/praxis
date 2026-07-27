@@ -2,62 +2,122 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, ListMusic, Settings, Timer, TrendingUp } from "lucide-react";
+import {
+  BarChart3,
+  BookOpen,
+  Cloud,
+  CloudOff,
+  Dumbbell,
+  Home,
+  Library,
+  Settings,
+  Shapes,
+  Timer,
+} from "lucide-react";
 import { useStore } from "@/lib/store";
 import { useElapsed } from "@/lib/hooks/useElapsed";
 import { useHydrated } from "@/lib/hooks/useHydrated";
 import { formatClock } from "@/lib/time";
 import { cn } from "@/lib/cn";
 
-const NAV = [
-  { href: "/", label: "practice", icon: Timer },
-  { href: "/repertoire", label: "repertoire", icon: ListMusic },
-  { href: "/history", label: "history", icon: CalendarDays },
-  { href: "/stats", label: "stats", icon: TrendingUp },
+const PRIMARY_NAV = [
+  { href: "/", label: "Overview", icon: Home },
+  { href: "/habits", label: "Habits", icon: Shapes },
+  { href: "/practice", label: "Practice", icon: Timer },
+  { href: "/training", label: "Training", icon: Dumbbell },
+  { href: "/repertoire", label: "Library", icon: Library },
 ] as const;
 
 function isActive(pathname: string, href: string): boolean {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
 
-function SessionPill() {
-  const hydrated = useHydrated();
-  const status = useStore((s) => s.timer.status);
-  const elapsed = useElapsed();
-  if (!hydrated || status === "idle") return null;
-  const running = status === "running";
+function Logo() {
   return (
-    <Link
-      href="/"
-      title={running ? "Session running" : "Session paused"}
-      className={cn(
-        "ml-1 flex h-8 items-center gap-2 rounded-full border border-border-strong bg-inset pl-2.5 pr-3",
-        "animate-[praxis-fade_0.2s_ease-out] transition-colors hover:border-accent/40",
-      )}
-    >
-      <span
-        className={cn(
-          "h-2 w-2 rounded-full",
-          running ? "bg-accent animate-[praxis-breathe_1.6s_ease-in-out_infinite]" : "bg-sub",
-        )}
-      />
-      <span className="tabnum text-xs text-text">{formatClock(elapsed)}</span>
+    <Link href="/" className="flex items-center gap-1.5 pr-3" aria-label="praxis — overview">
+      <span className="font-display text-[18px] font-semibold tracking-[-0.035em] text-text">
+        praxis
+      </span>
+      <span className="h-4 w-[3px] rounded-full bg-accent" />
     </Link>
   );
 }
 
-function Logo() {
-  const hydrated = useHydrated();
-  const running = useStore((s) => s.timer.status === "running") && hydrated;
+function SyncStatus() {
+  const status = useStore((state) => state.cloudStatus);
+  const offline = status === "offline" || status === "error";
+  const Icon = offline ? CloudOff : Cloud;
   return (
-    <Link href="/" className="flex items-center gap-1.5 pr-2" aria-label="praxis — home">
-      <span className="text-[17px] font-semibold lowercase tracking-tight text-text">praxis</span>
+    <span
+      className={cn(
+        "hidden items-center gap-1.5 text-[10px] lg:flex",
+        offline ? "text-error" : status === "syncing" ? "text-sub" : "text-sub/70",
+      )}
+      title={
+        status === "synced"
+          ? "Saved to Supabase"
+          : status === "syncing"
+            ? "Saving to Supabase"
+            : "Cloud sync unavailable"
+      }
+    >
+      <Icon className={cn("h-3 w-3", status === "syncing" && "animate-pulse")} />
+      {status === "syncing" ? "saving" : offline ? "offline" : "saved"}
+    </span>
+  );
+}
+
+function SessionPill() {
+  const hydrated = useHydrated();
+  const status = useStore((state) => state.timer.status);
+  const elapsed = useElapsed();
+  if (!hydrated || status === "idle") return null;
+  return (
+    <Link
+      href="/practice"
+      className="hidden h-8 items-center gap-2 rounded-full border border-accent/15 bg-accent/5 px-3 text-[11px] tabnum text-accent sm:flex"
+      title={status === "running" ? "Practice session running" : "Practice session paused"}
+    >
       <span
         className={cn(
-          "h-4 w-[3px] rounded-full bg-accent",
-          running && "animate-[praxis-breathe_1.6s_ease-in-out_infinite]",
+          "h-1.5 w-1.5 rounded-full bg-accent",
+          status === "running" && "animate-[praxis-breathe_1.6s_ease-in-out_infinite]",
         )}
       />
+      {formatClock(elapsed)}
+    </Link>
+  );
+}
+
+function NavItem({
+  item,
+  pathname,
+  mobile,
+}: {
+  item: (typeof PRIMARY_NAV)[number];
+  pathname: string;
+  mobile?: boolean;
+}) {
+  const active = isActive(pathname, item.href);
+  const Icon = item.icon;
+  return (
+    <Link
+      href={item.href}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        mobile
+          ? "flex min-w-0 flex-1 flex-col items-center justify-center gap-1 py-2 text-[9px]"
+          : "flex h-9 items-center gap-2 rounded-lg px-3 text-[12px]",
+        "transition-[background-color,color,transform] duration-150 active:scale-[0.97]",
+        active
+          ? mobile
+            ? "text-accent"
+            : "bg-white/[0.045] text-text"
+          : "text-sub hover:text-text",
+      )}
+    >
+      <Icon className={cn(mobile ? "h-[18px] w-[18px]" : "h-4 w-4", active && "text-accent")} />
+      <span>{item.label}</span>
     </Link>
   );
 }
@@ -65,42 +125,57 @@ function Logo() {
 export function TopNav() {
   const pathname = usePathname();
   return (
-    <header className="sticky top-0 z-30 -mx-5 mb-8 border-b border-border bg-bg/80 px-5 backdrop-blur-md sm:-mx-8 sm:px-8">
-      <div className="flex h-16 items-center justify-between gap-2">
-        <Logo />
-        <nav className="flex items-center gap-0.5">
-          {NAV.map((item) => {
-            const active = isActive(pathname, item.href);
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  "flex h-9 items-center gap-2 rounded-lg px-2.5 text-[13px] transition-colors duration-150 sm:px-3",
-                  active ? "text-accent" : "text-sub hover:text-text",
-                )}
-              >
-                <Icon className="h-4 w-4 shrink-0" strokeWidth={active ? 2.4 : 2} />
-                <span className="hidden sm:inline">{item.label}</span>
-              </Link>
-            );
-          })}
-          <SessionPill />
-          <Link
-            href="/settings"
-            aria-label="settings"
-            aria-current={isActive(pathname, "/settings") ? "page" : undefined}
-            className={cn(
-              "ml-0.5 flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-150",
-              isActive(pathname, "/settings") ? "text-accent" : "text-sub hover:text-text",
-            )}
-          >
-            <Settings className="h-4 w-4" />
-          </Link>
-        </nav>
-      </div>
-    </header>
+    <>
+      <header className="sticky top-0 z-30 -mx-4 mb-8 border-b border-border bg-bg/80 px-4 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <div className="flex h-16 items-center justify-between gap-3">
+          <Logo />
+          <nav className="hidden items-center gap-1 md:flex">
+            {PRIMARY_NAV.map((item) => (
+              <NavItem key={item.href} item={item} pathname={pathname} />
+            ))}
+          </nav>
+          <div className="flex items-center gap-2">
+            <SyncStatus />
+            <SessionPill />
+            <Link
+              href="/history"
+              aria-label="History"
+              className={cn(
+                "flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-150",
+                isActive(pathname, "/history") ? "bg-white/[0.045] text-accent" : "text-sub hover:text-text",
+              )}
+            >
+              <BookOpen className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/stats"
+              aria-label="Stats"
+              className={cn(
+                "hidden h-9 w-9 items-center justify-center rounded-lg transition-colors duration-150 sm:flex",
+                isActive(pathname, "/stats") ? "bg-white/[0.045] text-accent" : "text-sub hover:text-text",
+              )}
+            >
+              <BarChart3 className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/settings"
+              aria-label="Settings"
+              className={cn(
+                "flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-150",
+                isActive(pathname, "/settings") ? "bg-white/[0.045] text-accent" : "text-sub hover:text-text",
+              )}
+            >
+              <Settings className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <nav className="fixed inset-x-3 bottom-3 z-40 flex overflow-hidden rounded-2xl border border-border-strong bg-elevated/95 px-1 shadow-nav backdrop-blur-xl md:hidden">
+        {PRIMARY_NAV.map((item) => (
+          <NavItem key={item.href} item={item} pathname={pathname} mobile />
+        ))}
+      </nav>
+    </>
   );
 }

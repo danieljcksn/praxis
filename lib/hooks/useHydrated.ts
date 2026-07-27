@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useStore } from "@/lib/store";
 
-/** True only after the component has mounted on the client. Gates any UI that
- *  reads persisted (localStorage) state so the server render and the first
- *  client render agree — no hydration mismatch, honest loading states. */
+/** True after Zustand has restored its persisted state. Using the store's
+ *  hydration signal keeps every screen aligned with cloud sync and avoids a
+ *  second, component-local loading lifecycle. */
 export function useHydrated(): boolean {
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => setHydrated(true), []);
-  return hydrated;
+  return useStore((state) => state.hasHydrated);
 }

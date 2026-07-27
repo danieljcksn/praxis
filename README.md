@@ -1,80 +1,86 @@
 # praxis
 
-A practice tracker for classical guitar. Time your sessions, keep your
-repertoire, and see where your practice time actually goes.
+A private rhythm dashboard for practice, habits, and training. Praxis brings
+classical-guitar sessions, contribution-style habit grids, Hevy workouts, and
+Strava activity into one calm view.
 
-The look borrows from [Monkeytype](https://monkeytype.com)'s dark theme: flat,
-monospace, one gold accent. Everything runs in the browser — there's no account
-and no server, so your practice history stays on your machine.
+## What it tracks
 
-## Features
+- **Overview** — today’s practice target, habits, and side-by-side contribution
+  grids for practice, habits, Hevy, and Strava.
+- **Habits** — create color-coded habits, check them off once per day, and see a
+  full-year GitHub-style history for each one.
+- **Practice** — a timestamp-accurate timer with focus areas, repertoire,
+  targets, notes, ratings, history, and detailed statistics.
+- **Hevy** — imports all workout days and displays total duration plus the exact
+  start/end time of each active day.
+- **Strava** — refreshes short-lived OAuth tokens server-side and imports activity
+  days, moving time, distance, elevation, and exact daily hours.
+- **Supabase sync** — mirrors durable state to Postgres. Existing browser data is
+  migrated on the first cloud connection; JSON export/import remains available.
 
-- **Practice timer** — timestamp-accurate stopwatch that survives tab switches,
-  navigation, and reloads. Pick a focus (repertoire, technique, scales,
-  sight-reading, theory, or free play), attach the pieces you're working on, set
-  an optional session target, and log notes + a "how did it feel" rating when you
-  finish. Keyboard-first: `space` start/pause, `enter` finish, `1`–`6` pick focus.
-- **Repertoire** — track pieces with composer, status (backlog → learning →
-  polishing → performance → maintenance), difficulty, and notes. Each piece shows
-  accumulated time, session count, and when you last touched it. Search, filter,
-  sort, and archive.
-- **History** — a GitHub/Monkeytype-style activity heatmap plus a per-day session
-  log. Edit any session, or log practice you did away from the app.
-- **Stats** — total time, weekly trend, current/longest streak, where your time
-  goes (by focus), most-practiced pieces, and a by-day-of-week breakdown.
-- **Your data** — everything is kept in your browser (`localStorage`). Export a
-  JSON backup any time, import it to restore or move devices, load sample data to
-  explore, or clear everything.
+## Security model
 
-## Getting started
+Every page and API route is protected by a shared password. A successful unlock
+sets a signed, HttpOnly, SameSite cookie. Supabase, Hevy, and Strava secrets are
+only read by server routes and are never bundled into browser JavaScript.
+
+The Supabase migration enables Row Level Security on every exposed table, grants
+no access to `anon` or `authenticated`, and uses the server-only Supabase secret
+key for authorized operations.
+
+## Local setup
 
 ```bash
-npm install
-npm run dev
+pnpm install
+cp .env.example .env.local
+pnpm dlx supabase@latest db push --db-url "$POSTGRES_URL_NON_POOLING"
+pnpm dev
 ```
 
-Then open [http://localhost:3000](http://localhost:3000).
+The required runtime variables are documented in `.env.example`. A direct
+Postgres URL is only needed while applying migrations.
 
-New here? Head to **Settings → Load sample data** to explore with a few months of
-example history, then clear it when you're ready to start your own.
+For Strava activity history, set the application callback domain to the deployed
+hostname (for example `danpraxis.vercel.app`). If an initial developer token only
+has `read` scope, use **Training → Connect with Strava** once; Praxis requests
+`activity:read_all`, then stores each newly rotated token in the protected
+`integration_tokens` table.
 
 ## Scripts
 
 | command | what it does |
 | --- | --- |
-| `npm run dev` | start the dev server |
-| `npm run build` | production build |
-| `npm run start` | serve the production build |
-| `npm run typecheck` | run `tsc --noEmit` |
-| `npm run lint` | run Next.js ESLint |
+| `pnpm dev` | start the development server |
+| `pnpm build` | create a production build |
+| `pnpm start` | serve the production build |
+| `pnpm typecheck` | run `tsc --noEmit` |
 
 ## Stack
 
-- **Next.js** (App Router) + **React 19** + **TypeScript**
-- **Tailwind CSS v4** (CSS-first theme tokens)
-- **Zustand** with `persist` for browser-stored state
-- **date-fns**, **lucide-react**, **JetBrains Mono**
-
-## Data & backups
-
-All state lives under the `praxis-store` key in `localStorage`. Because it's
-per-browser, it doesn't sync across devices — use **Settings → Export backup**
-to keep a copy, and **Import backup** to restore it. Backups are plain JSON.
+- Next.js App Router, React 19, and TypeScript
+- Tailwind CSS v4 with a CSS-first theme
+- Zustand for optimistic local state and timer resilience
+- Supabase Postgres for durable state and integration caches
+- Hevy public API and Strava API v3
 
 ## Project layout
 
-```
-app/                 routes: / (timer), /repertoire, /history, /stats, /settings
+```text
+app/
+  api/               password, data, Hevy, and Strava server routes
+  habits/            contribution-based habit tracking
+  practice/          session timer
+  training/          Hevy and Strava activity
 components/
-  layout/            nav, page header, timer lifecycle
-  timer/             timer screen, focus selector, finish dialog
-  repertoire/        piece list + editor
-  history/           heatmap, session log + editor
-  stats/             tiles, trends, donut
-  ui/                buttons, modal, fields, toasts, primitives
+  activity/          reusable contribution grid
+  dashboard/         cross-domain overview
+  habits/            habit cards and editor
+  training/          workout and activity visualizations
+  timer/             practice timer workflow
 lib/
-  store.ts           zustand store (state + actions + persistence)
-  stats.ts           derived data: streaks, heatmap, rollups, breakdowns
-  time.ts            duration/date formatting + day keys
-  types.ts           domain model
+  hevy.ts            server-side Hevy sync
+  strava.ts          server-side OAuth refresh and activity sync
+  store.ts           local state plus Supabase snapshot model
+supabase/migrations/  RLS-protected database schema
 ```

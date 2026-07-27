@@ -1,5 +1,5 @@
-import { TimerScreen } from "@/components/timer/TimerScreen";
+import { DashboardScreen } from "@/components/dashboard/DashboardScreen";
 
-export default function PracticePage() {
-  return <TimerScreen />;
+export default function DashboardPage() {
+  return <DashboardScreen />;
 }
