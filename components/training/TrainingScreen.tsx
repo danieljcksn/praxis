@@ -1,53 +1,18 @@
 "use client";
 
 import { useMemo } from "react";
-import {
-  Activity,
-  Clock3,
-  Dumbbell,
-  Flame,
-  RefreshCw,
-  TimerReset,
-} from "lucide-react";
+import { Activity, Clock3, Flame, RefreshCw, TimerReset } from "lucide-react";
 import { useHevy } from "@/lib/hooks/useHevy";
 import { groupHevyByDay, hevyStreak, hevyValuesByDay } from "@/lib/hevy-activity";
-import { addDays, formatDate, formatTime, startOfDay, toDayKey } from "@/lib/time";
-import { cn } from "@/lib/cn";
+import { addDays, formatDate, formatMinutes, formatTime, startOfDay, toDayKey } from "@/lib/time";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { ContributionGrid } from "@/components/activity/ContributionGrid";
+import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Badge, Card } from "@/components/ui/Card";
+import { Metric } from "@/components/ui/Metric";
+import { Skeleton, SkeletonScreen } from "@/components/ui/Skeleton";
 import { StravaPanel } from "./StravaPanel";
-
-function duration(minutes: number): string {
-  if (minutes < 60) return `${minutes}m`;
-  const hours = Math.floor(minutes / 60);
-  const remainder = minutes % 60;
-  return remainder ? `${hours}h ${remainder}m` : `${hours}h`;
-}
-
-function Metric({
-  icon: Icon,
-  label,
-  value,
-  detail,
-}: {
-  icon: typeof Activity;
-  label: string;
-  value: string;
-  detail: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-border bg-panel/70 p-4 shadow-card">
-      <div className="flex items-center gap-2 text-sub">
-        <Icon className="h-4 w-4 text-hevy" />
-        <span className="text-[11px] font-medium">{label}</span>
-      </div>
-      <p className="mt-4 font-display text-2xl font-semibold tracking-[-0.015em] text-text">{value}</p>
-      <p className="mt-1 text-[11px] text-sub">{detail}</p>
-    </div>
-  );
-}
 
 function WeeklyTraining({ days }: { days: ReturnType<typeof groupHevyByDay> }) {
   const weeks = useMemo(() => {
@@ -65,27 +30,36 @@ function WeeklyTraining({ days }: { days: ReturnType<typeof groupHevyByDay> }) {
     });
   }, [days]);
   const max = Math.max(1, ...weeks.map((week) => week.minutes));
+  const lastIndex = weeks.length - 1;
 
   return (
-    <div className="flex h-40 items-end gap-2 sm:gap-3">
+    <div className="flex h-40 items-end gap-1.5 sm:gap-2">
       {weeks.map((week, index) => (
         <div
           key={week.start}
           className="group flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2"
-          title={`${formatDate(week.start)} · ${duration(week.minutes)}`}
+          title={`Week of ${formatDate(week.start)} · ${week.minutes ? formatMinutes(week.minutes) : "no training"}`}
         >
           <div className="relative flex h-full w-full items-end">
             <div
-              className="w-full rounded-t-[5px] bg-hevy/75 transition-[background-color,opacity] duration-150 group-hover:bg-hevy"
+              className={
+                // The current week reads as "in progress", not as a short week.
+                index === lastIndex
+                  ? "w-full rounded-t-sm bg-hevy transition-[height] duration-[280ms] ease-out"
+                  : "w-full rounded-t-sm bg-hevy/60 transition-[background-color,height] duration-[280ms] ease-out group-hover:bg-hevy"
+              }
               style={{
-                height: week.minutes ? `${Math.max(5, (week.minutes / max) * 100)}%` : "2px",
-                opacity: week.minutes ? 1 : 0.18,
+                height: week.minutes ? `${Math.max(4, (week.minutes / max) * 100)}%` : "2px",
+                opacity: week.minutes ? 1 : 0.25,
               }}
             />
           </div>
-          <span className="text-[9px] text-sub">
+          <span className="text-micro leading-none text-sub">
             {index % 2 === 0
-              ? new Date(week.start).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+              ? new Date(week.start).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })
               : ""}
           </span>
         </div>
@@ -102,24 +76,13 @@ export function TrainingScreen() {
   const average = workouts.length ? Math.round(totalMinutes / workouts.length) : 0;
   const streak = hevyStreak(workouts);
 
-  if (loading) {
-    return (
-      <div className="space-y-5">
-        <Skeleton className="h-20 rounded-xl" />
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {[0, 1, 2, 3].map((index) => (
-            <Skeleton key={index} className="h-28 rounded-2xl" />
-          ))}
-        </div>
-        <Skeleton className="h-72 rounded-2xl" />
-      </div>
-    );
-  }
+  if (loading) return <TrainingSkeleton />;
 
   return (
-    <div className="animate-[praxis-fade-in_0.3s_var(--ease-out)]">
+    <div>
       <PageHeader
-        eyebrow="Hevy connected"
+        eyebrow="Hevy + Strava"
+        tone="hevy"
         title="Training"
         subtitle={
           syncedAt
@@ -129,130 +92,147 @@ export function TrainingScreen() {
                 hour: "numeric",
                 minute: "2-digit",
               })}`
-            : "Workout days and hours from Hevy"
+            : "Workout days and hours, pulled from Hevy"
         }
         action={
           <Button variant="subtle" onClick={() => void refresh()} loading={refreshing}>
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-4 w-4" aria-hidden />
             Sync Hevy
           </Button>
         }
       />
 
       {(error || warning) && (
-        <div className="mb-5 rounded-xl border border-error/20 bg-error/5 px-4 py-3 text-[12px] text-error">
+        <Alert tone={error ? "error" : "warning"} className="mb-5">
           {error ?? `${warning} Showing the last successful sync.`}
-        </div>
+        </Alert>
       )}
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Metric
           icon={Activity}
+          tone="hevy"
           label="Active days"
-          value={String(days.length)}
+          value={days.length}
           detail={`${workouts.length} workouts recorded`}
         />
         <Metric
           icon={Clock3}
+          tone="hevy"
           label="Time trained"
-          value={duration(totalMinutes)}
+          value={formatMinutes(totalMinutes)}
           detail="Across your Hevy history"
         />
         <Metric
           icon={TimerReset}
+          tone="hevy"
           label="Average"
-          value={duration(average)}
+          value={formatMinutes(average)}
           detail="Per workout"
         />
         <Metric
           icon={Flame}
+          tone="hevy"
           label="Live streak"
           value={`${streak} ${streak === 1 ? "day" : "days"}`}
           detail="Today or your latest run"
         />
       </div>
 
-      <section className="mt-5 overflow-hidden rounded-2xl border border-border bg-panel/70 p-5 shadow-card">
-        <div className="mb-5 flex items-start justify-between gap-4">
+      <Card className="mt-4">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-[11px] font-medium text-hevy">
-              Consistency
-            </p>
-            <h2 className="mt-1 font-display text-lg font-semibold text-text">
-              Your year in motion
-            </h2>
+            <p className="eyebrow mb-2 text-hevy">Consistency</p>
+            <h2 className="font-display text-title-lg text-text">Your year in motion</h2>
           </div>
-          <span className="rounded-full border border-hevy/15 bg-hevy/8 px-2.5 py-1 text-[10px] text-hevy">
-            minutes per day
-          </span>
+          <Badge tone="hevy">minutes per day</Badge>
         </div>
         <ContributionGrid
           values={values}
           color="var(--color-hevy)"
           label="Hevy training"
           weeks={52}
-          valueLabel={duration}
+          valueLabel={formatMinutes}
         />
-      </section>
+      </Card>
 
-      <div className="mt-5 grid items-start gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-        <section className="rounded-2xl border border-border bg-panel/70 p-5 shadow-card">
-          <div className="mb-5">
-            <p className="text-[11px] font-medium text-sub">
-              Last 12 weeks
-            </p>
-            <h2 className="mt-1 font-display text-lg font-semibold text-text">
-              Training volume
-            </h2>
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+        <Card>
+          <div className="mb-6">
+            <p className="eyebrow mb-2 text-sub">Last 12 weeks</p>
+            <h2 className="text-title text-text">Training volume</h2>
           </div>
           <WeeklyTraining days={days} />
-        </section>
+        </Card>
 
-        <section className="rounded-2xl border border-border bg-panel/70 p-5 shadow-card">
-          <div className="mb-3 flex items-center justify-between">
-            <div>
-              <p className="text-[11px] font-medium text-sub">
-                Exact hours
-              </p>
-              <h2 className="mt-1 font-display text-lg font-semibold text-text">
-                Recent active days
-              </h2>
-            </div>
-            <Dumbbell className="h-5 w-5 text-hevy" />
+        <Card>
+          <div className="mb-4">
+            <p className="eyebrow mb-2 text-sub">Exact hours</p>
+            <h2 className="text-title text-text">Recent active days</h2>
           </div>
           {days.length === 0 ? (
-            <p className="py-10 text-center text-[13px] text-sub">
+            <p className="py-10 text-center text-sm text-sub">
               No workouts have arrived from Hevy yet.
             </p>
           ) : (
             <div className="divide-y divide-border">
               {days.slice(0, 8).map((day) => (
-                <div key={day.key} className="flex items-center gap-3 py-3">
-                  <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-lg bg-hevy/8 text-hevy">
-                    <span className="text-[9px]">
+                <div key={day.key} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                  <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-md bg-hevy/10 text-hevy">
+                    <span className="text-[0.5625rem] uppercase leading-none tracking-wider">
                       {new Date(day.date).toLocaleDateString("en-US", { month: "short" })}
                     </span>
-                    <span className="-mt-0.5 text-sm font-semibold">{new Date(day.date).getDate()}</span>
+                    <span className="mt-0.5 text-mini font-semibold leading-none tabnum">
+                      {new Date(day.date).getDate()}
+                    </span>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[12px] text-text">
+                    <p
+                      className="truncate text-sm text-text"
+                      title={day.workouts.map((workout) => workout.title).join(" · ")}
+                    >
                       {day.workouts.map((workout) => workout.title).join(" · ")}
                     </p>
-                    <p className="mt-0.5 text-[11px] tabnum text-sub">
+                    <p className="mt-0.5 text-micro tabnum text-sub">
                       {formatTime(day.firstStart)}–{formatTime(day.lastEnd)}
                     </p>
                   </div>
-                  <span className="shrink-0 text-[12px] tabnum text-hevy">
-                    {duration(day.totalMinutes)}
+                  <span className="shrink-0 text-mini tabnum text-hevy">
+                    {formatMinutes(day.totalMinutes)}
                   </span>
                 </div>
               ))}
             </div>
           )}
-        </section>
+        </Card>
       </div>
 
       <StravaPanel />
     </div>
+  );
+}
+
+function TrainingSkeleton() {
+  return (
+    <SkeletonScreen label="Loading your training">
+      <div className="mb-7 flex items-end justify-between gap-4">
+        <div className="space-y-2.5">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-8 w-40" delay={40} />
+          <Skeleton className="h-4 w-52" delay={60} />
+        </div>
+        <Skeleton className="h-10 w-32 rounded-md" delay={80} />
+      </div>
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {[0, 1, 2, 3].map((index) => (
+          <Skeleton key={index} className="h-[7.5rem] rounded-lg" delay={100 + index * 45} />
+        ))}
+      </div>
+      <Skeleton className="mt-4 h-64 rounded-lg" delay={300} />
+      <div className="mt-4 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+        <Skeleton className="h-72 rounded-lg" delay={360} />
+        <Skeleton className="h-72 rounded-lg" delay={400} />
+      </div>
+    </SkeletonScreen>
   );
 }

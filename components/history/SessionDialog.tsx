@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
+import { useArmedConfirm } from "@/lib/hooks/useArmedConfirm";
 import type { CategoryId, Session } from "@/lib/types";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/cn";
@@ -46,11 +47,19 @@ export function SessionDialog({
   const [pieceIds, setPieceIds] = useState<string[]>([]);
   const [notes, setNotes] = useState("");
   const [rating, setRating] = useState<number | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const confirmDeleteAction = useCallback(() => {
+    if (!session) return;
+    deleteSession(session.id);
+    toast.show("Session deleted");
+    onClose();
+  }, [session, deleteSession, onClose]);
+
+  const del = useArmedConfirm(confirmDeleteAction);
 
   useEffect(() => {
     if (!open) return;
-    setConfirmDelete(false);
+    del.reset();
     const base = session?.startedAt ?? Date.now();
     setDate(toDateValue(base));
     setTime(toTimeValue(session ? base : new Date().setHours(18, 0, 0, 0)));
@@ -59,7 +68,7 @@ export function SessionDialog({
     setPieceIds(session?.pieceIds ?? []);
     setNotes(session?.notes ?? "");
     setRating(session?.rating ?? null);
-  }, [open, session]);
+  }, [open, session, del]);
 
   const availablePieces = pieces.filter((p) => !p.archived || pieceIds.includes(p.id));
   const togglePiece = (id: string) =>
@@ -83,17 +92,6 @@ export function SessionDialog({
     onClose();
   };
 
-  const handleDelete = () => {
-    if (!session) return;
-    if (!confirmDelete) {
-      setConfirmDelete(true);
-      return;
-    }
-    deleteSession(session.id);
-    toast.show("Session deleted");
-    onClose();
-  };
-
   return (
     <Modal
       open={open}
@@ -104,8 +102,8 @@ export function SessionDialog({
       footer={
         <div className="flex w-full items-center justify-between">
           {isEdit ? (
-            <Button variant="danger" onClick={handleDelete}>
-              {confirmDelete ? "Confirm delete" : "Delete"}
+            <Button variant="danger" size="sm" onClick={del.trigger}>
+              {del.armed ? "Confirm delete" : "Delete"}
             </Button>
           ) : (
             <span />
@@ -164,7 +162,7 @@ export function SessionDialog({
                   aria-pressed={minutes === m}
                   onClick={() => setMinutes(m)}
                   className={cn(
-                    "h-8 rounded-md border px-2.5 text-[12px] tabnum transition-colors duration-150",
+                    "h-8 rounded-md border px-2.5 text-mini tabnum transition-colors duration-[130ms]",
                     minutes === m
                       ? "border-accent/40 bg-accent/12 text-text"
                       : "border-border text-sub hover:border-border-strong hover:text-text",

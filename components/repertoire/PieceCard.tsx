@@ -9,7 +9,7 @@ import { cn } from "@/lib/cn";
 
 function DifficultyMeter({ value }: { value: number }) {
   return (
-    <span className="inline-flex items-center gap-0.5" title={`Difficulty ${value}/5`}>
+    <span className="inline-flex items-center gap-0.5" title={`Difficulty ${value} of 5`}>
       {[1, 2, 3, 4, 5].map((n) => (
         <span
           key={n}
@@ -37,37 +37,51 @@ export function PieceCard({
     <button
       type="button"
       onClick={onClick}
+      title={`Edit ${piece.title}`}
       className={cn(
-        "group flex w-full items-center gap-4 rounded-xl border border-border px-4 py-3.5 text-left",
-        "transition-colors duration-150 hover:border-border-strong hover:bg-panel",
+        "group flex w-full items-center gap-4 rounded-lg border border-border px-4 py-3.5 text-left",
+        "transition-[background-color,border-color] duration-[130ms] ease-out",
+        "hover:border-border-strong hover:bg-panel",
         piece.archived ? "bg-transparent opacity-55" : "bg-panel/60",
       )}
     >
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <span className="truncate font-medium text-text">{piece.title}</span>
+      <span className="min-w-0 flex-1">
+        <span className="flex items-center gap-2">
+          <span className="truncate text-sm font-medium text-text" title={piece.title}>
+            {piece.title}
+          </span>
           <StatusBadge status={piece.status} />
-          {piece.archived && <span className="text-[11px] text-sub">archived</span>}
-        </div>
-        <div className="mt-1 flex items-center gap-2.5 text-[12px] text-sub">
-          <span className="truncate">{piece.composer || "Unknown"}</span>
+          {piece.archived && (
+            <span className="shrink-0 text-micro text-sub">archived</span>
+          )}
+        </span>
+        <span className="mt-1 flex items-center gap-2.5 text-mini text-sub">
+          <span className="truncate" title={piece.composer || undefined}>
+            {piece.composer || "Unknown composer"}
+          </span>
           {piece.difficulty != null && (
             <>
-              <span className="text-border-strong">·</span>
+              <span className="text-border-strong" aria-hidden>
+                ·
+              </span>
               <DifficultyMeter value={piece.difficulty} />
             </>
           )}
-        </div>
-      </div>
+        </span>
+      </span>
 
-      <div className="flex shrink-0 flex-col items-end gap-0.5 text-right">
-        <span className="tabnum text-sm text-text">{count > 0 ? formatDuration(total) : "—"}</span>
-        <span className="text-[11px] text-sub">
+      <span className="flex shrink-0 flex-col items-end gap-0.5 text-right">
+        <span className="text-sm tabnum text-text">{count > 0 ? formatDuration(total) : "—"}</span>
+        <span className="text-micro tabnum text-sub">
           {last ? `${formatRelativeDay(last)} · ${count}×` : "not practiced yet"}
         </span>
-      </div>
+      </span>
 
-      <Pencil className="h-4 w-4 shrink-0 text-sub opacity-0 transition-opacity group-hover:opacity-100" />
+      {/* Fades in on hover, but is always there for keyboard users. */}
+      <Pencil
+        className="h-3.5 w-3.5 shrink-0 text-sub opacity-0 transition-opacity duration-[130ms] group-hover:opacity-100 group-focus-visible:opacity-100"
+        aria-hidden
+      />
     </button>
   );
 }

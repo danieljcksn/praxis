@@ -25,19 +25,36 @@ export function CategoryChips({
             type="button"
             aria-pressed={active}
             onClick={() => onChange(cat.id)}
+            title={cat.hint}
             className={cn(
-              "group flex h-9 items-center gap-2 rounded-full border px-3.5 text-[13px] transition-[background-color,border-color,color,transform] duration-150",
+              "group flex h-9 items-center gap-2 rounded-full border px-3.5 text-sm",
+              "transition-[background-color,border-color,color] duration-[130ms] ease-out",
               active
-                ? "border-transparent bg-accent/12 text-text"
+                ? "text-text"
                 : "border-border text-sub hover:border-border-strong hover:text-text",
             )}
+            /* The selected chip wears its own category hue — the same color it
+               has in the donut and in the session log — so the six are
+               self-identifying rather than six identical gold pills. */
+            style={
+              active
+                ? {
+                    backgroundColor: `color-mix(in srgb, ${cat.color} 12%, transparent)`,
+                    borderColor: `color-mix(in srgb, ${cat.color} 32%, transparent)`,
+                  }
+                : undefined
+            }
           >
             {showKeys && (
-              <span className="hidden text-[10px] tabnum text-sub lg:inline">{i + 1}</span>
+              <span className="hidden text-micro tabnum text-sub lg:inline">{i + 1}</span>
             )}
             <span
-              className="h-2 w-2 rounded-full transition-transform duration-150 group-hover:scale-110"
-              style={{ backgroundColor: active ? cat.color : "currentColor", opacity: active ? 1 : 0.55 }}
+              className="h-2 w-2 rounded-full transition-transform duration-[130ms] group-hover:scale-110"
+              style={{
+                backgroundColor: active ? cat.color : "currentColor",
+                opacity: active ? 1 : 0.55,
+              }}
+              aria-hidden
             />
             {cat.label}
           </button>

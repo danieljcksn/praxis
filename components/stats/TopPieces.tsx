@@ -17,8 +17,8 @@ export function TopPieces({
         return (
           <li key={piece.id}>
             <div className="mb-1 flex items-baseline justify-between gap-3">
-              <span className="truncate text-[13px] text-text">{piece.title}</span>
-              <span className="tabnum shrink-0 text-[12px] text-sub">
+              <span className="truncate text-sm text-text">{piece.title}</span>
+              <span className="tabnum shrink-0 text-mini text-sub">
                 {formatDuration(stat.totalMs)}
               </span>
             </div>

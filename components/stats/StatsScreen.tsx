@@ -1,8 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import Link from "next/link";
-import { Clock, Flame, Repeat, TrendingUp, BarChart3 } from "lucide-react";
+import { ChartColumn, Clock, Flame, Repeat, TrendingUp } from "lucide-react";
 import { useStore } from "@/lib/store";
 import {
   categoryBreakdown,
@@ -13,60 +12,17 @@ import {
 } from "@/lib/stats";
 import { formatDuration, formatDurationCompact } from "@/lib/time";
 import { useHydrated } from "@/lib/hooks/useHydrated";
-import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Card } from "@/components/ui/Card";
+import { Metric } from "@/components/ui/Metric";
+import { Skeleton, SkeletonScreen } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Button } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/Button";
 import { CategoryDonut } from "./CategoryDonut";
 import { WeeklyTrend } from "./WeeklyTrend";
 import { TopPieces } from "./TopPieces";
 
 const WEEKDAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-function Card({
-  title,
-  children,
-  className,
-}: {
-  title: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <section className={cn("rounded-xl border border-border bg-panel/60 p-5", className)}>
-      <h2 className="mb-4 text-[13px] font-medium text-text">{title}</h2>
-      {children}
-    </section>
-  );
-}
-
-function StatTile({
-  icon: Icon,
-  label,
-  value,
-  sub,
-  accent,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: React.ReactNode;
-  sub?: string;
-  accent?: boolean;
-}) {
-  return (
-    <div className="rounded-xl border border-border bg-panel/60 p-4">
-      <div className="flex items-center gap-2 text-sub">
-        <Icon className={cn("h-4 w-4", accent && "text-accent")} />
-        <span className="text-[11px]">{label}</span>
-      </div>
-      <div className={cn("mt-2 tabnum text-2xl font-medium leading-none", accent ? "text-accent" : "text-text")}>
-        {value}
-      </div>
-      {sub && <div className="mt-1.5 text-[12px] text-sub">{sub}</div>}
-    </div>
-  );
-}
 
 export function StatsScreen() {
   const hydrated = useHydrated();
@@ -107,98 +63,122 @@ export function StatsScreen() {
 
   if (sessions.length === 0) {
     return (
-      <div className="animate-[praxis-fade-in_0.3s_ease-out]">
-        <PageHeader title="Stats" subtitle="Insights from your practice" />
+      <div>
+        <PageHeader title="Stats" subtitle="Insights from your practice." />
         <EmptyState
-          icon={BarChart3}
+          icon={ChartColumn}
           title="No stats yet"
-          description="Once you log a few sessions, this page fills with streaks, trends, and where your time goes."
+          description="Once you log a few sessions, this page fills with streaks, trends, and where your time actually goes."
           action={
-            <Link href="/practice">
-              <Button variant="primary">Start practicing</Button>
-            </Link>
+            <ButtonLink href="/practice" variant="primary">
+              Start practicing
+            </ButtonLink>
           }
         />
       </div>
     );
   }
 
-  const weeklyGoalMs = settings.dailyGoalMinutes * 7 * 60000;
+  const weeklyGoalMs = settings.dailyGoalMinutes * 7 * 60_000;
+  const best = weekday.ordered.reduce((a, b) => (b.ms > a.ms ? b : a));
 
   return (
-    <div className="animate-[praxis-fade-in_0.3s_ease-out] space-y-6">
+    <div>
       <PageHeader
         title="Stats"
         subtitle={`${formatDuration(rollups.total)} across ${rollups.activeDays} days`}
       />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatTile
+        <Metric
           icon={Clock}
           label="Total"
           value={formatDurationCompact(rollups.total)}
-          sub={`${rollups.activeDays} active days`}
+          detail={`${rollups.activeDays} active days`}
         />
-        <StatTile
+        <Metric
           icon={TrendingUp}
           label="This week"
           value={formatDurationCompact(rollups.week)}
-          sub={weeklyGoalMs > 0 ? `${Math.round((rollups.week / weeklyGoalMs) * 100)}% of goal` : undefined}
-        />
-        <StatTile
-          icon={Flame}
-          label="Streak"
-          accent={streaks.current > 0}
-          value={
-            <span>
-              {streaks.current}
-              <span className="ml-1 text-base font-normal text-sub">days</span>
-            </span>
+          detail={
+            weeklyGoalMs > 0
+              ? `${Math.round((rollups.week / weeklyGoalMs) * 100)}% of weekly goal`
+              : undefined
           }
-          sub={`best ${streaks.longest} days`}
         />
-        <StatTile
+        <Metric
+          icon={Flame}
+          tone={streaks.current > 0 ? "accent" : "neutral"}
+          label="Streak"
+          value={`${streaks.current} ${streaks.current === 1 ? "day" : "days"}`}
+          detail={`best ${streaks.longest} days`}
+        />
+        <Metric
           icon={Repeat}
           label="Sessions"
           value={rollups.sessionCount}
-          sub={`${formatDuration(rollups.avgSession)} avg`}
+          detail={`${formatDuration(rollups.avgSession)} average`}
         />
       </div>
 
-      <Card title="Weekly practice · last 12 weeks">
+      <Card className="mt-4">
+        <div className="mb-6">
+          <p className="eyebrow mb-2 text-sub">Last 12 weeks</p>
+          <h2 className="text-title text-text">Weekly practice</h2>
+        </div>
         <WeeklyTrend bars={bars} goalMsPerWeek={weeklyGoalMs} />
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card title="Where the time goes">
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-2">
+        <Card>
+          <div className="mb-6">
+            <p className="eyebrow mb-2 text-sub">Balance</p>
+            <h2 className="text-title text-text">Where the time goes</h2>
+          </div>
           <CategoryDonut slices={slices} total={rollups.total} />
         </Card>
-        <Card title="Most-practiced pieces">
+
+        <Card>
+          <div className="mb-6">
+            <p className="eyebrow mb-2 text-sub">Repertoire</p>
+            <h2 className="text-title text-text">Most-practiced pieces</h2>
+          </div>
           {topPieces.length > 0 ? (
             <TopPieces rows={topPieces} />
           ) : (
-            <p className="py-8 text-center text-[13px] text-sub">
+            <p className="py-10 text-center text-sm text-sub">
               Attach pieces to your sessions to see them ranked here.
             </p>
           )}
         </Card>
       </div>
 
-      <Card title="By day of week">
-        <div className="flex h-28 items-end gap-2">
+      <Card className="mt-4">
+        <div className="mb-6">
+          <p className="eyebrow mb-2 text-sub">Rhythm</p>
+          <h2 className="text-title text-text">By day of week</h2>
+        </div>
+        <div className="flex h-32 items-end gap-2">
           {weekday.ordered.map((d) => {
-            const h = (d.ms / weekday.max) * 100;
+            const height = (d.ms / weekday.max) * 100;
+            const isBest = d.ms > 0 && d.name === best.name;
             return (
               <div
                 key={d.name}
-                className="flex h-full flex-1 flex-col items-center justify-end gap-2"
+                className="group flex h-full flex-1 flex-col items-center justify-end gap-2"
                 title={`${d.name} · ${d.ms > 0 ? formatDuration(d.ms) : "no practice"}`}
               >
-                <div
-                  className="w-full max-w-10 rounded-t-sm bg-accent-dim transition-colors hover:bg-accent"
-                  style={{ height: d.ms > 0 ? `${Math.max(3, h)}%` : "2px" }}
-                />
-                <span className="text-[11px] text-sub">{d.name}</span>
+                <div className="flex w-full flex-1 items-end justify-center">
+                  <div
+                    className={
+                      isBest
+                        ? "w-full max-w-12 rounded-t-sm bg-accent transition-[height] duration-[280ms] ease-out"
+                        : "w-full max-w-12 rounded-t-sm bg-accent-dim/70 transition-[background-color,height] duration-[280ms] ease-out group-hover:bg-accent"
+                    }
+                    style={{ height: d.ms > 0 ? `${Math.max(3, height)}%` : "2px" }}
+                  />
+                </div>
+                <span className="text-micro text-sub">{d.name}</span>
               </div>
             );
           })}
@@ -210,21 +190,21 @@ export function StatsScreen() {
 
 function StatsSkeleton() {
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <Skeleton className="h-6 w-24" />
-        <Skeleton className="h-4 w-48" />
+    <SkeletonScreen label="Loading your stats">
+      <div className="mb-7 space-y-2.5">
+        <Skeleton className="h-8 w-28" />
+        <Skeleton className="h-4 w-52" delay={40} />
       </div>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-24 rounded-xl" />
+          <Skeleton key={i} className="h-[7.5rem] rounded-lg" delay={80 + i * 45} />
         ))}
       </div>
-      <Skeleton className="h-48 w-full rounded-xl" />
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Skeleton className="h-56 rounded-xl" />
-        <Skeleton className="h-56 rounded-xl" />
+      <Skeleton className="mt-4 h-56 w-full rounded-lg" delay={280} />
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <Skeleton className="h-64 rounded-lg" delay={340} />
+        <Skeleton className="h-64 rounded-lg" delay={380} />
       </div>
-    </div>
+    </SkeletonScreen>
   );
 }

@@ -25,7 +25,7 @@ export function PieceChips({
             aria-pressed={active}
             onClick={() => onToggle(piece.id)}
             className={cn(
-              "flex h-8 max-w-[15rem] items-center gap-2 rounded-full border px-3 text-[13px] transition-colors duration-150",
+              "flex h-8 max-w-[15rem] items-center gap-2 rounded-full border px-3 text-sm transition-colors duration-[130ms]",
               active
                 ? "border-accent/50 bg-accent/10 text-text"
                 : "border-border text-sub hover:border-border-strong hover:text-text",

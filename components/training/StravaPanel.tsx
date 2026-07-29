@@ -4,22 +4,22 @@ import { useMemo } from "react";
 import { Bike, ExternalLink, Footprints, Gauge, MapPin, RefreshCw } from "lucide-react";
 import { useStrava } from "@/lib/hooks/useStrava";
 import { groupStravaByDay, stravaValuesByDay } from "@/lib/strava-activity";
-import { formatTime } from "@/lib/time";
+import { formatMinutes, formatTime } from "@/lib/time";
 import { ContributionGrid } from "@/components/activity/ContributionGrid";
-import { Button } from "@/components/ui/Button";
+import { SectionHeading } from "@/components/layout/PageHeader";
+import { Alert } from "@/components/ui/Alert";
+import { Button, ButtonLink } from "@/components/ui/Button";
+import { Badge, Card } from "@/components/ui/Card";
+import { Metric } from "@/components/ui/Metric";
 import { Skeleton } from "@/components/ui/Skeleton";
-
-function duration(minutes: number): string {
-  if (minutes < 60) return `${minutes}m`;
-  const hours = Math.floor(minutes / 60);
-  const remainder = minutes % 60;
-  return remainder ? `${hours}h ${remainder}m` : `${hours}h`;
-}
 
 function distance(meters: number): string {
   return `${(meters / 1_000).toLocaleString("en-US", { maximumFractionDigits: 1 })} km`;
 }
 
+/** Strava used to be a bespoke panel with its own header, metric grid, and
+ *  footer. It is the same kind of thing as the Hevy section above it, so it
+ *  now uses exactly the same parts — only the hue changes. */
 export function StravaPanel() {
   const { activities, syncedAt, warning, loading, refreshing, error, refresh } = useStrava();
   const days = useMemo(() => groupStravaByDay(activities), [activities]);
@@ -28,125 +28,153 @@ export function StravaPanel() {
   const movingMinutes = activities.reduce((total, activity) => total + activity.movingMinutes, 0);
   const needsConnect = activities.length === 0 && Boolean(error || warning);
 
-  if (loading) return <Skeleton className="mt-5 h-[30rem] rounded-2xl" />;
+  if (loading) {
+    return (
+      <div className="mt-10">
+        <Skeleton className="h-8 w-44" />
+        <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((index) => (
+            <Skeleton key={index} className="h-[7.5rem] rounded-lg" delay={index * 45} />
+          ))}
+        </div>
+        <Skeleton className="mt-4 h-64 rounded-lg" delay={200} />
+      </div>
+    );
+  }
 
   return (
-    <section className="mt-5 overflow-hidden rounded-2xl border border-border bg-panel/70 shadow-card">
-      <div className="flex flex-col gap-4 border-b border-border p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-strava" />
-            <p className="text-[11px] font-medium text-strava">
-              Strava
-            </p>
-          </div>
-          <h2 className="mt-1 font-display text-xl font-semibold tracking-[-0.01em] text-text">
-            Outdoor activity
-          </h2>
-          <p className="mt-1 text-[11px] text-sub">
-            {syncedAt
-              ? `Synced ${new Date(syncedAt).toLocaleString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
-                })}`
-              : "Runs, rides, walks, and everything between"}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          {needsConnect && (
-            <a
-              href="/api/strava/connect"
-              className="inline-flex h-10 items-center gap-2 rounded-lg bg-strava px-4 text-[12px] font-semibold text-on-strava transition-[background-color,transform] duration-150 hover:bg-strava-strong active:scale-[0.97]"
-            >
-              Connect with Strava
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          )}
-          <Button variant="subtle" onClick={() => void refresh()} loading={refreshing}>
-            <RefreshCw className="h-4 w-4" />
-            Sync
-          </Button>
-        </div>
-      </div>
+    <section className="mt-10">
+      <SectionHeading
+        eyebrow="Strava"
+        tone="strava"
+        title="Outdoor activity"
+        subtitle={
+          syncedAt
+            ? `Last synced ${new Date(syncedAt).toLocaleString("en-US", {
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "2-digit",
+              })}`
+            : "Runs, rides, walks, and everything between"
+        }
+        action={
+          <>
+            {needsConnect && (
+              <ButtonLink href="/api/strava/connect" external variant="primary">
+                Connect with Strava
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+              </ButtonLink>
+            )}
+            <Button variant="subtle" onClick={() => void refresh()} loading={refreshing}>
+              <RefreshCw className="h-4 w-4" aria-hidden />
+              Sync Strava
+            </Button>
+          </>
+        }
+      />
 
       {(error || warning) && (
-        <div className="mx-5 mt-5 rounded-xl border border-strava/20 bg-strava/5 px-4 py-3 text-[12px] text-strava">
+        <Alert tone={error ? "error" : "warning"} className="mb-4">
           {error ?? warning}
-        </div>
+        </Alert>
       )}
 
-      <div className="grid grid-cols-2 gap-px bg-border sm:grid-cols-4">
-        {[
-          { icon: MapPin, label: "Active days", value: String(days.length) },
-          { icon: Gauge, label: "Distance", value: distance(totalDistance) },
-          { icon: Footprints, label: "Moving time", value: duration(movingMinutes) },
-          { icon: Bike, label: "Activities", value: String(activities.length) },
-        ].map((metric) => (
-          <div key={metric.label} className="bg-panel px-5 py-4">
-            <div className="flex items-center gap-2 text-sub">
-              <metric.icon className="h-3.5 w-3.5 text-strava" />
-              <span className="text-[9px] font-medium">
-                {metric.label}
-              </span>
-            </div>
-            <p className="mt-2 font-display text-xl font-semibold text-text">
-              {metric.value}
-            </p>
-          </div>
-        ))}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Metric
+          icon={MapPin}
+          tone="strava"
+          label="Active days"
+          value={days.length}
+          detail={`${activities.length} activities`}
+        />
+        <Metric
+          icon={Gauge}
+          tone="strava"
+          label="Distance"
+          value={distance(totalDistance)}
+          detail="Total logged"
+        />
+        <Metric
+          icon={Footprints}
+          tone="strava"
+          label="Moving time"
+          value={formatMinutes(movingMinutes)}
+          detail="Across every activity"
+        />
+        <Metric
+          icon={Bike}
+          tone="strava"
+          label="Average"
+          value={activities.length ? distance(totalDistance / activities.length) : "—"}
+          detail="Per activity"
+        />
       </div>
 
-      <div className="grid gap-6 p-5 lg:grid-cols-[1.15fr_0.85fr]">
-        <div>
-          <p className="mb-4 text-[11px] font-medium text-sub">
-            Moving minutes by day
-          </p>
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+        <Card>
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="eyebrow mb-2 text-strava">Consistency</p>
+              <h2 className="text-title text-text">Moving minutes by day</h2>
+            </div>
+            <Badge tone="strava">minutes per day</Badge>
+          </div>
           <ContributionGrid
             values={values}
             color="var(--color-strava)"
             label="Strava activity"
             weeks={52}
-            valueLabel={duration}
+            valueLabel={formatMinutes}
           />
-        </div>
-        <div>
-          <p className="mb-1 text-[11px] font-medium text-sub">
-            Exact hours
-          </p>
-          <div className="divide-y divide-border">
-            {days.slice(0, 6).map((day) => (
-              <div key={day.key} className="flex items-center gap-3 py-3">
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-[12px] text-text">
-                    {day.activities.map((activity) => activity.name).join(" · ")}
-                  </p>
-                  <p className="mt-0.5 text-[10px] tabnum text-sub">
-                    {new Date(day.date).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })}
-                    {" · "}
-                    {formatTime(day.firstStart)}–{formatTime(day.lastEnd)}
-                  </p>
-                </div>
-                <div className="shrink-0 text-right">
-                  <p className="text-[11px] tabnum text-strava">{duration(day.movingMinutes)}</p>
-                  <p className="mt-0.5 text-[9px] tabnum text-sub">{distance(day.distanceMeters)}</p>
-                </div>
-              </div>
-            ))}
-            {days.length === 0 && !needsConnect && (
-              <p className="py-10 text-center text-[12px] text-sub">No Strava activities yet.</p>
-            )}
+        </Card>
+
+        <Card>
+          <div className="mb-4">
+            <p className="eyebrow mb-2 text-sub">Exact hours</p>
+            <h2 className="text-title text-text">Recent activities</h2>
           </div>
-        </div>
+          {days.length === 0 ? (
+            <p className="py-10 text-center text-sm text-sub">
+              {needsConnect
+                ? "Connect Strava to pull in your runs and rides."
+                : "No Strava activities yet."}
+            </p>
+          ) : (
+            <div className="divide-y divide-border">
+              {days.slice(0, 6).map((day) => (
+                <div key={day.key} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                  <div className="min-w-0 flex-1">
+                    <p
+                      className="truncate text-sm text-text"
+                      title={day.activities.map((activity) => activity.name).join(" · ")}
+                    >
+                      {day.activities.map((activity) => activity.name).join(" · ")}
+                    </p>
+                    <p className="mt-0.5 text-micro tabnum text-sub">
+                      {new Date(day.date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                      {" · "}
+                      {formatTime(day.firstStart)}–{formatTime(day.lastEnd)}
+                    </p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="text-mini tabnum text-strava">{formatMinutes(day.movingMinutes)}</p>
+                    <p className="mt-0.5 text-micro tabnum text-sub">
+                      {distance(day.distanceMeters)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
       </div>
 
-      <div className="border-t border-border px-5 py-3 text-right text-[10px] font-medium text-strava">
-        Powered by Strava
-      </div>
+      {/* Required by the Strava API terms. */}
+      <p className="mt-4 text-right text-micro font-medium text-strava">Powered by Strava</p>
     </section>
   );
 }

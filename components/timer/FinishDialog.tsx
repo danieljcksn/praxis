@@ -6,6 +6,7 @@ import type { CategoryId } from "@/lib/types";
 import { formatClock } from "@/lib/time";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
+import { Digits } from "@/components/ui/Digits";
 import { Field, TextArea } from "@/components/ui/Field";
 import { RatingInput } from "@/components/ui/Rating";
 import { CategoryChips } from "./CategoryChips";
@@ -83,11 +84,11 @@ export function FinishDialog({
       }
     >
       <div className="space-y-6">
-        <div className="flex flex-col items-center rounded-xl bg-inset py-6">
-          <span className="font-fine tabnum text-5xl font-medium text-accent">
-            {formatClock(elapsedMs)}
+        <div className="flex flex-col items-center rounded-md bg-inset py-6">
+          <span className="font-display text-[2.75rem] leading-none tracking-[-0.02em] text-accent">
+            <Digits value={formatClock(elapsedMs)} />
           </span>
-          <span className="mt-1 text-[11px] text-sub">practiced</span>
+          <span className="eyebrow mt-2.5 text-sub">practiced</span>
         </div>
 
         <Field label="Focus">

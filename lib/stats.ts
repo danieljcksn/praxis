@@ -142,78 +142,17 @@ export function computeRollups(
   };
 }
 
-// ── Heatmap ────────────────────────────────────────────────────────────────────
-export interface HeatCell {
-  key: string;
-  date: number;
-  totalMs: number;
-  level: 0 | 1 | 2 | 3 | 4;
-  future: boolean;
-}
-
-export interface HeatmapModel {
-  weeks: HeatCell[][]; // columns of 7 rows
-  monthLabels: Array<{ colIndex: number; label: string }>;
-  maxMs: number;
-}
-
-function levelFor(minutes: number): 0 | 1 | 2 | 3 | 4 {
-  if (minutes <= 0) return 0;
-  if (minutes < 20) return 1;
-  if (minutes < 45) return 2;
-  if (minutes < 90) return 3;
-  return 4;
-}
-
-export function buildHeatmap(
-  sessions: Session[],
-  opts: { weeks: number; weekStartsOn: 0 | 1; now?: number },
-): HeatmapModel {
-  const now = opts.now ?? Date.now();
-  const byDay = new Map<string, number>();
+// ── Contribution values ────────────────────────────────────────────────────────
+/** Practice minutes per local day, in the shape ContributionGrid consumes.
+ *  Shared by the overview and the history heatmap so both read from exactly
+ *  the same series. */
+export function practiceMinutesByDay(sessions: Session[]): Map<string, number> {
+  const values = new Map<string, number>();
   for (const s of sessions) {
     const key = toDayKey(s.startedAt);
-    byDay.set(key, (byDay.get(key) ?? 0) + s.durationMs);
+    values.set(key, (values.get(key) ?? 0) + Math.round(s.durationMs / 60_000));
   }
-
-  const todayStart = startOfDay(now);
-  const lastWeekStart = startOfWeek(now, opts.weekStartsOn);
-  const firstWeekStart = addDays(lastWeekStart, -(opts.weeks - 1) * 7);
-
-  const weeks: HeatCell[][] = [];
-  const monthLabels: Array<{ colIndex: number; label: string }> = [];
-  let lastMonth = -1;
-  let maxMs = 0;
-
-  for (let col = 0; col < opts.weeks; col++) {
-    const weekStart = addDays(firstWeekStart, col * 7);
-    const cells: HeatCell[] = [];
-    for (let row = 0; row < 7; row++) {
-      const dayTs = addDays(weekStart, row);
-      const key = toDayKey(dayTs);
-      const totalMs = byDay.get(key) ?? 0;
-      if (totalMs > maxMs) maxMs = totalMs;
-      cells.push({
-        key,
-        date: dayTs,
-        totalMs,
-        level: levelFor(totalMs / 60_000),
-        future: dayTs > todayStart,
-      });
-    }
-    // Month label appears the first column that lands in a new month.
-    const firstOfCol = new Date(weekStart);
-    if (firstOfCol.getMonth() !== lastMonth) {
-      lastMonth = firstOfCol.getMonth();
-      monthLabels.push({
-        colIndex: col,
-        label: firstOfCol.toLocaleDateString("en-US", { month: "short" }),
-      });
-    }
-    weeks.push(cells);
-  }
-
-  return { weeks, monthLabels, maxMs };
+  return values;
 }
 
 // ── Category breakdown ──────────────────────────────────────────────────────────

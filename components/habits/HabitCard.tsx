@@ -1,12 +1,13 @@
 "use client";
 
 import { useMemo } from "react";
-import { Check, Flame, MoreHorizontal } from "lucide-react";
+import { Check, Flame, Pencil, Plus } from "lucide-react";
 import type { Habit, HabitEntry } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { completedToday, entriesByDay, habitStreak } from "@/lib/habits";
 import { useStore } from "@/lib/store";
 import { ContributionGrid } from "@/components/activity/ContributionGrid";
+import { Card } from "@/components/ui/Card";
 import { HabitIcon } from "./HabitIcon";
 import { HABIT_COLORS } from "./HabitDialog";
 
@@ -14,12 +15,10 @@ export function HabitCard({
   habit,
   entries,
   onEdit,
-  compact = false,
 }: {
   habit: Habit;
   entries: HabitEntry[];
   onEdit: () => void;
-  compact?: boolean;
 }) {
   const color = HABIT_COLORS[habit.color].hex;
   const values = useMemo(() => entriesByDay(entries), [entries]);
@@ -27,78 +26,100 @@ export function HabitCard({
   const streak = habitStreak(entries);
 
   return (
-    <article
-      className="group overflow-hidden rounded-2xl border border-border bg-panel/75 p-4 shadow-card sm:p-5"
-      style={{ "--habit-color": color } as React.CSSProperties}
-    >
-      <div className="flex items-start gap-3">
-        <div
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border"
+    <Card className={cn(habit.archived && "opacity-60")}>
+      <div className="flex items-center gap-3">
+        <span
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border"
           style={{
             backgroundColor: `color-mix(in srgb, ${color} 11%, transparent)`,
             borderColor: `color-mix(in srgb, ${color} 16%, transparent)`,
             color,
           }}
+          aria-hidden
         >
-          <HabitIcon name={habit.icon} className="h-5 w-5" />
-        </div>
+          <HabitIcon name={habit.icon} className="h-[18px] w-[18px]" />
+        </span>
+
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h2 className="truncate text-[15px] font-medium text-text">
+            <h2 className="truncate text-lead font-medium text-text" title={habit.name}>
               {habit.name}
             </h2>
+            {habit.archived && (
+              <span className="shrink-0 rounded-full bg-soft px-2 py-0.5 text-micro text-sub">
+                Archived
+              </span>
+            )}
             {streak > 0 && (
-              <span className="inline-flex shrink-0 items-center gap-1 text-[11px] tabnum text-sub">
-                <Flame className="h-3 w-3" style={{ color }} />
+              <span
+                className="inline-flex shrink-0 items-center gap-1 text-micro tabnum text-sub"
+                title={`${streak} day streak`}
+              >
+                <Flame className="h-3 w-3" style={{ color }} aria-hidden />
                 {streak}
               </span>
             )}
           </div>
-          <p className="mt-0.5 truncate text-[12px] text-sub">
-            {habit.description || `${entries.length} completed days`}
+          <p className="mt-0.5 truncate text-mini text-sub" title={habit.description || undefined}>
+            {habit.description ||
+              `${entries.length} completed ${entries.length === 1 ? "day" : "days"}`}
           </p>
         </div>
+
+        {/* Secondary: present but recessive, and always reachable by keyboard
+            rather than hidden behind hover. */}
         <button
           type="button"
           onClick={onEdit}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sub transition-[background-color,color,transform] duration-150 hover:bg-soft-strong hover:text-text active:scale-95"
           aria-label={`Edit ${habit.name}`}
+          title={`Edit ${habit.name}`}
+          className={cn(
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-sub opacity-70",
+            "transition-[background-color,color,opacity,transform] duration-[130ms] ease-out",
+            "hover:bg-soft-strong hover:text-text hover:opacity-100 focus-visible:opacity-100 active:scale-95",
+          )}
         >
-          <MoreHorizontal className="h-4 w-4" />
+          <Pencil className="h-3.5 w-3.5" aria-hidden />
         </button>
+
+        {/* Primary: the whole point of the card. */}
         <button
           type="button"
           onClick={() => useStore.getState().toggleHabitForDay(habit.id)}
+          aria-pressed={done}
+          aria-label={done ? `Mark ${habit.name} not done today` : `Mark ${habit.name} done today`}
+          title={done ? "Done today — click to undo" : "Mark done for today"}
           className={cn(
-            "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-[background-color,border-color,color,transform] duration-150 active:scale-[0.94]",
-            done
-              ? "text-on-color"
-              : "bg-soft text-sub hover:bg-soft-strong hover:text-text",
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-md border",
+            "transition-[background-color,border-color,color,transform] duration-[130ms] ease-out",
+            "active:scale-[0.94]",
+            done ? "text-on-color" : "bg-soft text-sub hover:bg-soft-strong hover:text-text",
           )}
           style={
             done
               ? { backgroundColor: color, borderColor: color }
               : { borderColor: `color-mix(in srgb, ${color} 22%, transparent)` }
           }
-          aria-pressed={done}
-          aria-label={done ? `Mark ${habit.name} incomplete today` : `Complete ${habit.name} today`}
         >
-          {done ? <Check className="h-5 w-5" strokeWidth={2.8} /> : <span className="text-xl">+</span>}
+          {done ? (
+            <Check className="h-[18px] w-[18px]" strokeWidth={2.8} aria-hidden />
+          ) : (
+            <Plus className="h-[18px] w-[18px]" aria-hidden />
+          )}
         </button>
       </div>
 
-      {!compact && (
-        <div className="mt-5 border-t border-border pt-4">
-          <ContributionGrid
-            values={values}
-            color={color}
-            label={habit.name}
-            weeks={52}
-            weekStartsOn={1}
-            valueLabel={() => "Completed"}
-          />
-        </div>
-      )}
-    </article>
+      <div className="mt-5 border-t border-border pt-5">
+        <ContributionGrid
+          values={values}
+          color={color}
+          label={habit.name}
+          weeks={52}
+          weekStartsOn={1}
+          valueLabel={() => "Completed"}
+          legend={false}
+        />
+      </div>
+    </Card>
   );
 }
