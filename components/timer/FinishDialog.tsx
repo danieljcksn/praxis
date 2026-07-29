@@ -85,7 +85,7 @@ export function FinishDialog({
       <div className="space-y-6">
         <div className="flex flex-col items-center rounded-xl bg-inset py-6">
           <span className="tabnum text-5xl font-medium text-accent">{formatClock(elapsedMs)}</span>
-          <span className="mt-1 text-[11px] uppercase tracking-[0.12em] text-sub">practiced</span>
+          <span className="mt-1 text-[11px] text-sub">practiced</span>
         </div>
 
         <Field label="Focus">

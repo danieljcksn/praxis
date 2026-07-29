@@ -1,8 +1,8 @@
 # praxis
 
-A private rhythm dashboard for practice, habits, and training. Praxis brings
-classical-guitar sessions, contribution-style habit grids, Hevy workouts, and
-Strava activity into one calm view.
+A private rhythm dashboard for practice, habits, training, and making. Praxis
+brings classical-guitar sessions, contribution-style habit grids, GitHub
+activity, Hevy workouts, and Strava activity into one calm view.
 
 ## What it tracks
 
@@ -12,6 +12,8 @@ Strava activity into one calm view.
   full-year GitHub-style history for each one.
 - **Practice** — a timestamp-accurate timer with focus areas, repertoire,
   targets, notes, ratings, history, and detailed statistics.
+- **GitHub** — displays the public contribution calendar for `danieljcksn`,
+  annual totals, active days, weekly output, streaks, and the busiest day.
 - **Hevy** — imports all workout days and displays total duration plus the exact
   start/end time of each active day.
 - **Strava** — refreshes short-lived OAuth tokens server-side and imports activity
@@ -79,6 +81,7 @@ components/
   training/          workout and activity visualizations
   timer/             practice timer workflow
 lib/
+  github.ts          server-side GitHub contribution sync
   hevy.ts            server-side Hevy sync
   strava.ts          server-side OAuth refresh and activity sync
   store.ts           local state plus Supabase snapshot model

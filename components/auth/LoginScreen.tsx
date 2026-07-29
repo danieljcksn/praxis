@@ -65,7 +65,7 @@ export function LoginScreen() {
           <form onSubmit={submit}>
             <label
               htmlFor="password"
-              className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.14em] text-sub"
+              className="mb-2 block text-[11px] font-medium text-sub"
             >
               Password
             </label>

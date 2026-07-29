@@ -58,7 +58,7 @@ function StatTile({
     <div className="rounded-xl border border-border bg-panel/60 p-4">
       <div className="flex items-center gap-2 text-sub">
         <Icon className={cn("h-4 w-4", accent && "text-accent")} />
-        <span className="text-[11px] uppercase tracking-[0.08em]">{label}</span>
+        <span className="text-[11px]">{label}</span>
       </div>
       <div className={cn("mt-2 tabnum text-2xl font-medium leading-none", accent ? "text-accent" : "text-text")}>
         {value}

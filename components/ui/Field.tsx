@@ -11,7 +11,7 @@ export const inputClass = cn(
   "disabled:opacity-40",
 );
 
-const labelClass = "text-[11px] font-medium uppercase tracking-[0.08em] text-sub-strong";
+const labelClass = "text-[11px] font-medium text-sub-strong";
 
 export function Field({
   label,

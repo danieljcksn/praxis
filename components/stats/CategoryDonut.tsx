@@ -37,7 +37,7 @@ export function CategoryDonut({ slices, total }: { slices: CategorySlice[]; tota
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="tabnum text-xl font-medium text-text">{formatDurationCompact(total)}</span>
-          <span className="text-[10px] uppercase tracking-[0.12em] text-sub">total</span>
+          <span className="text-[10px] text-sub">total</span>
         </div>
       </div>
 

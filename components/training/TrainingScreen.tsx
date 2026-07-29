@@ -41,7 +41,7 @@ function Metric({
     <div className="rounded-2xl border border-border bg-panel/70 p-4 shadow-card">
       <div className="flex items-center gap-2 text-sub">
         <Icon className="h-4 w-4 text-hevy" />
-        <span className="text-[10px] font-semibold uppercase tracking-[0.14em]">{label}</span>
+        <span className="text-[11px] font-medium">{label}</span>
       </div>
       <p className="mt-4 font-display text-2xl font-semibold tracking-[-0.04em] text-text">{value}</p>
       <p className="mt-1 text-[11px] text-sub">{detail}</p>
@@ -175,7 +175,7 @@ export function TrainingScreen() {
       <section className="mt-5 overflow-hidden rounded-2xl border border-border bg-panel/70 p-5 shadow-card">
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-hevy">
+            <p className="text-[11px] font-medium text-hevy">
               Consistency
             </p>
             <h2 className="mt-1 font-display text-lg font-semibold tracking-tight text-text">
@@ -198,7 +198,7 @@ export function TrainingScreen() {
       <div className="mt-5 grid items-start gap-5 lg:grid-cols-[1.1fr_0.9fr]">
         <section className="rounded-2xl border border-border bg-panel/70 p-5 shadow-card">
           <div className="mb-5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-sub">
+            <p className="text-[11px] font-medium text-sub">
               Last 12 weeks
             </p>
             <h2 className="mt-1 font-display text-lg font-semibold tracking-tight text-text">
@@ -211,7 +211,7 @@ export function TrainingScreen() {
         <section className="rounded-2xl border border-border bg-panel/70 p-5 shadow-card">
           <div className="mb-3 flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-sub">
+              <p className="text-[11px] font-medium text-sub">
                 Exact hours
               </p>
               <h2 className="mt-1 font-display text-lg font-semibold tracking-tight text-text">
@@ -229,7 +229,7 @@ export function TrainingScreen() {
               {days.slice(0, 8).map((day) => (
                 <div key={day.key} className="flex items-center gap-3 py-3">
                   <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-lg bg-hevy/8 text-hevy">
-                    <span className="text-[9px] uppercase">
+                    <span className="text-[9px]">
                       {new Date(day.date).toLocaleDateString("en-US", { month: "short" })}
                     </span>
                     <span className="-mt-0.5 text-sm font-semibold">{new Date(day.date).getDate()}</span>

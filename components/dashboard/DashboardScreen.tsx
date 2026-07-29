@@ -16,10 +16,12 @@ import { useStore } from "@/lib/store";
 import { useHydrated } from "@/lib/hooks/useHydrated";
 import { useHevy } from "@/lib/hooks/useHevy";
 import { useStrava } from "@/lib/hooks/useStrava";
+import { useGithub } from "@/lib/hooks/useGithub";
 import { completedToday, entriesByDay } from "@/lib/habits";
 import { computeRollups, computeStreaks } from "@/lib/stats";
 import { groupHevyByDay, hevyValuesByDay } from "@/lib/hevy-activity";
 import { groupStravaByDay, stravaValuesByDay } from "@/lib/strava-activity";
+import { githubActivityStats, githubValuesByDay } from "@/lib/github-activity";
 import { formatDuration, formatTime, toDayKey } from "@/lib/time";
 import { cn } from "@/lib/cn";
 import { ContributionGrid } from "@/components/activity/ContributionGrid";
@@ -115,6 +117,7 @@ export function DashboardScreen() {
   const settings = useStore((state) => state.settings);
   const { workouts, loading: hevyLoading } = useHevy();
   const { activities: stravaActivities, loading: stravaLoading } = useStrava();
+  const { data: githubActivity, loading: githubLoading } = useGithub();
   const habits = useMemo(
     () => allHabits.filter((habit) => !habit.archived),
     [allHabits],
@@ -134,6 +137,11 @@ export function DashboardScreen() {
   const hevyDays = useMemo(() => groupHevyByDay(workouts), [workouts]);
   const stravaMap = useMemo(() => stravaValuesByDay(stravaActivities), [stravaActivities]);
   const stravaDays = useMemo(() => groupStravaByDay(stravaActivities), [stravaActivities]);
+  const githubMap = useMemo(() => githubValuesByDay(githubActivity ?? undefined), [githubActivity]);
+  const githubStats = useMemo(
+    () => (githubActivity ? githubActivityStats(githubActivity) : null),
+    [githubActivity],
+  );
   const latestTraining = hevyDays[0];
 
   if (!hydrated) {
@@ -153,7 +161,7 @@ export function DashboardScreen() {
     <div className="animate-[praxis-fade-in_0.3s_var(--ease-out)]">
       <header className="mb-7 flex items-end justify-between gap-4">
         <div>
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-accent">
+          <p className="mb-2 text-[11px] font-medium text-accent">
             {new Date().toLocaleDateString("en-US", {
               weekday: "long",
               month: "long",
@@ -178,7 +186,7 @@ export function DashboardScreen() {
           <div className="relative">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-accent">
+                <p className="text-[11px] font-medium text-accent">
                   Practice
                 </p>
                 <h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.035em] text-text">
@@ -215,7 +223,7 @@ export function DashboardScreen() {
         <section className="rounded-2xl border border-border bg-panel/75 p-5 shadow-card sm:p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-mint">
+              <p className="text-[11px] font-medium text-mint">
                 Today’s habits
               </p>
               <h2 className="mt-1 font-display text-lg font-semibold tracking-tight text-text">
@@ -281,7 +289,7 @@ export function DashboardScreen() {
 
       <section className="mt-5 rounded-2xl border border-border bg-panel/75 p-5 shadow-card sm:p-6">
         <div className="mb-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-sub">
+          <p className="text-[11px] font-medium text-sub">
             The long view
           </p>
           <h2 className="mt-1 font-display text-xl font-semibold tracking-[-0.025em] text-text">
@@ -303,6 +311,18 @@ export function DashboardScreen() {
           values={habitValues}
           color="#54d6ad"
           valueLabel={(value) => `${value} completed`}
+        />
+        <ActivityRow
+          label="GitHub"
+          detail={
+            githubLoading
+              ? "Syncing GitHub…"
+              : `${githubStats?.activeDays ?? 0} active days`
+          }
+          href="/github"
+          values={githubMap}
+          color="#6ccf83"
+          valueLabel={(value) => `${value} ${value === 1 ? "contribution" : "contributions"}`}
         />
         <ActivityRow
           label="Training"
@@ -329,7 +349,7 @@ export function DashboardScreen() {
         >
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-hevy">
+              <p className="text-[11px] font-medium text-hevy">
                 Latest from Hevy
               </p>
               <h2 className="mt-2 font-display text-lg font-semibold tracking-tight text-text">
@@ -365,7 +385,7 @@ export function DashboardScreen() {
         >
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-accent">
+              <p className="text-[11px] font-medium text-accent">
                 Practice archive
               </p>
               <h2 className="mt-2 font-display text-lg font-semibold tracking-tight text-text">

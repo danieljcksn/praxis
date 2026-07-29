@@ -36,7 +36,7 @@ export function StravaPanel() {
         <div>
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-strava" />
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-strava">
+            <p className="text-[11px] font-medium text-strava">
               Strava
             </p>
           </div>
@@ -87,7 +87,7 @@ export function StravaPanel() {
           <div key={metric.label} className="bg-panel px-5 py-4">
             <div className="flex items-center gap-2 text-sub">
               <metric.icon className="h-3.5 w-3.5 text-strava" />
-              <span className="text-[9px] font-semibold uppercase tracking-[0.12em]">
+              <span className="text-[9px] font-medium">
                 {metric.label}
               </span>
             </div>
@@ -100,7 +100,7 @@ export function StravaPanel() {
 
       <div className="grid gap-6 p-5 lg:grid-cols-[1.15fr_0.85fr]">
         <div>
-          <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-sub">
+          <p className="mb-4 text-[11px] font-medium text-sub">
             Moving minutes by day
           </p>
           <ContributionGrid
@@ -112,7 +112,7 @@ export function StravaPanel() {
           />
         </div>
         <div>
-          <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-sub">
+          <p className="mb-1 text-[11px] font-medium text-sub">
             Exact hours
           </p>
           <div className="divide-y divide-border">
@@ -144,7 +144,7 @@ export function StravaPanel() {
         </div>
       </div>
 
-      <div className="border-t border-border px-5 py-3 text-right text-[9px] font-semibold uppercase tracking-[0.12em] text-strava">
+      <div className="border-t border-border px-5 py-3 text-right text-[10px] font-medium text-strava">
         Powered by Strava
       </div>
     </section>

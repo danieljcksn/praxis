@@ -177,7 +177,7 @@ export function TimerScreen() {
       {/* Center block */}
       <div className="flex flex-1 flex-col items-center justify-center gap-10 py-8">
         <div className="flex flex-col items-center">
-          <div className="mb-3 flex h-5 max-w-[min(88vw,42rem)] items-center gap-2 text-[12px] uppercase tracking-[0.14em]">
+          <div className="mb-3 flex h-5 max-w-[min(88vw,42rem)] items-center gap-2 text-[12px]">
             <span
               className={cn(
                 "h-2 w-2 shrink-0 rounded-full transition-colors",

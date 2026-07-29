@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s · praxis",
   },
   description:
-    "A private dashboard for practice, habits, and training.",
+    "A private dashboard for practice, habits, training, and GitHub activity.",
   applicationName: "praxis",
 };
 

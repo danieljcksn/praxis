@@ -13,9 +13,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <>
       <CloudSync />
       <TimerLifecycle />
-      <div className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8">
+      <div className="flex min-h-dvh w-full flex-col">
         <TopNav />
-        <main className="flex-1 pb-28 md:pb-16">{children}</main>
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-28 sm:px-6 md:pb-16 lg:px-8">
+          {children}
+        </main>
       </div>
     </>
   );

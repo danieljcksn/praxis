@@ -8,6 +8,7 @@ import {
   Cloud,
   CloudOff,
   Dumbbell,
+  GitGraph,
   Home,
   Library,
   Settings,
@@ -25,6 +26,7 @@ const PRIMARY_NAV = [
   { href: "/habits", label: "Habits", icon: Shapes },
   { href: "/practice", label: "Practice", icon: Timer },
   { href: "/training", label: "Training", icon: Dumbbell },
+  { href: "/github", label: "GitHub", icon: GitGraph },
   { href: "/repertoire", label: "Library", icon: Library },
 ] as const;
 
@@ -107,7 +109,7 @@ function NavItem({
       className={cn(
         mobile
           ? "flex min-w-0 flex-1 flex-col items-center justify-center gap-1 py-2 text-[9px]"
-          : "flex h-9 items-center gap-2 rounded-lg px-3 text-[12px]",
+          : "flex h-9 items-center gap-0 rounded-lg px-3 text-[12px] lg:gap-2",
         "transition-[background-color,color,transform] duration-150 active:scale-[0.97]",
         active
           ? mobile
@@ -117,7 +119,7 @@ function NavItem({
       )}
     >
       <Icon className={cn(mobile ? "h-[18px] w-[18px]" : "h-4 w-4", active && "text-accent")} />
-      <span>{item.label}</span>
+      <span className={mobile ? undefined : "hidden lg:inline"}>{item.label}</span>
     </Link>
   );
 }
@@ -126,8 +128,8 @@ export function TopNav() {
   const pathname = usePathname();
   return (
     <>
-      <header className="sticky top-0 z-30 -mx-4 mb-8 border-b border-border bg-bg/80 px-4 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-        <div className="flex h-16 items-center justify-between gap-3">
+      <header className="sticky top-0 z-30 mb-8 w-full border-b border-border bg-bg/80 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
+        <div className="flex h-16 w-full items-center justify-between gap-3">
           <Logo />
           <nav className="hidden items-center gap-1 md:flex">
             {PRIMARY_NAV.map((item) => (
@@ -171,7 +173,7 @@ export function TopNav() {
         </div>
       </header>
 
-      <nav className="fixed inset-x-3 bottom-3 z-40 flex overflow-hidden rounded-2xl border border-border-strong bg-elevated/95 px-1 shadow-nav backdrop-blur-xl md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex overflow-hidden border-x-0 border-t border-border-strong bg-elevated/95 px-1 pb-[env(safe-area-inset-bottom)] shadow-nav backdrop-blur-xl md:hidden">
         {PRIMARY_NAV.map((item) => (
           <NavItem key={item.href} item={item} pathname={pathname} mobile />
         ))}
