@@ -111,7 +111,7 @@ export function Modal({ open, onClose, title, description, children, footer, siz
         aria-hidden
         onClick={onClose}
         className={cn(
-          "absolute inset-0 bg-overlay backdrop-blur-[2px] transition-opacity duration-200",
+          "absolute inset-0 bg-overlay backdrop-blur-[2px] transition-opacity duration-[190ms] ease-out",
           visible ? "opacity-100" : "opacity-0",
         )}
       />
@@ -124,26 +124,27 @@ export function Modal({ open, onClose, title, description, children, footer, siz
         tabIndex={-1}
         className={cn(
           "relative z-10 flex max-h-[90dvh] w-full flex-col outline-none",
-          "border border-border-strong bg-elevated",
-          "rounded-t-2xl sm:rounded-2xl sm:m-4",
+          "border border-border-strong bg-elevated shadow-login",
+          // Rises from the bottom edge on phones, settles in place on desktop.
+          "rounded-t-xl sm:m-4 sm:rounded-xl",
           SIZES[size],
-          "transition-[opacity,transform] duration-200 ease-out",
+          "transition-[opacity,transform] duration-[190ms] ease-out",
           visible
             ? "translate-y-0 scale-100 opacity-100"
             : "translate-y-4 opacity-0 sm:translate-y-2 sm:scale-[0.98]",
         )}
       >
-        <header className="flex items-start justify-between gap-4 px-5 pt-5 pb-4 sm:px-6">
+        <header className="flex items-start justify-between gap-4 px-5 pb-4 pt-5 sm:px-6">
           <div className="min-w-0">
-            <h2 className="font-display text-[16px] font-medium text-text">{title}</h2>
+            <h2 className="text-title text-text">{title}</h2>
             {description && (
-              <p id={descId} className="mt-0.5 text-[13px] leading-snug text-sub">
+              <p id={descId} className="mt-1 text-sm text-sub">
                 {description}
               </p>
             )}
           </div>
           <IconButton label="Close" size="sm" onClick={onClose} className="-mr-1.5 -mt-1 shrink-0">
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4" aria-hidden />
           </IconButton>
         </header>
 

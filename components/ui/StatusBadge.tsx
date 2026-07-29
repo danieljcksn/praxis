@@ -5,13 +5,18 @@ export function StatusBadge({ status }: { status: PieceStatus }) {
   const meta = getStatusMeta(status);
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium"
+      className="inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-micro font-medium whitespace-nowrap"
       style={{
         color: meta.color,
         backgroundColor: `color-mix(in srgb, ${meta.color} 13%, transparent)`,
       }}
+      title={meta.blurb}
     >
-      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: meta.color }} />
+      <span
+        className="h-1.5 w-1.5 rounded-full"
+        style={{ backgroundColor: meta.color }}
+        aria-hidden
+      />
       {meta.label}
     </span>
   );

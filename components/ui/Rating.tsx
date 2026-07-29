@@ -30,7 +30,7 @@ export function RatingInput({
               aria-pressed={active}
               onClick={() => onChange(value === n ? null : n)}
               className={cn(
-                "flex items-center justify-center rounded-md transition-[color,transform] duration-150",
+                "flex items-center justify-center rounded-md transition-[color,transform] duration-[130ms]",
                 "hover:scale-110 active:scale-95",
                 dim,
                 active ? "text-accent" : "text-sub hover:text-sub-strong",
@@ -41,7 +41,7 @@ export function RatingInput({
           );
         })}
       </div>
-      <span className="min-w-[3ch] text-xs text-sub">{value ? LABELS[value] : ""}</span>
+      <span className="min-w-[3ch] text-mini text-sub">{value ? LABELS[value] : ""}</span>
     </div>
   );
 }

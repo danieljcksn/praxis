@@ -23,6 +23,16 @@ export function formatDuration(ms: number): string {
   return `${hours}h ${minutes}m`;
 }
 
+/** Duration given in whole minutes: `1h 24m`, `47m`, `0m`. Used by the
+ *  integrations, which all report minutes rather than milliseconds. */
+export function formatMinutes(minutes: number): string {
+  const total = Math.max(0, Math.round(minutes));
+  if (total < 60) return `${total}m`;
+  const hours = Math.floor(total / 60);
+  const remainder = total % 60;
+  return remainder ? `${hours}h ${remainder}m` : `${hours}h`;
+}
+
 /** Compact duration for dense tiles: `1.4h`, `47m`. */
 export function formatDurationCompact(ms: number): string {
   const totalMinutes = Math.round(ms / 60000);

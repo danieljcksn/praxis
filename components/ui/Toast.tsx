@@ -23,12 +23,12 @@ function ToastItem({ toast }: { toast: Toast }) {
     <div
       role="status"
       className={cn(
-        "pointer-events-auto flex items-center gap-2.5 rounded-lg border border-border-strong",
-        "bg-elevated px-3.5 py-2.5 text-[13px] text-text",
-        "animate-[praxis-fade-in_0.24s_cubic-bezier(0.22,1,0.36,1)_both]",
+        "pointer-events-auto flex max-w-[min(24rem,calc(100vw-2rem))] items-center gap-2.5",
+        "rounded-md border border-border-strong bg-elevated px-3.5 py-2.5 text-sm text-text shadow-card",
+        "animate-[praxis-enter_var(--dur-control)_var(--ease-out)_both]",
       )}
     >
-      <Icon className={cn("h-4 w-4 shrink-0", color)} />
+      <Icon className={cn("h-4 w-4 shrink-0", color)} aria-hidden />
       <span className="min-w-0">{toast.message}</span>
     </div>
   );
@@ -37,7 +37,14 @@ function ToastItem({ toast }: { toast: Toast }) {
 export function ToastViewport() {
   const toasts = useToasts((s) => s.toasts);
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[60] flex flex-col items-center gap-2 px-4">
+    <div
+      className={cn(
+        "pointer-events-none fixed inset-x-0 z-[60] flex flex-col items-center gap-2 px-4",
+        // Clears the mobile tab bar and its safe area; sits at the base of the
+        // window once that bar is gone.
+        "bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] md:bottom-6",
+      )}
+    >
       {toasts.map((t) => (
         <ToastItem key={t.id} toast={t} />
       ))}
