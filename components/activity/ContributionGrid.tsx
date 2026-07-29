@@ -113,7 +113,7 @@ export function ContributionGrid({
                   return (
                     <span
                       key={cell.key}
-                      className="h-3 w-3 rounded-[3px] border border-white/[0.025]"
+                      className="h-3 w-3 rounded-[3px] border border-grid-border"
                       style={{
                         backgroundColor: cell.future
                           ? "transparent"

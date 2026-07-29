@@ -12,11 +12,11 @@ import { Field, TextArea, TextField } from "@/components/ui/Field";
 import { HabitIcon } from "./HabitIcon";
 
 export const HABIT_COLORS: Record<HabitColor, { label: string; hex: string }> = {
-  mint: { label: "Mint", hex: "#54d6ad" },
-  violet: { label: "Violet", hex: "#ad8cff" },
-  coral: { label: "Coral", hex: "#ff7d7d" },
-  amber: { label: "Amber", hex: "#f4a259" },
-  sky: { label: "Sky", hex: "#69b7ff" },
+  mint: { label: "Mint", hex: "var(--color-habit-mint)" },
+  violet: { label: "Violet", hex: "var(--color-habit-violet)" },
+  coral: { label: "Coral", hex: "var(--color-habit-coral)" },
+  amber: { label: "Amber", hex: "var(--color-habit-amber)" },
+  sky: { label: "Sky", hex: "var(--color-habit-sky)" },
 };
 
 const ICONS: HabitIconName[] = ["check", "book", "code", "mind", "music", "walk", "water"];
@@ -138,7 +138,7 @@ export function HabitDialog({
                 className={cn(
                   "flex h-9 items-center gap-2 rounded-lg border px-3 text-[12px] transition-[border-color,background-color,transform] duration-150 active:scale-[0.97]",
                   color === value
-                    ? "border-white/20 bg-white/[0.06] text-text"
+                    ? "border-soft-strong bg-soft-strong text-text"
                     : "border-border text-sub hover:border-border-strong hover:text-text",
                 )}
               >
@@ -160,7 +160,7 @@ export function HabitDialog({
                 className={cn(
                   "flex h-10 w-10 items-center justify-center rounded-lg border transition-[border-color,background-color,color,transform] duration-150 active:scale-[0.96]",
                   icon === value
-                    ? "border-white/20 bg-white/[0.07] text-text"
+                    ? "border-soft-strong bg-soft-strong text-text"
                     : "border-border text-sub hover:border-border-strong hover:text-text",
                 )}
               >

@@ -44,7 +44,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ref={ref}
       disabled={disabled || loading}
       className={cn(
-        "relative inline-flex select-none items-center justify-center font-medium tracking-tight",
+        "relative inline-flex select-none items-center justify-center font-medium",
         "transition-[background-color,color,transform,opacity] duration-[130ms] ease-out",
         "active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40",
         VARIANTS[variant],

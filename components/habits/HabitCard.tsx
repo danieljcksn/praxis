@@ -44,7 +44,7 @@ export function HabitCard({
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h2 className="truncate text-[15px] font-medium tracking-[-0.01em] text-text">
+            <h2 className="truncate text-[15px] font-medium text-text">
               {habit.name}
             </h2>
             {streak > 0 && (
@@ -61,7 +61,7 @@ export function HabitCard({
         <button
           type="button"
           onClick={onEdit}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sub transition-[background-color,color,transform] duration-150 hover:bg-white/[0.05] hover:text-text active:scale-95"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sub transition-[background-color,color,transform] duration-150 hover:bg-soft-strong hover:text-text active:scale-95"
           aria-label={`Edit ${habit.name}`}
         >
           <MoreHorizontal className="h-4 w-4" />
@@ -72,8 +72,8 @@ export function HabitCard({
           className={cn(
             "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-[background-color,border-color,color,transform] duration-150 active:scale-[0.94]",
             done
-              ? "text-[#07120e]"
-              : "bg-white/[0.025] text-sub hover:bg-white/[0.05] hover:text-text",
+              ? "text-on-color"
+              : "bg-soft text-sub hover:bg-soft-strong hover:text-text",
           )}
           style={
             done

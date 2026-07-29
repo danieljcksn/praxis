@@ -111,7 +111,7 @@ export function Modal({ open, onClose, title, description, children, footer, siz
         aria-hidden
         onClick={onClose}
         className={cn(
-          "absolute inset-0 bg-black/55 backdrop-blur-[2px] transition-opacity duration-200",
+          "absolute inset-0 bg-overlay backdrop-blur-[2px] transition-opacity duration-200",
           visible ? "opacity-100" : "opacity-0",
         )}
       />
@@ -135,7 +135,7 @@ export function Modal({ open, onClose, title, description, children, footer, siz
       >
         <header className="flex items-start justify-between gap-4 px-5 pt-5 pb-4 sm:px-6">
           <div className="min-w-0">
-            <h2 className="text-[15px] font-medium tracking-tight text-text">{title}</h2>
+            <h2 className="font-display text-[16px] font-medium text-text">{title}</h2>
             {description && (
               <p id={descId} className="mt-0.5 text-[13px] leading-snug text-sub">
                 {description}

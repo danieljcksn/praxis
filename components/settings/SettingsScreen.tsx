@@ -7,6 +7,7 @@ import {
   Download,
   Dumbbell,
   LogOut,
+  Palette,
   Sparkles,
   Trash2,
   Upload,
@@ -21,6 +22,7 @@ import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Modal } from "@/components/ui/Modal";
 import { TextField } from "@/components/ui/Field";
+import { ThemeSelector } from "@/components/theme/ThemeToggle";
 
 const GOAL_PRESETS = [15, 30, 45, 60, 90];
 
@@ -117,6 +119,15 @@ export function SettingsScreen() {
       <PageHeader title="Settings" subtitle="Preferences and your data" />
 
       <div className="space-y-6">
+        <Section title="Appearance" description="Choose the canvas that feels best for the moment.">
+          <Row label="Color theme" hint="Praxis remembers your choice on this device.">
+            <div className="flex items-center gap-3">
+              <Palette className="h-4 w-4 text-accent" aria-hidden />
+              <ThemeSelector />
+            </div>
+          </Row>
+        </Section>
+
         <Section title="Practice">
           <div className="divide-y divide-border">
             <Row label="Daily goal" hint="Used for streak targets and trend lines.">

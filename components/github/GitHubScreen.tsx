@@ -39,7 +39,7 @@ function Metric({
         <Icon className="h-4 w-4 text-github" />
         <span className="text-[11px] font-medium">{label}</span>
       </div>
-      <p className="mt-4 font-display text-2xl font-semibold tracking-[-0.04em] text-text">
+      <p className="mt-4 font-display text-2xl font-semibold tracking-[-0.015em] text-text">
         {value}
       </p>
       <p className="mt-1 text-[11px] text-sub">{detail}</p>
@@ -163,7 +163,7 @@ export function GitHubScreen() {
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-[11px] font-medium text-github">Contribution calendar</p>
-            <h2 className="mt-1 font-display text-xl font-semibold tracking-[-0.025em] text-text">
+            <h2 className="mt-1 font-display text-xl font-semibold tracking-[-0.01em] text-text">
               {data.total.toLocaleString("en-US")} contributions in the last year
             </h2>
           </div>
@@ -173,7 +173,7 @@ export function GitHubScreen() {
         </div>
         <ContributionGrid
           values={values}
-          color="#6ccf83"
+          color="var(--color-github)"
           label="GitHub"
           weeks={53}
           weekStartsOn={0}

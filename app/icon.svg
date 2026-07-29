@@ -1,5 +1,15 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="32" height="32" rx="7" fill="#323437"/>
-  <text x="7" y="23" font-family="'JetBrains Mono','SFMono-Regular',monospace" font-size="18" font-weight="600" fill="#d1d0c5">p</text>
-  <rect x="20" y="9" width="3" height="15" rx="1.5" fill="#e2b714"/>
+  <style>
+    .canvas { fill: #181b20; }
+    .letter { fill: #f2f0e9; }
+    .accent { fill: #f0c458; }
+    @media (prefers-color-scheme: light) {
+      .canvas { fill: #fdfcf8; }
+      .letter { fill: #24211d; }
+      .accent { fill: #966708; }
+    }
+  </style>
+  <rect class="canvas" width="32" height="32" rx="7"/>
+  <text class="letter" x="7" y="23" font-family="Georgia,serif" font-size="20" font-weight="600">p</text>
+  <rect class="accent" x="21" y="8" width="3" height="16" rx="1.5"/>
 </svg>

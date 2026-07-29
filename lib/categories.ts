@@ -13,12 +13,42 @@ export interface CategoryDef {
 // reserved for the timer + primary actions) but each is distinct enough to read
 // at a glance in the stats donut and session list.
 export const CATEGORIES: CategoryDef[] = [
-  { id: "repertoire", label: "Repertoire", hint: "working on pieces", color: "#e2b714" },
-  { id: "technique", label: "Technique", hint: "arpeggios, slurs, tremolo", color: "#7eb8da" },
-  { id: "scales", label: "Scales", hint: "scales & shifts", color: "#9d8cd6" },
-  { id: "sight-reading", label: "Sight-reading", hint: "reading cold", color: "#5fb99c" },
-  { id: "theory", label: "Theory & ear", hint: "harmony, ear training", color: "#d68c6a" },
-  { id: "free", label: "Free play", hint: "just play", color: "#a9a196" },
+  {
+    id: "repertoire",
+    label: "Repertoire",
+    hint: "working on pieces",
+    color: "var(--color-category-repertoire)",
+  },
+  {
+    id: "technique",
+    label: "Technique",
+    hint: "arpeggios, slurs, tremolo",
+    color: "var(--color-category-technique)",
+  },
+  {
+    id: "scales",
+    label: "Scales",
+    hint: "scales & shifts",
+    color: "var(--color-category-scales)",
+  },
+  {
+    id: "sight-reading",
+    label: "Sight-reading",
+    hint: "reading cold",
+    color: "var(--color-category-sight)",
+  },
+  {
+    id: "theory",
+    label: "Theory & ear",
+    hint: "harmony, ear training",
+    color: "var(--color-category-theory)",
+  },
+  {
+    id: "free",
+    label: "Free play",
+    hint: "just play",
+    color: "var(--color-category-free)",
+  },
 ];
 
 const CATEGORY_MAP: Record<CategoryId, CategoryDef> = CATEGORIES.reduce(

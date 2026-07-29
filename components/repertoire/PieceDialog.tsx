@@ -150,7 +150,13 @@ export function PieceDialog({
                       ? "border-transparent text-text"
                       : "border-border text-sub hover:border-border-strong hover:text-text",
                   )}
-                  style={active ? { backgroundColor: `${s.color}22` } : undefined}
+                  style={
+                    active
+                      ? {
+                          backgroundColor: `color-mix(in srgb, ${s.color} 13%, transparent)`,
+                        }
+                      : undefined
+                  }
                 >
                   <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: s.color }} />
                   {s.label}

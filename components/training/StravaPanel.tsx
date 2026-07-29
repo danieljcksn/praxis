@@ -40,7 +40,7 @@ export function StravaPanel() {
               Strava
             </p>
           </div>
-          <h2 className="mt-1 font-display text-xl font-semibold tracking-[-0.025em] text-text">
+          <h2 className="mt-1 font-display text-xl font-semibold tracking-[-0.01em] text-text">
             Outdoor activity
           </h2>
           <p className="mt-1 text-[11px] text-sub">
@@ -58,7 +58,7 @@ export function StravaPanel() {
           {needsConnect && (
             <a
               href="/api/strava/connect"
-              className="inline-flex h-10 items-center gap-2 rounded-lg bg-strava px-4 text-[12px] font-semibold text-white transition-[background-color,transform] duration-150 hover:bg-[#df3f08] active:scale-[0.97]"
+              className="inline-flex h-10 items-center gap-2 rounded-lg bg-strava px-4 text-[12px] font-semibold text-on-strava transition-[background-color,transform] duration-150 hover:bg-strava-strong active:scale-[0.97]"
             >
               Connect with Strava
               <ExternalLink className="h-3.5 w-3.5" />
@@ -91,7 +91,7 @@ export function StravaPanel() {
                 {metric.label}
               </span>
             </div>
-            <p className="mt-2 font-display text-xl font-semibold tracking-tight text-text">
+            <p className="mt-2 font-display text-xl font-semibold text-text">
               {metric.value}
             </p>
           </div>
@@ -105,7 +105,7 @@ export function StravaPanel() {
           </p>
           <ContributionGrid
             values={values}
-            color="#fc4c02"
+            color="var(--color-strava)"
             label="Strava activity"
             weeks={52}
             valueLabel={duration}

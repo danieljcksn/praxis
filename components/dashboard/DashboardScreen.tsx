@@ -168,7 +168,7 @@ export function DashboardScreen() {
               day: "numeric",
             })}
           </p>
-          <h1 className="font-display text-[clamp(2rem,5vw,3.25rem)] font-semibold leading-none tracking-[-0.045em] text-text">
+          <h1 className="font-display text-[clamp(2rem,5vw,3.25rem)] font-semibold leading-none tracking-[-0.022em] text-text">
             {greeting()}.
           </h1>
         </div>
@@ -189,7 +189,7 @@ export function DashboardScreen() {
                 <p className="text-[11px] font-medium text-accent">
                   Practice
                 </p>
-                <h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.035em] text-text">
+                <h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.015em] text-text">
                   {rollups.today > 0 ? formatDuration(rollups.today) : "Ready when you are"}
                 </h2>
                 <p className="mt-1 text-[12px] text-sub">
@@ -212,7 +212,7 @@ export function DashboardScreen() {
             </div>
             <Link
               href="/practice"
-              className="mt-5 inline-flex h-11 items-center gap-2 rounded-xl bg-accent px-4 text-[13px] font-semibold text-[#16130a] transition-[background-color,transform] duration-150 hover:bg-accent-dim active:scale-[0.97]"
+              className="mt-5 inline-flex h-11 items-center gap-2 rounded-xl bg-accent px-4 text-[13px] font-semibold text-on-accent transition-[background-color,transform] duration-150 hover:bg-accent-dim active:scale-[0.97]"
             >
               <Play className="h-4 w-4 fill-current" />
               Start a session
@@ -226,7 +226,7 @@ export function DashboardScreen() {
               <p className="text-[11px] font-medium text-mint">
                 Today’s habits
               </p>
-              <h2 className="mt-1 font-display text-lg font-semibold tracking-tight text-text">
+              <h2 className="mt-1 font-display text-lg font-semibold text-text">
                 {habits.length === 0
                   ? "Build a daily rhythm"
                   : completedHabits === habits.length
@@ -247,7 +247,7 @@ export function DashboardScreen() {
                   key={habit.id}
                   type="button"
                   onClick={() => useStore.getState().toggleHabitForDay(habit.id)}
-                  className="flex w-full items-center gap-3 rounded-xl border border-transparent px-2 py-2 text-left transition-[background-color,border-color,transform] duration-150 hover:border-border hover:bg-white/[0.025] active:scale-[0.99]"
+                  className="flex w-full items-center gap-3 rounded-xl border border-transparent px-2 py-2 text-left transition-[background-color,border-color,transform] duration-150 hover:border-border hover:bg-soft active:scale-[0.99]"
                 >
                   <span
                     className="flex h-8 w-8 items-center justify-center rounded-lg"
@@ -265,7 +265,7 @@ export function DashboardScreen() {
                     className="flex h-7 w-7 items-center justify-center rounded-lg border"
                     style={
                       done
-                        ? { background: color, borderColor: color, color: "#07120e" }
+                        ? { background: color, borderColor: color, color: "var(--color-on-color)" }
                         : { borderColor: `color-mix(in srgb, ${color} 20%, transparent)`, color }
                     }
                   >
@@ -292,7 +292,7 @@ export function DashboardScreen() {
           <p className="text-[11px] font-medium text-sub">
             The long view
           </p>
-          <h2 className="mt-1 font-display text-xl font-semibold tracking-[-0.025em] text-text">
+          <h2 className="mt-1 font-display text-xl font-semibold tracking-[-0.01em] text-text">
             Your momentum, side by side
           </h2>
         </div>
@@ -301,7 +301,7 @@ export function DashboardScreen() {
           detail={`${rollups.activeDays} active days`}
           href="/practice"
           values={practiceMap}
-          color="#f0c458"
+          color="var(--color-accent)"
           valueLabel={(value) => `${value} minutes`}
         />
         <ActivityRow
@@ -309,7 +309,7 @@ export function DashboardScreen() {
           detail={`${habitEntries.length} check-ins`}
           href="/habits"
           values={habitValues}
-          color="#54d6ad"
+          color="var(--color-mint)"
           valueLabel={(value) => `${value} completed`}
         />
         <ActivityRow
@@ -321,7 +321,7 @@ export function DashboardScreen() {
           }
           href="/github"
           values={githubMap}
-          color="#6ccf83"
+          color="var(--color-github)"
           valueLabel={(value) => `${value} ${value === 1 ? "contribution" : "contributions"}`}
         />
         <ActivityRow
@@ -329,7 +329,7 @@ export function DashboardScreen() {
           detail={hevyLoading ? "Syncing Hevy…" : `${hevyDays.length} active days`}
           href="/training"
           values={hevyMap}
-          color="#70a7ff"
+          color="var(--color-hevy)"
           valueLabel={(value) => `${value} minutes`}
         />
         <ActivityRow
@@ -337,7 +337,7 @@ export function DashboardScreen() {
           detail={stravaLoading ? "Syncing Strava…" : `${stravaDays.length} active days`}
           href="/training"
           values={stravaMap}
-          color="#fc4c02"
+          color="var(--color-strava)"
           valueLabel={(value) => `${value} moving minutes`}
         />
       </section>
@@ -352,7 +352,7 @@ export function DashboardScreen() {
               <p className="text-[11px] font-medium text-hevy">
                 Latest from Hevy
               </p>
-              <h2 className="mt-2 font-display text-lg font-semibold tracking-tight text-text">
+              <h2 className="mt-2 font-display text-lg font-semibold text-text">
                 {latestTraining
                   ? latestTraining.workouts.map((workout) => workout.title).join(" · ")
                   : hevyLoading
@@ -388,7 +388,7 @@ export function DashboardScreen() {
               <p className="text-[11px] font-medium text-accent">
                 Practice archive
               </p>
-              <h2 className="mt-2 font-display text-lg font-semibold tracking-tight text-text">
+              <h2 className="mt-2 font-display text-lg font-semibold text-text">
                 {rollups.sessionCount
                   ? `${rollups.sessionCount} sessions · ${formatDuration(rollups.total)}`
                   : "Your story starts with one session"}

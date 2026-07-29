@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
-/* Praxis: a quiet, tactile activity dashboard. The near-black canvas keeps
-   contribution colors luminous without turning the interface into a toy. */
+/* Praxis uses one semantic palette for both appearances. Components never
+   reach for raw light/dark colors, so every surface changes as a system. */
 @theme {
   --color-bg: #0b0c0f;
   --color-panel: #121418;
@@ -20,17 +20,46 @@
   --color-github: #6ccf83;
   --color-error: #ff737d;
   --color-error-dim: #a33a44;
-
   --color-border: rgba(242, 240, 233, 0.075);
   --color-border-strong: rgba(242, 240, 233, 0.13);
+  --color-soft: rgba(242, 240, 233, 0.045);
+  --color-soft-strong: rgba(242, 240, 233, 0.085);
+  --color-grid-border: rgba(255, 255, 255, 0.025);
+  --color-overlay: rgba(0, 0, 0, 0.55);
+  --color-on-accent: #16130a;
+  --color-on-color: #07120e;
+  --color-on-strava: #ffffff;
+  --color-strava-strong: #df3f08;
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+  --color-habit-mint: #54d6ad;
+  --color-habit-violet: #ad8cff;
+  --color-habit-coral: #ff7d7d;
+  --color-habit-amber: #f4a259;
+  --color-habit-sky: #69b7ff;
+
+  --color-category-repertoire: #e2b714;
+  --color-category-technique: #7eb8da;
+  --color-category-scales: #9d8cd6;
+  --color-category-sight: #5fb99c;
+  --color-category-theory: #d68c6a;
+  --color-category-free: #a9a196;
+
+  --color-status-backlog: #85888b;
+  --color-status-learning: #7eb8da;
+  --color-status-polishing: #d68c6a;
+  --color-status-performance: #5fb99c;
+  --color-status-maintenance: #9d8cd6;
+
+  --font-sans: var(--font-tiempos-text), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-tiempos-headline), Georgia, "Times New Roman", serif;
+  --font-fine: var(--font-tiempos-fine), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-tiempos-text), Georgia, "Times New Roman", serif;
 
   --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.025), 0 18px 45px rgba(0, 0, 0, 0.13);
+  --shadow-control: 0 1px 2px rgba(0, 0, 0, 0.18);
   --shadow-nav: 0 18px 50px rgba(0, 0, 0, 0.42);
   --shadow-login: 0 30px 100px rgba(0, 0, 0, 0.48);
+  --shadow-focus: 0 0 0 3px rgba(240, 196, 88, 0.1);
 
   --animate-fade-in: praxis-fade-in 0.28s cubic-bezier(0.23, 1, 0.32, 1) both;
   --animate-fade: praxis-fade 0.2s ease-out both;
@@ -44,6 +73,62 @@
     --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   }
 
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --color-bg: #f6f3ec;
+    --color-panel: #fdfcf8;
+    --color-panel-hover: #f2eee4;
+    --color-elevated: #fffefa;
+    --color-inset: #ece8de;
+    --color-grid-empty: #e2ded4;
+    --color-sub: #6b665e;
+    --color-sub-strong: #4e4942;
+    --color-text: #24211d;
+    --color-accent: #8c6008;
+    --color-accent-dim: #714b04;
+    --color-mint: #16775d;
+    --color-hevy: #356fbe;
+    --color-strava: #bd3b0b;
+    --color-github: #267a3a;
+    --color-error: #bb3542;
+    --color-error-dim: #92232e;
+    --color-border: rgba(49, 43, 35, 0.1);
+    --color-border-strong: rgba(49, 43, 35, 0.17);
+    --color-soft: rgba(49, 43, 35, 0.045);
+    --color-soft-strong: rgba(49, 43, 35, 0.085);
+    --color-grid-border: rgba(49, 43, 35, 0.055);
+    --color-overlay: rgba(29, 25, 20, 0.42);
+    --color-on-accent: #fffdf7;
+    --color-on-color: #ffffff;
+    --color-on-strava: #ffffff;
+    --color-strava-strong: #9e2e05;
+
+    --color-habit-mint: #16775d;
+    --color-habit-violet: #7355ad;
+    --color-habit-coral: #b94d52;
+    --color-habit-amber: #a65f16;
+    --color-habit-sky: #356fa5;
+
+    --color-category-repertoire: #896a05;
+    --color-category-technique: #356f9a;
+    --color-category-scales: #6d57a5;
+    --color-category-sight: #26775f;
+    --color-category-theory: #a05534;
+    --color-category-free: #6f685e;
+
+    --color-status-backlog: #68655f;
+    --color-status-learning: #356f9a;
+    --color-status-polishing: #a05534;
+    --color-status-performance: #26775f;
+    --color-status-maintenance: #6d57a5;
+
+    --shadow-card: 0 1px 2px rgba(48, 40, 28, 0.04), 0 14px 36px rgba(48, 40, 28, 0.055);
+    --shadow-control: 0 1px 2px rgba(48, 40, 28, 0.12);
+    --shadow-nav: 0 16px 42px rgba(48, 40, 28, 0.14);
+    --shadow-login: 0 30px 90px rgba(48, 40, 28, 0.14);
+    --shadow-focus: 0 0 0 3px rgba(150, 103, 8, 0.14);
+  }
+
   * {
     border-color: var(--color-border);
   }
@@ -55,8 +140,16 @@
   body {
     background-color: var(--color-bg);
     background-image:
-      radial-gradient(circle at 15% -10%, rgba(240, 196, 88, 0.045), transparent 30rem),
-      radial-gradient(circle at 90% 10%, rgba(84, 214, 173, 0.025), transparent 26rem);
+      radial-gradient(
+        circle at 15% -10%,
+        color-mix(in srgb, var(--color-accent) 5%, transparent),
+        transparent 30rem
+      ),
+      radial-gradient(
+        circle at 90% 10%,
+        color-mix(in srgb, var(--color-mint) 3%, transparent),
+        transparent 26rem
+      );
     background-attachment: fixed;
     color: var(--color-text);
     font-family: var(--font-sans);
@@ -64,6 +157,15 @@
     text-rendering: optimizeLegibility;
     font-size: 15px;
     line-height: 1.5;
+  }
+
+  .theme-transition,
+  .theme-transition *,
+  .theme-transition *::before,
+  .theme-transition *::after {
+    transition-property: color, background-color, border-color, box-shadow, fill, stroke;
+    transition-duration: 180ms;
+    transition-timing-function: var(--ease-out);
   }
 
   ::selection {
@@ -113,6 +215,10 @@
   .tabnum {
     font-variant-numeric: tabular-nums;
     font-family: var(--font-mono);
+  }
+
+  .font-fine {
+    font-family: var(--font-fine);
   }
 
   /* Skeleton: a ghosted preview well with a slow, subtle sheen. */

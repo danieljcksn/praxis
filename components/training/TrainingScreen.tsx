@@ -43,7 +43,7 @@ function Metric({
         <Icon className="h-4 w-4 text-hevy" />
         <span className="text-[11px] font-medium">{label}</span>
       </div>
-      <p className="mt-4 font-display text-2xl font-semibold tracking-[-0.04em] text-text">{value}</p>
+      <p className="mt-4 font-display text-2xl font-semibold tracking-[-0.015em] text-text">{value}</p>
       <p className="mt-1 text-[11px] text-sub">{detail}</p>
     </div>
   );
@@ -178,7 +178,7 @@ export function TrainingScreen() {
             <p className="text-[11px] font-medium text-hevy">
               Consistency
             </p>
-            <h2 className="mt-1 font-display text-lg font-semibold tracking-tight text-text">
+            <h2 className="mt-1 font-display text-lg font-semibold text-text">
               Your year in motion
             </h2>
           </div>
@@ -188,7 +188,7 @@ export function TrainingScreen() {
         </div>
         <ContributionGrid
           values={values}
-          color="#70a7ff"
+          color="var(--color-hevy)"
           label="Hevy training"
           weeks={52}
           valueLabel={duration}
@@ -201,7 +201,7 @@ export function TrainingScreen() {
             <p className="text-[11px] font-medium text-sub">
               Last 12 weeks
             </p>
-            <h2 className="mt-1 font-display text-lg font-semibold tracking-tight text-text">
+            <h2 className="mt-1 font-display text-lg font-semibold text-text">
               Training volume
             </h2>
           </div>
@@ -214,7 +214,7 @@ export function TrainingScreen() {
               <p className="text-[11px] font-medium text-sub">
                 Exact hours
               </p>
-              <h2 className="mt-1 font-display text-lg font-semibold tracking-tight text-text">
+              <h2 className="mt-1 font-display text-lg font-semibold text-text">
                 Recent active days
               </h2>
             </div>

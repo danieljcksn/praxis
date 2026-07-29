@@ -20,6 +20,7 @@ import { useElapsed } from "@/lib/hooks/useElapsed";
 import { useHydrated } from "@/lib/hooks/useHydrated";
 import { formatClock } from "@/lib/time";
 import { cn } from "@/lib/cn";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const PRIMARY_NAV = [
   { href: "/", label: "Overview", icon: Home },
@@ -37,7 +38,7 @@ function isActive(pathname: string, href: string): boolean {
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-1.5 pr-3" aria-label="praxis — overview">
-      <span className="font-display text-[18px] font-semibold tracking-[-0.035em] text-text">
+      <span className="font-display text-[18px] font-semibold tracking-[-0.01em] text-text">
         praxis
       </span>
       <span className="h-4 w-[3px] rounded-full bg-accent" />
@@ -114,7 +115,7 @@ function NavItem({
         active
           ? mobile
             ? "text-accent"
-            : "bg-white/[0.045] text-text"
+            : "bg-soft text-text"
           : "text-sub hover:text-text",
       )}
     >
@@ -139,12 +140,13 @@ export function TopNav() {
           <div className="flex items-center gap-2">
             <SyncStatus />
             <SessionPill />
+            <ThemeToggle />
             <Link
               href="/history"
               aria-label="History"
               className={cn(
                 "flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-150",
-                isActive(pathname, "/history") ? "bg-white/[0.045] text-accent" : "text-sub hover:text-text",
+                isActive(pathname, "/history") ? "bg-soft text-accent" : "text-sub hover:text-text",
               )}
             >
               <BookOpen className="h-4 w-4" />
@@ -154,7 +156,7 @@ export function TopNav() {
               aria-label="Stats"
               className={cn(
                 "hidden h-9 w-9 items-center justify-center rounded-lg transition-colors duration-150 sm:flex",
-                isActive(pathname, "/stats") ? "bg-white/[0.045] text-accent" : "text-sub hover:text-text",
+                isActive(pathname, "/stats") ? "bg-soft text-accent" : "text-sub hover:text-text",
               )}
             >
               <BarChart3 className="h-4 w-4" />
@@ -164,7 +166,7 @@ export function TopNav() {
               aria-label="Settings"
               className={cn(
                 "flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-150",
-                isActive(pathname, "/settings") ? "bg-white/[0.045] text-accent" : "text-sub hover:text-text",
+                isActive(pathname, "/settings") ? "bg-soft text-accent" : "text-sub hover:text-text",
               )}
             >
               <Settings className="h-4 w-4" />

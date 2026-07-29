@@ -20,6 +20,23 @@ activity, Hevy workouts, and Strava activity into one calm view.
   days, moving time, distance, elevation, and exact daily hours.
 - **Supabase sync** — mirrors durable state to Postgres. Existing browser data is
   migrated on the first cloud connection; JSON export/import remains available.
+- **Appearance** — starts from the device preference, then remembers an explicit
+  light or dark choice without flashing the wrong theme during page load.
+
+## Visual system
+
+Praxis uses a semantic color system with complete dark and warm-paper light
+palettes. Surfaces, borders, contribution grids, status colors, focus states,
+overlays, shadows, and browser chrome all switch together.
+
+Typography uses the supplied Tiempos family:
+
+- **Tiempos Text** for interface copy and tabular figures
+- **Tiempos Headline** for page and card hierarchy
+- **Tiempos Fine** for the large practice clock
+
+The bundled font files and their original personal-use license are kept in
+`app/fonts/tiempos`.
 
 ## Security model
 
@@ -62,6 +79,7 @@ has `read` scope, use **Training → Connect with Strava** once; Praxis requests
 
 - Next.js App Router, React 19, and TypeScript
 - Tailwind CSS v4 with a CSS-first theme
+- Tiempos Text, Headline, and Fine through `next/font/local`
 - Zustand for optimistic local state and timer resilience
 - Supabase Postgres for durable state and integration caches
 - Hevy public API and Strava API v3

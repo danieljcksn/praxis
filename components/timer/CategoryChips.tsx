@@ -26,7 +26,7 @@ export function CategoryChips({
             aria-pressed={active}
             onClick={() => onChange(cat.id)}
             className={cn(
-              "group flex h-9 items-center gap-2 rounded-full border px-3.5 text-[13px] transition-all duration-150",
+              "group flex h-9 items-center gap-2 rounded-full border px-3.5 text-[13px] transition-[background-color,border-color,color,transform] duration-150",
               active
                 ? "border-transparent bg-accent/12 text-text"
                 : "border-border text-sub hover:border-border-strong hover:text-text",

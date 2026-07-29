@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { ArrowRight, LockKeyhole } from "lucide-react";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/Button";
 
 const CELLS = Array.from({ length: 98 }, (_, index) => (index * 13 + 7) % 9 > 3);
@@ -36,6 +37,7 @@ export function LoginScreen() {
 
   return (
     <main className="relative flex min-h-dvh items-center justify-center overflow-hidden px-5 py-12">
+      <ThemeToggle className="absolute right-5 top-5 z-20 border border-border bg-panel/70 shadow-card" />
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-[-18rem] h-[42rem] w-[42rem] -translate-x-1/2 rounded-full bg-accent/[0.07] blur-[120px]" />
         <div className="absolute bottom-[-12rem] right-[-10rem] h-[32rem] w-[32rem] rounded-full bg-mint/[0.05] blur-[110px]" />
@@ -43,7 +45,7 @@ export function LoginScreen() {
 
       <section className="relative z-10 w-full max-w-sm">
         <div className="mb-8 flex items-center justify-center gap-2">
-          <span className="font-display text-xl font-semibold tracking-[-0.035em] text-text">
+          <span className="font-display text-xl font-semibold tracking-[-0.01em] text-text">
             praxis
           </span>
           <span className="h-5 w-1 rounded-full bg-accent" />
@@ -54,7 +56,7 @@ export function LoginScreen() {
             <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-accent/15 bg-accent/8 text-accent">
               <LockKeyhole className="h-5 w-5" />
             </span>
-            <h1 className="mt-5 font-display text-2xl font-semibold tracking-[-0.035em] text-text">
+            <h1 className="mt-5 font-display text-2xl font-semibold tracking-[-0.015em] text-text">
               Your private rhythm.
             </h1>
             <p className="mt-2 text-[13px] leading-relaxed text-sub">
@@ -76,7 +78,7 @@ export function LoginScreen() {
               onChange={(event) => setPassword(event.target.value)}
               autoComplete="current-password"
               autoFocus
-              className="h-12 w-full rounded-xl border border-border-strong bg-inset px-4 text-[14px] text-text outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-sub focus:border-accent/50 focus:shadow-[0_0_0_3px_rgba(240,196,88,0.08)]"
+              className="h-12 w-full rounded-xl border border-border-strong bg-inset px-4 text-[14px] text-text outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-sub focus:border-accent/50 focus:shadow-focus"
               placeholder="Enter password"
               aria-describedby={error ? "login-error" : undefined}
             />

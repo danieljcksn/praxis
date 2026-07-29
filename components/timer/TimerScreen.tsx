@@ -194,7 +194,7 @@ export function TimerScreen() {
 
           <div
             className={cn(
-              "tabnum select-none text-center font-medium leading-none tracking-tight transition-colors duration-300",
+              "font-fine tabnum select-none text-center font-medium leading-none tracking-[-0.015em] transition-colors duration-300",
               "text-[clamp(4.5rem,17vw,9rem)]",
               running ? "text-accent" : idle ? "text-sub/70" : "text-text",
             )}

@@ -1,20 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { tiemposFine, tiemposHeadline, tiemposText } from "./fonts";
 import { AppShell } from "@/components/layout/AppShell";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ToastViewport } from "@/components/ui/Toast";
 
-const sans = Geist({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-geist-sans",
-});
-
-const mono = Geist_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-geist-mono",
-});
+const themeInitializer = `
+  (() => {
+    try {
+      const saved = window.localStorage.getItem("praxis-theme");
+      const theme = saved === "light" || saved === "dark"
+        ? saved
+        : window.matchMedia("(prefers-color-scheme: light)").matches
+          ? "light"
+          : "dark";
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    } catch {
+      document.documentElement.dataset.theme = "dark";
+      document.documentElement.style.colorScheme = "dark";
+    }
+  })();
+`;
 
 export const metadata: Metadata = {
   title: {
@@ -27,16 +34,28 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0c0f",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f6f3ec" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0c0f" },
+  ],
+  colorScheme: "light dark",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${tiemposText.variable} ${tiemposHeadline.variable} ${tiemposFine.variable}`}
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitializer }} />
+      </head>
       <body className="min-h-dvh antialiased">
-        <AppShell>{children}</AppShell>
-        <ToastViewport />
+        <ThemeProvider>
+          <AppShell>{children}</AppShell>
+          <ToastViewport />
+        </ThemeProvider>
       </body>
     </html>
   );
