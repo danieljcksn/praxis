@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { tiemposFine, tiemposHeadline, tiemposText } from "./fonts";
+import { instrumentSans, instrumentSerif } from "./fonts";
 import { AppShell } from "@/components/layout/AppShell";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ToastViewport } from "@/components/ui/Toast";
 
+// Runs before first paint so the correct palette is on the document from the
+// very first frame — no flash of the wrong theme, ever.
 const themeInitializer = `
   (() => {
     try {
@@ -46,7 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${tiemposText.variable} ${tiemposHeadline.variable} ${tiemposFine.variable}`}
+      className={`${instrumentSans.variable} ${instrumentSerif.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitializer }} />
