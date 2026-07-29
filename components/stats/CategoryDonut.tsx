@@ -37,7 +37,7 @@ export function CategoryDonut({ slices, total }: { slices: CategorySlice[]; tota
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="tabnum text-xl font-medium text-text">{formatDurationCompact(total)}</span>
-          <span className="text-[10px] text-sub">total</span>
+          <span className="text-micro text-sub">total</span>
         </div>
       </div>
 
@@ -45,7 +45,7 @@ export function CategoryDonut({ slices, total }: { slices: CategorySlice[]; tota
         {slices.map((s) => {
           const cat = getCategory(s.category);
           return (
-            <li key={s.category} className="flex items-center gap-2.5 text-[13px]">
+            <li key={s.category} className="flex items-center gap-2.5 text-sm">
               <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: cat.color }} />
               <span className="flex-1 text-sub">{cat.label}</span>
               <span className="tabnum text-text">{formatDuration(s.totalMs)}</span>

@@ -24,7 +24,7 @@ export function WeeklyTrend({
             className="pointer-events-none absolute inset-x-0 border-t border-dashed border-border-strong"
             style={{ bottom: `${goalPct}%` }}
           >
-            <span className="absolute -top-4 right-0 text-[10px] text-sub">
+            <span className="absolute -top-4 right-0 text-micro text-sub">
               weekly goal {formatDuration(goalMsPerWeek)}
             </span>
           </div>
@@ -41,7 +41,7 @@ export function WeeklyTrend({
               >
                 <div
                   className={cn(
-                    "w-full rounded-t-sm transition-colors duration-150",
+                    "w-full rounded-t-sm transition-colors duration-[130ms]",
                     isLast ? "bg-accent" : "bg-accent-dim group-hover:bg-accent",
                   )}
                   style={{ height: b.totalMs > 0 ? `${Math.max(3, h)}%` : "2px" }}
@@ -53,7 +53,7 @@ export function WeeklyTrend({
       </div>
       <div className="mt-2 flex gap-1.5">
         {bars.map((b, i) => (
-          <div key={b.weekStart} className="flex-1 text-center text-[10px] text-sub">
+          <div key={b.weekStart} className="flex-1 text-center text-micro text-sub">
             {i === 0 || i === lastIndex || i === Math.floor(lastIndex / 2)
               ? formatDate(b.weekStart)
               : ""}

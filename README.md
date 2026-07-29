@@ -29,14 +29,25 @@ Praxis uses a semantic color system with complete dark and warm-paper light
 palettes. Surfaces, borders, contribution grids, status colors, focus states,
 overlays, shadows, and browser chrome all switch together.
 
-Typography uses the supplied Tiempos family:
+Typography is two families with one shared scale, loaded through
+`next/font/google`:
 
-- **Tiempos Text** for interface copy and tabular figures
-- **Tiempos Headline** for page and card hierarchy
-- **Tiempos Fine** for the large practice clock
+- **Instrument Sans** carries everything that is read — copy, labels, controls,
+  and tabular figures.
+- **Instrument Serif** is rationed to display sizes only (20px floor): page
+  titles, metric values, the wordmark, and the practice clock.
 
-The bundled font files and their original personal-use license are kept in
-`app/fonts/tiempos`.
+Sizes, line-heights, and letter-spacing live together as `--text-*` tokens in
+`app/globals.css`, so a call site picks one step (`text-micro` … `text-display-lg`)
+and cannot drift. Radii collapse to four steps, and motion to four durations
+with one easing pair.
+
+The practice clock renders through `components/ui/Digits.tsx`, which gives each
+digit its own `1ch` cell — Instrument Serif has no tabular-figure feature, so
+without it the clock would shift sideways every time a `1` ticked over.
+
+Both families are fetched at build time, so there are no font binaries in the
+repository.
 
 ## Security model
 
@@ -57,6 +68,9 @@ pnpm dlx supabase@latest db push --db-url "$POSTGRES_URL_NON_POOLING"
 pnpm dev
 ```
 
+Praxis serves on **http://localhost:3100** — port 3000 is left free for other
+local services. The port is set in the `dev` and `start` scripts.
+
 The required runtime variables are documented in `.env.example`. A direct
 Postgres URL is only needed while applying migrations.
 
@@ -70,16 +84,16 @@ has `read` scope, use **Training → Connect with Strava** once; Praxis requests
 
 | command | what it does |
 | --- | --- |
-| `pnpm dev` | start the development server |
+| `pnpm dev` | start the development server on port 3100 |
 | `pnpm build` | create a production build |
-| `pnpm start` | serve the production build |
+| `pnpm start` | serve the production build on port 3100 |
 | `pnpm typecheck` | run `tsc --noEmit` |
 
 ## Stack
 
 - Next.js App Router, React 19, and TypeScript
 - Tailwind CSS v4 with a CSS-first theme
-- Tiempos Text, Headline, and Fine through `next/font/local`
+- Instrument Sans and Instrument Serif through `next/font/google`
 - Zustand for optimistic local state and timer resilience
 - Supabase Postgres for durable state and integration caches
 - Hevy public API and Strava API v3

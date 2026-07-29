@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ListMusic, Plus, Search } from "lucide-react";
+import { ListMusic, Plus, Search, X } from "lucide-react";
 import { useStore } from "@/lib/store";
 import type { Piece, PieceStatus } from "@/lib/types";
 import { PIECE_STATUSES } from "@/lib/pieces";
@@ -10,7 +10,7 @@ import { useHydrated } from "@/lib/hooks/useHydrated";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/Button";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Skeleton, SkeletonScreen } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Switch } from "@/components/ui/Switch";
 import { inputClass, Select } from "@/components/ui/Field";
@@ -41,16 +41,30 @@ export function RepertoireScreen() {
 
   const stats = useMemo(() => pieceStats(sessions, pieces), [sessions, pieces]);
 
+  /** The set the status chips count against — everything except the archive
+   *  filter, so a chip's number always matches what clicking it will show. */
+  const inScope = useMemo(
+    () => pieces.filter((p) => showArchived || !p.archived),
+    [pieces, showArchived],
+  );
+
+  const counts = useMemo(() => {
+    const map = new Map<StatusFilter, number>([["all", inScope.length]]);
+    for (const piece of inScope) {
+      map.set(piece.status, (map.get(piece.status) ?? 0) + 1);
+    }
+    return map;
+  }, [inScope]);
+
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase();
-    let list = pieces.filter((p) => {
-      if (!showArchived && p.archived) return false;
+    const list = inScope.filter((p) => {
       if (statusFilter !== "all" && p.status !== statusFilter) return false;
       if (q && !`${p.title} ${p.composer}`.toLowerCase().includes(q)) return false;
       return true;
     });
     const stat = (id: string) => stats.get(id);
-    list = [...list].sort((a, b) => {
+    return [...list].sort((a, b) => {
       switch (sort) {
         case "time":
           return (stat(b.id)?.totalMs ?? 0) - (stat(a.id)?.totalMs ?? 0);
@@ -63,8 +77,7 @@ export function RepertoireScreen() {
           return (stat(b.id)?.lastPracticed ?? 0) - (stat(a.id)?.lastPracticed ?? 0);
       }
     });
-    return list;
-  }, [pieces, sessions, search, statusFilter, sort, showArchived, stats]);
+  }, [inScope, search, statusFilter, sort, stats]);
 
   const openAdd = () => {
     setEditing(null);
@@ -74,19 +87,29 @@ export function RepertoireScreen() {
     setEditing(piece);
     setDialogOpen(true);
   };
+  const clearFilters = () => {
+    setSearch("");
+    setStatusFilter("all");
+    setShowArchived(false);
+  };
 
   const activeCount = pieces.filter((p) => !p.archived).length;
+  const filtered = search.trim() !== "" || statusFilter !== "all";
 
   if (!hydrated) return <RepertoireSkeleton />;
 
   return (
-    <div className="animate-[praxis-fade-in_0.3s_ease-out]">
+    <div>
       <PageHeader
         title="Repertoire"
-        subtitle={activeCount === 0 ? "Your pieces live here" : `${activeCount} pieces in progress`}
+        subtitle={
+          activeCount === 0
+            ? "The pieces you're working on live here."
+            : `${activeCount} ${activeCount === 1 ? "piece" : "pieces"} in progress`
+        }
         action={
           <Button variant="primary" onClick={openAdd}>
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4" aria-hidden />
             Add piece
           </Button>
         }
@@ -96,26 +119,41 @@ export function RepertoireScreen() {
         <EmptyState
           icon={ListMusic}
           title="No pieces yet"
-          description="Add the pieces you're learning so you can attach them to sessions and see where your time goes."
+          description="Add what you're learning so you can attach pieces to sessions and see exactly where your practice time goes."
           action={
             <Button variant="primary" onClick={openAdd}>
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4" aria-hidden />
               Add your first piece
             </Button>
           }
         />
       ) : (
         <>
-          <div className="mb-4 flex flex-col gap-3">
+          <div className="mb-5 flex flex-col gap-3">
             <div className="flex flex-wrap items-center gap-3">
               <div className="relative min-w-[12rem] flex-1">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-sub" />
+                <Search
+                  className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-sub"
+                  aria-hidden
+                />
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search title or composer"
-                  className={cn(inputClass, "h-10 pl-9")}
+                  aria-label="Search pieces"
+                  className={cn(inputClass, "h-10 pl-9", search && "pr-9")}
                 />
+                {search && (
+                  <button
+                    type="button"
+                    onClick={() => setSearch("")}
+                    aria-label="Clear search"
+                    title="Clear search"
+                    className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-sm text-sub transition-colors duration-[130ms] hover:text-text"
+                  >
+                    <X className="h-3.5 w-3.5" aria-hidden />
+                  </button>
+                )}
               </div>
               <Select
                 aria-label="Sort pieces"
@@ -132,8 +170,14 @@ export function RepertoireScreen() {
               <Switch checked={showArchived} onChange={setShowArchived} label="Archived" />
             </div>
 
-            <div className="flex flex-wrap gap-1.5">
-              <FilterChip active={statusFilter === "all"} onClick={() => setStatusFilter("all")}>
+            {/* Counts sit on the chips so you can see what a filter holds
+                before committing to it. */}
+            <div className="no-scrollbar flex gap-1.5 overflow-x-auto pb-0.5">
+              <FilterChip
+                active={statusFilter === "all"}
+                count={counts.get("all") ?? 0}
+                onClick={() => setStatusFilter("all")}
+              >
                 All
               </FilterChip>
               {PIECE_STATUSES.map((s) => (
@@ -141,6 +185,8 @@ export function RepertoireScreen() {
                   key={s.id}
                   active={statusFilter === s.id}
                   color={s.color}
+                  count={counts.get(s.id) ?? 0}
+                  title={s.blurb}
                   onClick={() => setStatusFilter(s.id)}
                 >
                   {s.label}
@@ -150,28 +196,27 @@ export function RepertoireScreen() {
           </div>
 
           {visible.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border-strong px-6 py-12 text-center text-[13px] text-sub">
-              No pieces match these filters.
-              <button
-                onClick={() => {
-                  setSearch("");
-                  setStatusFilter("all");
-                  setShowArchived(false);
-                }}
-                className="ml-2 text-accent transition-colors hover:text-accent-dim"
-              >
-                Clear
-              </button>
+            <div className="rounded-lg border border-dashed border-border-strong px-6 py-14 text-center">
+              <p className="text-sm text-sub">No pieces match these filters.</p>
+              {filtered && (
+                <Button variant="subtle" size="sm" className="mt-4" onClick={clearFilters}>
+                  Clear filters
+                </Button>
+              )}
             </div>
           ) : (
             <div className="space-y-2">
               {visible.map((piece, i) => (
                 <div
                   key={piece.id}
-                  className="animate-[praxis-fade-in_0.3s_ease-out_both]"
-                  style={{ animationDelay: `${Math.min(i, 8) * 35}ms` }}
+                  className="enter"
+                  style={{ "--enter-delay": `${Math.min(i, 10) * 30}ms` } as React.CSSProperties}
                 >
-                  <PieceCard piece={piece} stat={stats.get(piece.id)} onClick={() => openEdit(piece)} />
+                  <PieceCard
+                    piece={piece}
+                    stat={stats.get(piece.id)}
+                    onClick={() => openEdit(piece)}
+                  />
                 </div>
               ))}
             </div>
@@ -187,11 +232,15 @@ export function RepertoireScreen() {
 function FilterChip({
   active,
   color,
+  count,
+  title,
   onClick,
   children,
 }: {
   active: boolean;
   color?: string;
+  count: number;
+  title?: string;
   onClick: () => void;
   children: React.ReactNode;
 }) {
@@ -200,10 +249,12 @@ function FilterChip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
+      title={title}
       className={cn(
-        "flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[12px] transition-colors duration-150",
+        "flex h-8 shrink-0 items-center gap-1.5 rounded-full border px-3 text-mini",
+        "transition-[background-color,border-color,color] duration-[130ms] ease-out",
         active
-          ? "border-transparent bg-panel-hover text-text"
+          ? "border-border-strong bg-soft-strong text-text"
           : "border-border text-sub hover:border-border-strong hover:text-text",
       )}
     >
@@ -211,32 +262,41 @@ function FilterChip({
         <span
           className="h-1.5 w-1.5 rounded-full"
           style={{ backgroundColor: active ? color : "currentColor", opacity: active ? 1 : 0.5 }}
+          aria-hidden
         />
       )}
       {children}
+      <span className={cn("tabnum", active ? "text-sub-strong" : "text-sub/70")}>{count}</span>
     </button>
   );
 }
 
 function RepertoireSkeleton() {
   return (
-    <div>
-      <div className="mb-6 flex items-end justify-between">
-        <div className="space-y-2">
-          <Skeleton className="h-6 w-40" />
-          <Skeleton className="h-4 w-28" />
+    <SkeletonScreen label="Loading your repertoire">
+      <div className="mb-7 flex items-end justify-between gap-4">
+        <div className="space-y-2.5">
+          <Skeleton className="h-8 w-44" />
+          <Skeleton className="h-4 w-32" delay={40} />
         </div>
-        <Skeleton className="h-10 w-32 rounded-lg" />
+        <Skeleton className="h-10 w-32 rounded-md" delay={60} />
       </div>
-      <div className="mb-4 flex gap-3">
-        <Skeleton className="h-10 flex-1 rounded-lg" />
-        <Skeleton className="h-10 w-44 rounded-lg" />
+      <div className="mb-5 space-y-3">
+        <div className="flex gap-3">
+          <Skeleton className="h-10 flex-1 rounded-md" delay={100} />
+          <Skeleton className="h-10 w-44 rounded-md" delay={120} />
+        </div>
+        <div className="flex gap-1.5">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <Skeleton key={i} className="h-8 w-24 rounded-full" delay={140 + i * 25} />
+          ))}
+        </div>
       </div>
       <div className="space-y-2">
         {[0, 1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-[4.5rem] w-full rounded-xl" />
+          <Skeleton key={i} className="h-[4.5rem] w-full rounded-lg" delay={280 + i * 40} />
         ))}
       </div>
-    </div>
+    </SkeletonScreen>
   );
 }

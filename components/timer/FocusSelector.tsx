@@ -34,21 +34,21 @@ export function FocusSelector() {
   return (
     <div className="w-full space-y-5">
       <CategoryChips value={category} onChange={setCategory} showKeys />
-      <div key={category} className="flex min-h-[2rem] items-start justify-center animate-[praxis-fade_0.2s_ease-out]">
+      <div key={category} className="flex min-h-[2rem] items-start justify-center animate-[praxis-fade_var(--dur-control)_var(--ease-out)]">
         {isRepertoire ? (
           list.length > 0 ? (
             <PieceChips pieces={list} selected={pieceIds} onToggle={togglePiece} />
           ) : (
             <Link
               href="/repertoire"
-              className="flex items-center gap-1.5 text-[13px] text-sub transition-colors hover:text-text"
+              className="flex items-center gap-1.5 rounded-sm text-sm text-sub transition-colors duration-[130ms] hover:text-text"
             >
               Add pieces to your repertoire
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           )
         ) : (
-          <p className="text-center text-[13px] text-sub">{getCategory(category).hint}</p>
+          <p className="text-center text-sm text-sub">{getCategory(category).hint}</p>
         )}
       </div>
     </div>

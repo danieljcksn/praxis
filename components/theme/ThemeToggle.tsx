@@ -15,8 +15,8 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label={`Use ${nextTheme} mode`}
       title={`Use ${nextTheme} mode`}
       className={cn(
-        "inline-flex h-9 w-9 items-center justify-center rounded-lg text-sub",
-        "transition-[background-color,color,transform] duration-150 hover:bg-soft hover:text-text active:scale-[0.95]",
+        "inline-flex h-9 w-9 items-center justify-center rounded-md text-sub",
+        "transition-[background-color,color,transform] duration-[130ms] hover:bg-soft hover:text-text active:scale-[0.95]",
         className,
       )}
     >
@@ -34,7 +34,7 @@ export function ThemeSelector() {
 
   return (
     <div
-      className="inline-flex rounded-lg border border-border bg-inset p-1"
+      className="inline-flex rounded-md border border-border bg-inset p-1"
       role="radiogroup"
       aria-label="Color theme"
     >
@@ -51,8 +51,8 @@ export function ThemeSelector() {
             aria-checked={active}
             onClick={() => setTheme(value)}
             className={cn(
-              "inline-flex h-8 items-center gap-2 rounded-md px-3 text-[12px]",
-              "transition-[background-color,color,box-shadow,transform] duration-150 active:scale-[0.97]",
+              "inline-flex h-8 items-center gap-2 rounded-[0.375rem] px-3 text-mini",
+              "transition-[background-color,color,box-shadow,transform] duration-[130ms] active:scale-[0.97]",
               active ? "bg-panel text-text shadow-control" : "text-sub hover:text-text",
             )}
           >
