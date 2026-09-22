@@ -55,11 +55,10 @@ export function SessionDialog({
     onClose();
   }, [session, deleteSession, onClose]);
 
-  const del = useArmedConfirm(confirmDeleteAction);
+  const del = useArmedConfirm(confirmDeleteAction, open ? (session?.id ?? "new") : null);
 
   useEffect(() => {
     if (!open) return;
-    del.reset();
     const base = session?.startedAt ?? Date.now();
     setDate(toDateValue(base));
     setTime(toTimeValue(session ? base : new Date().setHours(18, 0, 0, 0)));
@@ -68,7 +67,7 @@ export function SessionDialog({
     setPieceIds(session?.pieceIds ?? []);
     setNotes(session?.notes ?? "");
     setRating(session?.rating ?? null);
-  }, [open, session, del]);
+  }, [open, session]);
 
   const availablePieces = pieces.filter((p) => !p.archived || pieceIds.includes(p.id));
   const togglePiece = (id: string) =>

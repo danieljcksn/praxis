@@ -44,11 +44,10 @@ export function PieceDialog({
     onClose();
   }, [piece, deletePiece, onClose]);
 
-  const del = useArmedConfirm(confirmDeleteAction);
+  const del = useArmedConfirm(confirmDeleteAction, open ? (piece?.id ?? "new") : null);
 
   useEffect(() => {
     if (!open) return;
-    del.reset();
     setForm(
       piece
         ? {
@@ -61,7 +60,7 @@ export function PieceDialog({
           }
         : EMPTY,
     );
-  }, [open, piece, del]);
+  }, [open, piece]);
 
   const set = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [key]: value }));

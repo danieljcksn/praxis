@@ -58,11 +58,12 @@ export function BookDialog({
     router.push("/books");
   }, [book, deleteBook, onClose, router]);
 
-  const del = useArmedConfirm(confirmDelete);
+  // Keyed on the book on screen: opening a different one, or closing the
+  // dialog, forgets any half-pressed delete.
+  const del = useArmedConfirm(confirmDelete, open ? book?.id : null);
 
   useEffect(() => {
     if (!open || !book) return;
-    del.reset();
     setForm({
       title: book.title,
       subtitle: book.subtitle,
@@ -75,7 +76,7 @@ export function BookDialog({
       coverUrl: book.coverUrl,
       notes: book.notes,
     });
-  }, [open, book, del]);
+  }, [open, book]);
 
   if (!book) return null;
 

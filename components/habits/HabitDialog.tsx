@@ -52,7 +52,7 @@ export function HabitDialog({
     onClose();
   }, [habit, onClose]);
 
-  const del = useArmedConfirm(confirmDeleteAction);
+  const del = useArmedConfirm(confirmDeleteAction, open ? (habit?.id ?? "new") : null);
 
   useEffect(() => {
     if (!open) return;
@@ -60,8 +60,7 @@ export function HabitDialog({
     setDescription(habit?.description ?? "");
     setColor(habit?.color ?? "mint");
     setIcon(habit?.icon ?? "check");
-    del.reset();
-  }, [habit, open, del]);
+  }, [habit, open]);
 
   const save = () => {
     const trimmed = name.trim();
