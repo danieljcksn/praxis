@@ -82,6 +82,8 @@ export function SettingsScreen() {
   const pieceCount = useStore((s) => s.pieces.length);
   const habitCount = useStore((s) => s.habits.length);
   const entryCount = useStore((s) => s.habitEntries.length);
+  const bookCount = useStore((s) => s.books.length);
+  const readingCount = useStore((s) => s.readingEvents.length);
   const cloudStatus = useStore((s) => s.cloudStatus);
 
   const fileRef = useRef<HTMLInputElement>(null);
@@ -123,6 +125,11 @@ export function SettingsScreen() {
     synced: { icon: Cloud, label: "Saved to Supabase", tone: "text-mint" },
     offline: { icon: CloudOff, label: "Offline — saved locally", tone: "text-error" },
     error: { icon: CloudOff, label: "Sync failed — saved locally", tone: "text-error" },
+    "too-large": {
+      icon: CloudOff,
+      label: "Too large to sync — saved locally",
+      tone: "text-error",
+    },
   };
   const cloud = CLOUD[cloudStatus];
   const CloudIcon = cloud.icon;
@@ -197,7 +204,7 @@ export function SettingsScreen() {
                     aria-checked={settings.weekStartsOn === value}
                     onClick={() => updateSettings({ weekStartsOn: value })}
                     className={cn(
-                      "h-9 px-4 text-mini transition-colors duration-[130ms] ease-out",
+                      "segment h-9 px-4 text-mini transition-colors duration-[130ms] ease-out",
                       i === 1 && "border-l border-border",
                       settings.weekStartsOn === value
                         ? "bg-accent/12 text-text"
@@ -213,12 +220,14 @@ export function SettingsScreen() {
         </Section>
 
         <Section title="Data" description="Everything durable is mirrored to Supabase.">
-          <dl className="mb-5 grid grid-cols-2 gap-px overflow-hidden rounded-md border border-border bg-border sm:grid-cols-4">
+          <dl className="mb-5 grid grid-cols-2 gap-px overflow-hidden rounded-md border border-border bg-border sm:grid-cols-3">
             {[
               ["Sessions", sessionCount],
               ["Pieces", pieceCount],
               ["Habits", habitCount],
               ["Check-ins", entryCount],
+              ["Books", bookCount],
+              ["Reading days", readingCount],
             ].map(([label, value]) => (
               <div key={label as string} className="bg-panel px-4 py-3">
                 <dt className="eyebrow text-sub">{label}</dt>
@@ -249,7 +258,7 @@ export function SettingsScreen() {
               onClick={() =>
                 setConfirm({
                   title: "Load sample data?",
-                  body: "This replaces your current practice and habit data with an example history so you can explore the app. Export a backup first if you want to keep what you have.",
+                  body: "This replaces your current practice, habit, and reading data with an example history so you can explore the app. Export a backup first if you want to keep what you have.",
                   confirmLabel: "Load sample",
                   action: () => {
                     useStore.getState().loadSample();
@@ -267,7 +276,7 @@ export function SettingsScreen() {
               onClick={() =>
                 setConfirm({
                   title: "Clear all data?",
-                  body: "This permanently deletes every session, piece, habit, and check-in from this app and from Supabase. It cannot be undone. Your settings are kept.",
+                  body: "This permanently deletes every session, piece, habit, check-in, book, and reading entry from this app and from Supabase. It cannot be undone. Your settings are kept.",
                   confirmLabel: "Delete everything",
                   danger: true,
                   action: () => {
