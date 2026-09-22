@@ -5,13 +5,17 @@ import { CloudSync } from "@/components/layout/CloudSync";
 import { TimerLifecycle } from "@/components/layout/TimerLifecycle";
 import { TopNav } from "@/components/layout/TopNav";
 import { SectionNav } from "@/components/layout/SectionNav";
-import { PRACTICE_NAV, inPracticeSection } from "@/lib/nav";
+import { BOOKS_NAV, PRACTICE_NAV, inBooksSection, inPracticeSection } from "@/lib/nav";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   if (pathname === "/login") return <>{children}</>;
 
-  const practice = inPracticeSection(pathname);
+  const section = inPracticeSection(pathname)
+    ? { items: PRACTICE_NAV, label: "Practice views" }
+    : inBooksSection(pathname)
+      ? { items: BOOKS_NAV, label: "Reading views" }
+      : null;
 
   return (
     <>
@@ -24,9 +28,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           id="main"
           className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-6 sm:px-6 md:pb-16 lg:px-8"
         >
-          {practice && (
+          {section && (
             <div className="mb-7">
-              <SectionNav items={PRACTICE_NAV} label="Practice views" />
+              <SectionNav items={section.items} label={section.label} />
             </div>
           )}
           {/* Keyed on the route so each view plays its entrance once, giving
