@@ -7,14 +7,24 @@ import { cn } from "@/lib/cn";
 /** Form controls opt out of the global focus outline in favour of a border
  *  shift plus a soft halo — an outline offset from a filled input reads as a
  *  second box, which is exactly the noise the ring is meant to avoid. */
-export const inputClass = cn(
-  "w-full rounded-md border border-border bg-inset px-3 text-sm text-text",
+/** Everything about a field except its size.
+ *
+ *  `cn` is a plain joiner with no conflict resolution, so a call site that
+ *  appends its own `text-*` or `px-*` to a class string that already carries
+ *  one is at the mercy of stylesheet order — which is how a control declared
+ *  at 11px silently renders at 13px. Anything that needs its own scale
+ *  composes from this instead. */
+export const inputBase = cn(
+  "w-full rounded-md border border-border bg-inset text-text",
   "placeholder:text-sub",
   "transition-[border-color,box-shadow] duration-[130ms] ease-out",
   "hover:border-border-strong",
   "focus-visible:border-accent/60 focus-visible:shadow-focus focus-visible:outline-none",
   "disabled:cursor-not-allowed disabled:opacity-40",
 );
+
+/** The default field: base plus the standard body size and padding. */
+export const inputClass = cn(inputBase, "px-3 text-sm");
 
 const labelClass = "eyebrow text-sub-strong";
 

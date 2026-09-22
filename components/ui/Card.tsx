@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 /** Domain hues. Every eyebrow, badge, and metric icon in the app draws its
  *  color from this one map, so a surface's subject is always the same color
  *  wherever it appears. */
-export type Tone = "accent" | "mint" | "hevy" | "strava" | "github" | "neutral";
+export type Tone = "accent" | "mint" | "hevy" | "strava" | "github" | "book" | "neutral";
 
 const TONE_TEXT: Record<Tone, string> = {
   accent: "text-accent",
@@ -12,6 +12,7 @@ const TONE_TEXT: Record<Tone, string> = {
   hevy: "text-hevy",
   strava: "text-strava",
   github: "text-github",
+  book: "text-book",
   neutral: "text-sub",
 };
 
@@ -21,6 +22,7 @@ const TONE_BADGE: Record<Tone, string> = {
   hevy: "border-hevy/15 bg-hevy/8 text-hevy",
   strava: "border-strava/15 bg-strava/8 text-strava",
   github: "border-github/15 bg-github/8 text-github",
+  book: "border-book/15 bg-book/8 text-book",
   neutral: "border-border bg-soft text-sub",
 };
 
@@ -52,6 +54,7 @@ const CARD_HOVER_BORDER: Record<Tone, string> = {
   hevy: "hover:border-hevy/25",
   strava: "hover:border-strava/25",
   github: "hover:border-github/25",
+  book: "hover:border-book/25",
   neutral: "hover:border-border-strong",
 };
 
