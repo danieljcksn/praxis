@@ -408,3 +408,94 @@ export function lastReadByBook(events: ReadingEvent[]): Map<string, number> {
   }
   return last;
 }
+
+// ── Series for the charts ────────────────────────────────────────────────────
+// Audiobooks are excluded from every page-based series, the same rule the grid
+// and the totals follow: 45 minutes and 45 pages are not the same quantity.
+
+function pagedBookIds(books: Book[]): Set<string> {
+  return new Set(books.filter((book) => book.format !== "audio").map((book) => book.id));
+}
+
+export interface MonthPoint {
+  start: number;
+  pages: number;
+}
+
+/** Pages per calendar month, oldest first — the trend the day grid is too
+ *  fine-grained to show. */
+export function pagesByMonth(
+  events: ReadingEvent[],
+  books: Book[],
+  months: number,
+  now = Date.now(),
+): MonthPoint[] {
+  const paged = pagedBookIds(books);
+  const points: MonthPoint[] = [];
+  const anchor = new Date(now);
+  anchor.setDate(1);
+  anchor.setHours(0, 0, 0, 0);
+  for (let i = months - 1; i >= 0; i -= 1) {
+    const start = new Date(anchor);
+    start.setMonth(start.getMonth() - i);
+    points.push({ start: start.getTime(), pages: 0 });
+  }
+  const key = (ts: number) => {
+    const date = new Date(ts);
+    return `${date.getFullYear()}-${date.getMonth()}`;
+  };
+  const index = new Map(points.map((point, i) => [key(point.start), i]));
+  for (const event of events) {
+    if (!paged.has(event.bookId)) continue;
+    const delta = event.to - event.from;
+    if (delta <= 0) continue;
+    const i = index.get(key(event.at));
+    if (i !== undefined) points[i].pages += delta;
+  }
+  return points;
+}
+
+export interface WeekdayPoint {
+  /** 0–6, as `Date.getDay()` reports it. */
+  day: number;
+  label: string;
+  pages: number;
+}
+
+const WEEKDAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/** Pages per day of the week, rotated to the week start the rest of the app
+ *  uses. Answers "when do I actually read", which no other view does. */
+export function pagesByWeekday(
+  events: ReadingEvent[],
+  books: Book[],
+  weekStartsOn: 0 | 1,
+): WeekdayPoint[] {
+  const paged = pagedBookIds(books);
+  const totals = new Array(7).fill(0) as number[];
+  for (const event of events) {
+    if (!paged.has(event.bookId)) continue;
+    const delta = event.to - event.from;
+    if (delta > 0) totals[new Date(event.at).getDay()] += delta;
+  }
+  return Array.from({ length: 7 }, (_, i) => {
+    const day = (weekStartsOn + i) % 7;
+    return { day, label: WEEKDAY_NAMES[day], pages: totals[day] };
+  });
+}
+
+export interface ProgressPoint {
+  at: number;
+  position: number;
+}
+
+/** Where the bookmark stood after each sitting, oldest first — the shape of
+ *  how one book actually got read, plateaus and binges included. Seeded with
+ *  the first sitting's starting point so the line begins where you began. */
+export function progressSeries(events: ReadingEvent[]): ProgressPoint[] {
+  const ordered = [...events].filter((event) => event.to > event.from).sort((a, b) => a.at - b.at);
+  if (ordered.length === 0) return [];
+  const points: ProgressPoint[] = [{ at: ordered[0].at, position: ordered[0].from }];
+  for (const event of ordered) points.push({ at: event.at, position: event.to });
+  return points;
+}

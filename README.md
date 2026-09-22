@@ -17,9 +17,11 @@ activity into one calm view.
 - **Reading** — a shelf of covers with progress, a per-day reading log, and
   insights. Books are found by title, author, or ISBN through Open Library,
   which fills in the cover, page count, publication year, and blurb; a
-  learning ± stepper moves the bookmark, one record per book per day drives
-  the grids, the pace, and the projected finish date, and nothing is ever
-  marked finished without a deliberate press.
+  learning ± stepper moves the bookmark and extends the day's latest entry,
+  sittings can also be logged by hand for a second session or for reading
+  done before you got here, and those entries drive the grids, the pace, and
+  the projected finish date. Nothing is ever marked finished without a
+  deliberate press.
 - **GitHub** — displays the public contribution calendar for `danieljcksn`,
   annual totals, active days, weekly output, streaks, and the busiest day.
 - **Hevy** — imports all workout days and displays total duration plus the exact

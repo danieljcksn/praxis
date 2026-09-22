@@ -11,6 +11,8 @@ import {
   formatAmount,
   longestReadingStreak,
   pagesByDay,
+  pagesByMonth,
+  pagesByWeekday,
   readingStreak,
   readingTotals,
   unitsReadByBook,
@@ -27,6 +29,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Metric } from "@/components/ui/Metric";
 import { Skeleton, SkeletonScreen } from "@/components/ui/Skeleton";
 import { Cover } from "./Cover";
+import { MonthlyPages, StatusBars, WeekdayPages } from "./Charts";
 
 const MONTH_LABEL = (ts: number) =>
   new Date(ts).toLocaleDateString("en-US", { month: "short" });
@@ -44,6 +47,14 @@ export function InsightsScreen() {
   const streak = useMemo(() => readingStreak(readingEvents), [readingEvents]);
   const longest = useMemo(() => longestReadingStreak(readingEvents), [readingEvents]);
   const months = useMemo(() => finishedByMonth(books, 12), [books]);
+  const monthlyPages = useMemo(
+    () => pagesByMonth(readingEvents, books, 12),
+    [readingEvents, books],
+  );
+  const weekday = useMemo(
+    () => pagesByWeekday(readingEvents, books, weekStartsOn),
+    [readingEvents, books, weekStartsOn],
+  );
   const finished = useMemo(() => finishedBooks(books), [books]);
 
   const thisYear = useMemo(() => {
@@ -178,6 +189,24 @@ export function InsightsScreen() {
 
       <div className="mt-4 grid items-start gap-4 lg:grid-cols-2">
         <Card>
+          <div className="mb-5">
+            <p className="eyebrow mb-2 text-sub">Last 12 months</p>
+            <h2 className="text-title text-text">Pages per month</h2>
+          </div>
+          <MonthlyPages points={monthlyPages} />
+        </Card>
+
+        <Card>
+          <div className="mb-5">
+            <p className="eyebrow mb-2 text-sub">Rhythm</p>
+            <h2 className="text-title text-text">When you read</h2>
+          </div>
+          <WeekdayPages points={weekday} />
+        </Card>
+      </div>
+
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-2">
+        <Card>
           <div className="mb-6">
             <p className="eyebrow mb-2 text-sub">Last 12 months</p>
             <h2 className="text-title text-text">Books finished by month</h2>
@@ -218,38 +247,20 @@ export function InsightsScreen() {
             <p className="eyebrow mb-2 text-sub">Balance</p>
             <h2 className="text-title text-text">The shelf, at a glance</h2>
           </div>
-          {/* A stacked rule rather than a donut: it is one line, it reads
-              left to right like a shelf does, and it keeps its meaning at
-              any width. */}
-          <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-inset">
-            {shelf.map((slice) => (
-              <span
-                key={slice.meta.id}
-                className="h-full"
-                style={{
-                  width: `${(slice.count / books.length) * 100}%`,
-                  backgroundColor: slice.meta.color,
-                }}
-                title={`${slice.meta.label}: ${slice.count}`}
-              />
-            ))}
-          </div>
-          <ul className="mt-5 space-y-2.5">
-            {shelf.map((slice) => (
-              <li key={slice.meta.id} className="flex items-center gap-2.5 text-sm">
-                <span
-                  className="h-2 w-2 shrink-0 rounded-full"
-                  style={{ backgroundColor: slice.meta.color }}
-                  aria-hidden
-                />
-                <span className="min-w-0 flex-1 truncate text-sub-strong">{slice.meta.label}</span>
-                <span className="tabnum text-sub">{slice.count}</span>
-                <span className="w-10 text-right tabnum text-micro text-sub">
-                  {Math.round((slice.count / books.length) * 100)}%
-                </span>
-              </li>
-            ))}
-          </ul>
+          {/* Labelled rows, not a stacked rule: the palette validator puts
+              `finished` and `want to read` at ΔE 0.4 for a deuteranope
+              against warm paper, so a reader could not have told two of the
+              fills apart. The word carries identity; the hue only echoes it. */}
+          <StatusBars
+            rows={shelf.map((slice) => ({
+              id: slice.meta.id,
+              label: slice.meta.label,
+              color: slice.meta.color,
+              count: slice.count,
+            }))}
+            total={books.length}
+          />
+
           {totals.listeningMinutes > 0 && (
             <p className="mt-5 flex items-center gap-2 border-t border-border pt-4 text-mini text-sub">
               <Headphones className="h-3.5 w-3.5 shrink-0" aria-hidden />

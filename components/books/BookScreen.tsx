@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, BookOpen, Check, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, BookOpen, Check, Pencil, Plus, Trash2 } from "lucide-react";
 import type { Book, BookStatus, ReadingEvent } from "@/lib/types";
 import {
   BOOK_STATUSES,
@@ -10,13 +10,16 @@ import {
   formatAmount,
   formatPosition,
   getBookStatus,
+  learnedStep,
   progressOf,
+  progressSeries,
   unitOf,
 } from "@/lib/books";
 import { useStore } from "@/lib/store";
 import { useHydrated } from "@/lib/hooks/useHydrated";
-import { formatDate, formatRelativeDay, startOfDay, toDayKey } from "@/lib/time";
+import { formatDate, formatRelativeDay, fromDayKey, startOfDay, toDayKey } from "@/lib/time";
 import { cn } from "@/lib/cn";
+import { toast } from "@/lib/toast";
 import { Button, ButtonLink, IconButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ContributionGrid } from "@/components/activity/ContributionGrid";
@@ -26,6 +29,7 @@ import { BOOK_RATING_LABELS, RatingInput } from "@/components/ui/Rating";
 import { Skeleton, SkeletonScreen } from "@/components/ui/Skeleton";
 import { TextArea, inputBase } from "@/components/ui/Field";
 import { BookDialog } from "./BookDialog";
+import { BookProgress } from "./Charts";
 import { Cover } from "./Cover";
 import { FinishDialog } from "./FinishDialog";
 import { ProgressStepper } from "./ProgressStepper";
@@ -42,6 +46,7 @@ export function BookScreen({ id }: { id: string }) {
   const [editing, setEditing] = useState(false);
   const [finishing, setFinishing] = useState<Book | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const [adding, setAdding] = useState(false);
 
   const events = useMemo(
     () => allEvents.filter((event) => event.bookId === id).sort((a, b) => b.at - a.at),
@@ -60,6 +65,8 @@ export function BookScreen({ id }: { id: string }) {
     const days = Math.round((startOfDay(last) - startOfDay(first)) / 86_400_000) + 1;
     return Math.min(52, Math.max(26, Math.ceil(days / 7) + 1));
   }, [events]);
+
+  const series = useMemo(() => progressSeries(events), [events]);
 
   const values = useMemo(() => {
     const map = new Map<string, number>();
@@ -301,10 +308,8 @@ export function BookScreen({ id }: { id: string }) {
           <Card className="mb-4">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className="eyebrow mb-2 text-book">
-                  {weeks >= 52 ? "The last 12 months" : `The last ${weeks} weeks`}
-                </p>
-                <h2 className="text-title text-text">Days with this book</h2>
+                <p className="eyebrow mb-2 text-book">Every sitting</p>
+                <h2 className="text-title text-text">How it went</h2>
               </div>
               {totalRead > 0 && (
                 <span className="text-mini tabnum text-sub">
@@ -312,6 +317,19 @@ export function BookScreen({ id }: { id: string }) {
                 </span>
               )}
             </div>
+            {/* Two views of the same log, and they answer different
+                questions: the line is how the book went, the grid is how
+                often you showed up. */}
+            {series.length > 1 && (
+              <div className="mb-6 border-b border-border pb-6">
+                <BookProgress points={series} length={book.length} unit={unit} />
+              </div>
+            )}
+            {events.length > 0 && (
+              <p className="eyebrow mb-3 text-sub">
+                {weeks >= 52 ? "The last 12 months" : `The last ${weeks} weeks`}
+              </p>
+            )}
             {events.length > 0 ? (
               <ContributionGrid
                 values={values}
@@ -346,19 +364,44 @@ export function BookScreen({ id }: { id: string }) {
             />
           </Card>
 
-          {events.length > 0 && (
-            <Card>
-              <h2 className="text-title text-text">Reading log</h2>
-              <p className="mt-1 text-sm text-sub">
-                One row per day. Correct a mistyped {unit === "pages" ? "page" : "minute"} here.
-              </p>
+          <Card>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="text-title text-text">Reading log</h2>
+                <p className="mt-1 text-sm text-sub">
+                  Every sitting. Stepping the bookmark adds to the latest entry of
+                  the day; add one by hand for a second session, or for reading you
+                  did before you got here.
+                </p>
+              </div>
+              <Button variant="subtle" size="sm" onClick={() => setAdding((value) => !value)}>
+                <Plus className="h-3.5 w-3.5" aria-hidden />
+                Add entry
+              </Button>
+            </div>
+
+            {adding && (
+              <AddEntry
+                book={book}
+                events={events}
+                onDone={() => setAdding(false)}
+              />
+            )}
+
+            {events.length > 0 ? (
               <div className="mt-4 space-y-1">
                 {events.map((event) => (
                   <LogRow key={event.id} event={event} book={book} />
                 ))}
               </div>
-            </Card>
-          )}
+            ) : (
+              !adding && (
+                <p className="py-6 text-center text-sm text-sub">
+                  Nothing logged yet.
+                </p>
+              )
+            )}
+          </Card>
         </div>
       </div>
 
@@ -368,11 +411,101 @@ export function BookScreen({ id }: { id: string }) {
   );
 }
 
-/** One day of reading, and the place to fix it.
+/** Record a sitting by hand.
  *
- *  The same-day record is adjusted automatically as you step, so only an
- *  older mistake needs this — which is why editing is a click away rather
- *  than always on screen. */
+ *  Pre-filled with where you are and roughly how much you read at a time, so
+ *  the common case — "another chapter this evening" — is one press. The date
+ *  is editable because the most useful manual entry is usually a past one. */
+function AddEntry({
+  book,
+  events,
+  onDone,
+}: {
+  book: Book;
+  events: ReadingEvent[];
+  onDone: () => void;
+}) {
+  const addReadingEvent = useStore((s) => s.addReadingEvent);
+  const step = learnedStep(events);
+  const unit = unitOf(book.format);
+
+  const [day, setDay] = useState(() => toDayKey(Date.now()));
+  const [from, setFrom] = useState(String(book.position));
+  const [to, setTo] = useState(
+    String(book.length != null ? Math.min(book.length, book.position + step) : book.position + step),
+  );
+
+  const fromValue = Number.parseInt(from, 10);
+  const toValue = Number.parseInt(to, 10);
+  const valid =
+    Number.isFinite(fromValue) && Number.isFinite(toValue) && toValue > fromValue;
+  const amount = valid ? toValue - fromValue : 0;
+
+  const save = () => {
+    if (!valid) return;
+    // Noon, so the entry lands on the day you picked regardless of timezone,
+    // and later entries on the same day still sort after earlier ones.
+    const at = (fromDayKey(day) ?? Date.now()) + events.filter((e) => toDayKey(e.at) === day).length;
+    addReadingEvent({ bookId: book.id, at, from: fromValue, to: toValue });
+    toast.success(`Logged ${formatAmount(book.format, toValue - fromValue)}`);
+    onDone();
+  };
+
+  return (
+    <div className="mt-4 flex flex-wrap items-end gap-3 rounded-md border border-border bg-inset/60 p-3">
+      <label className="flex flex-col gap-1.5">
+        <span className="eyebrow text-sub-strong">Date</span>
+        <input
+          type="date"
+          value={day}
+          max={toDayKey(Date.now())}
+          onChange={(event) => setDay(event.target.value)}
+          className={cn(inputBase, "h-9 px-2 text-mini tabnum")}
+        />
+      </label>
+      <label className="flex flex-col gap-1.5">
+        <span className="eyebrow text-sub-strong">From</span>
+        <input
+          value={from}
+          inputMode="numeric"
+          onChange={(event) => setFrom(event.target.value.replace(/[^\d]/g, ""))}
+          className={cn(inputBase, "h-9 w-20 px-2 text-center text-mini tabnum")}
+        />
+      </label>
+      <label className="flex flex-col gap-1.5">
+        <span className="eyebrow text-sub-strong">To</span>
+        <input
+          value={to}
+          inputMode="numeric"
+          autoFocus
+          onChange={(event) => setTo(event.target.value.replace(/[^\d]/g, ""))}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") save();
+            if (event.key === "Escape") onDone();
+          }}
+          className={cn(inputBase, "h-9 w-20 px-2 text-center text-mini tabnum")}
+        />
+      </label>
+      <span className="pb-2 text-mini tabnum text-sub">
+        {valid ? formatAmount(book.format, amount) : `to must be past from`}
+      </span>
+      <div className="ml-auto flex items-center gap-2 pb-0.5">
+        <Button size="sm" variant="ghost" onClick={onDone}>
+          Cancel
+        </Button>
+        <Button size="sm" variant="primary" onClick={save} disabled={!valid}>
+          Add {unit === "pages" ? "pages" : "minutes"}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/** One sitting, and the place to fix it.
+ *
+ *  Stepping adjusts the day's latest record automatically, so only an older
+ *  mistake needs this — which is why editing is a click away rather than
+ *  always on screen. */
 function LogRow({ event, book }: { event: ReadingEvent; book: Book }) {
   const updateReadingEvent = useStore((s) => s.updateReadingEvent);
   const deleteReadingEvent = useStore((s) => s.deleteReadingEvent);

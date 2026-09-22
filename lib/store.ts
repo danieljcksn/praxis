@@ -371,10 +371,13 @@ function applyProgress(
 
   if (next === book.position) return { books };
 
+  // The most recent sitting on this day — a day can hold several now that
+  // entries can be added by hand, and stepping should continue the last one
+  // rather than reopening the morning's.
   const today = toDayKey(now);
-  const existing = state.readingEvents.find(
-    (event) => event.bookId === bookId && toDayKey(event.at) === today,
-  );
+  const existing = state.readingEvents
+    .filter((event) => event.bookId === bookId && toDayKey(event.at) === today)
+    .reduce<ReadingEvent | null>((best, event) => (!best || event.at > best.at ? event : best), null);
 
   let readingEvents = state.readingEvents;
   if (existing) {
@@ -476,6 +479,7 @@ interface StoreState {
   setBookStatus: (id: string, status: BookStatus) => void;
   setBookProgress: (id: string, position: number) => void;
   logReading: (id: string, amount: number) => void;
+  addReadingEvent: (input: { bookId: string; at: number; from: number; to: number }) => void;
   updateReadingEvent: (id: string, patch: { at?: number; from?: number; to?: number }) => void;
   deleteReadingEvent: (id: string) => void;
 
@@ -802,6 +806,46 @@ export const useStore = create<StoreState>()(
           const book = s.books.find((candidate) => candidate.id === id);
           if (!book) return {};
           return applyProgress(s, id, book.position + amount, Date.now());
+        }),
+
+      /** A sitting recorded by hand: a second session the same evening, or a
+       *  week of reading logged after the fact. Unlike the stepper this never
+       *  coalesces — you asked for this row, so you get this row. */
+      addReadingEvent: (input) =>
+        set((s) => {
+          const book = s.books.find((candidate) => candidate.id === input.bookId);
+          if (!book) return {};
+          const from = Math.max(0, Math.round(input.from));
+          const ceiling = book.length ?? Number.MAX_SAFE_INTEGER;
+          const to = Math.min(ceiling, Math.max(0, Math.round(input.to)));
+          if (to <= from) return {};
+
+          const event: ReadingEvent = {
+            id: createShortId(),
+            bookId: input.bookId,
+            at: input.at,
+            from,
+            to,
+          };
+          const readingEvents = [...s.readingEvents, event];
+
+          // Only the newest sitting moves the bookmark; backfilling an older
+          // week must not drag you back to where you were in March.
+          const isLatest = !s.readingEvents.some(
+            (e) => e.bookId === input.bookId && e.at > input.at,
+          );
+          const started = book.status === "backlog" || book.status === "paused";
+          const books = s.books.map((candidate) =>
+            candidate.id !== input.bookId
+              ? candidate
+              : {
+                  ...candidate,
+                  position: isLatest ? to : candidate.position,
+                  status: started ? ("reading" as BookStatus) : candidate.status,
+                  startedAt: candidate.startedAt ?? input.at,
+                },
+          );
+          return { books, readingEvents };
         }),
 
       updateReadingEvent: (id, patch) =>
