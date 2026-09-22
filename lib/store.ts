@@ -2,6 +2,9 @@ import { create } from "zustand";
 import { persist, createJSONStorage, type StateStorage } from "zustand/middleware";
 import type {
   BackupFile,
+  Book,
+  BookFormat,
+  BookStatus,
   CategoryId,
   CloudSnapshot,
   Habit,
@@ -10,21 +13,36 @@ import type {
   HabitIcon,
   Piece,
   PieceStatus,
+  ReadingEvent,
   Session,
   Settings,
   TimerState,
 } from "./types";
-import { createId } from "./id";
+import { createId, createShortId } from "./id";
+import { toDayKey } from "./time";
 import { timerElapsed } from "./timerMath";
-import { sampleData } from "./sample";
+import { sampleBooks, sampleData } from "./sample";
 
 const STORE_KEY = "praxis-store";
-const STORE_VERSION = 2;
+const STORE_VERSION = 3;
 
 const DEFAULT_SETTINGS: Settings = {
   dailyGoalMinutes: 30,
   weekStartsOn: 0,
+  bookView: "shelf",
 };
+
+/** Ceilings on the free-text a book can carry. Catalogue blurbs run to
+ *  thousands of characters and the whole app shares a 2 MB sync payload, so a
+ *  description is clamped to roughly what the detail view will ever show. */
+const MAX_DESCRIPTION = 800;
+const MAX_NOTES = 4000;
+const MAX_TAGS = 8;
+const MAX_TAG_LENGTH = 24;
+const MAX_TITLE = 300;
+const MAX_AUTHOR = 200;
+const MAX_LENGTH_UNITS = 200_000;
+const MAX_YEAR = 2200;
 
 const DEFAULT_TIMER: TimerState = {
   status: "idle",
@@ -54,6 +72,8 @@ const CATEGORY_IDS: CategoryId[] = ["repertoire", "technique", "scales", "sight-
 const STATUS_IDS: PieceStatus[] = ["backlog", "learning", "polishing", "performance", "maintenance"];
 const HABIT_COLORS: HabitColor[] = ["mint", "violet", "coral", "amber", "sky"];
 const HABIT_ICONS: HabitIcon[] = ["check", "book", "code", "mind", "music", "walk", "water"];
+const BOOK_STATUS_IDS: BookStatus[] = ["backlog", "reading", "paused", "finished", "abandoned"];
+const BOOK_FORMAT_IDS: BookFormat[] = ["paper", "ebook", "audio"];
 
 const finiteNum = (v: unknown, fallback: number): number =>
   typeof v === "number" && Number.isFinite(v) ? v : fallback;
@@ -102,9 +122,87 @@ function sanitizePiece(x: unknown): Piece | null {
 function sanitizeSettings(x: unknown): Settings {
   const o = (x && typeof x === "object" ? x : {}) as Record<string, unknown>;
   return {
-    dailyGoalMinutes: Math.min(600, Math.max(1, Math.round(finiteNum(o.dailyGoalMinutes, DEFAULT_SETTINGS.dailyGoalMinutes)))),
+    // 1440 to agree with the settings screen and `updateSettings`; a lower
+    // ceiling here would silently cut a goal the UI happily accepted.
+    dailyGoalMinutes: Math.min(1440, Math.max(1, Math.round(finiteNum(o.dailyGoalMinutes, DEFAULT_SETTINGS.dailyGoalMinutes)))),
     weekStartsOn: o.weekStartsOn === 1 ? 1 : 0,
+    bookView: o.bookView === "list" ? "list" : "shelf",
   };
+}
+
+/** Positive whole number, or null. Used for lengths and years, both of which
+ *  arrive from a volunteer-edited catalogue and are regularly absurd. */
+const positiveOrNull = (v: unknown, max: number): number | null => {
+  if (typeof v !== "number" || !Number.isFinite(v)) return null;
+  const n = Math.round(v);
+  return n > 0 && n <= max ? n : null;
+};
+
+const clampText = (v: unknown, max: number): string => asStr(v).slice(0, max).trim();
+
+/** Only two shapes of cover are ever stored: an Open Library cover id, or an
+ *  https URL the user pasted. Anything else — a data: URI smuggling image
+ *  bytes into the sync payload, a javascript: scheme — is dropped outright. */
+function sanitizeCoverUrl(v: unknown): string {
+  const raw = asStr(v).trim();
+  if (!raw) return "";
+  if (!/^https:\/\//i.test(raw) || raw.length > 500) return "";
+  return raw;
+}
+
+function sanitizeBook(x: unknown): Book | null {
+  if (!x || typeof x !== "object") return null;
+  const o = x as Record<string, unknown>;
+  const title = asStr(o.title).trim();
+  if (!title) return null;
+  const length = positiveOrNull(o.length, MAX_LENGTH_UNITS);
+  const position = Math.max(0, Math.round(finiteNum(o.position, 0)));
+  return {
+    id: typeof o.id === "string" ? o.id : createId(),
+    title: title.slice(0, MAX_TITLE),
+    subtitle: clampText(o.subtitle, MAX_TITLE),
+    author: clampText(o.author, MAX_AUTHOR),
+    status: BOOK_STATUS_IDS.includes(o.status as BookStatus) ? (o.status as BookStatus) : "backlog",
+    format: BOOK_FORMAT_IDS.includes(o.format as BookFormat) ? (o.format as BookFormat) : "paper",
+    length,
+    // A position past the stated length is a typo, not a fact about the book.
+    position: length != null ? Math.min(position, length) : position,
+    coverId: positiveOrNull(o.coverId, Number.MAX_SAFE_INTEGER),
+    coverUrl: sanitizeCoverUrl(o.coverUrl),
+    isbn: asStr(o.isbn).replace(/[^0-9Xx]/g, "").slice(0, 13),
+    publishedYear: positiveOrNull(o.publishedYear, MAX_YEAR),
+    workId: clampText(o.workId, 60),
+    description: clampText(o.description, MAX_DESCRIPTION),
+    rating: ratingOf(o.rating),
+    notes: asStr(o.notes).slice(0, MAX_NOTES),
+    tags: Array.isArray(o.tags)
+      ? [
+          ...new Set(
+            o.tags
+              .filter((tag): tag is string => typeof tag === "string")
+              .map((tag) => tag.trim().slice(0, MAX_TAG_LENGTH))
+              .filter(Boolean),
+          ),
+        ].slice(0, MAX_TAGS)
+      : [],
+    addedAt: finiteNum(o.addedAt, Date.now()),
+    startedAt: typeof o.startedAt === "number" && Number.isFinite(o.startedAt) ? o.startedAt : null,
+    finishedAt:
+      typeof o.finishedAt === "number" && Number.isFinite(o.finishedAt) ? o.finishedAt : null,
+  };
+}
+
+function sanitizeReadingEvent(x: unknown, bookIds: Set<string>): ReadingEvent | null {
+  if (!x || typeof x !== "object") return null;
+  const o = x as Record<string, unknown>;
+  const bookId = asStr(o.bookId);
+  const at = finiteNum(o.at, NaN);
+  if (!bookIds.has(bookId) || !Number.isFinite(at)) return null;
+  const from = Math.max(0, Math.round(finiteNum(o.from, 0)));
+  const to = Math.max(0, Math.round(finiteNum(o.to, 0)));
+  // A zero- or negative-width event is a correction someone made, not reading.
+  if (to <= from) return null;
+  return { id: typeof o.id === "string" ? o.id : createShortId(), bookId, at, from, to };
 }
 
 function sanitizeHabit(x: unknown): Habit | null {
@@ -157,11 +255,25 @@ function sanitizeCloudSnapshot(value: unknown): Omit<CloudSnapshot, "version"> {
         .map((entry) => sanitizeHabitEntry(entry, habitIds))
         .filter((entry): entry is HabitEntry => entry !== null)
     : [];
+  // Guarded exactly like the arrays above: a v2 blob has no `books` key at
+  // all, and an unguarded `.map()` would white-screen every device that
+  // hasn't been upgraded yet.
+  const books = Array.isArray(o.books)
+    ? o.books.map(sanitizeBook).filter((book): book is Book => book !== null)
+    : [];
+  const bookIds = new Set(books.map((book) => book.id));
+  const readingEvents = Array.isArray(o.readingEvents)
+    ? o.readingEvents
+        .map((event) => sanitizeReadingEvent(event, bookIds))
+        .filter((event): event is ReadingEvent => event !== null)
+    : [];
   return {
     sessions,
     pieces,
     habits,
     habitEntries,
+    books,
+    readingEvents,
     settings: sanitizeSettings(o.settings),
   };
 }
@@ -209,7 +321,113 @@ export interface NewHabitInput {
   icon: HabitIcon;
 }
 
-export type CloudStatus = "idle" | "syncing" | "synced" | "offline" | "error";
+export interface NewBookInput {
+  title: string;
+  subtitle?: string;
+  author?: string;
+  status?: BookStatus;
+  format?: BookFormat;
+  length?: number | null;
+  coverId?: number | null;
+  coverUrl?: string;
+  isbn?: string;
+  publishedYear?: number | null;
+  workId?: string;
+  description?: string;
+}
+
+/** Move a book to `to` and record what that cost, in one place.
+ *
+ *  Two rules carry the whole design. First, a day is the unit: nudging +10
+ *  five times in an evening extends one record rather than writing five, which
+ *  keeps the log readable, keeps the learned step honest, and bounds the only
+ *  unbounded array in the app at books × days. Second, going backwards is a
+ *  correction, not reading — it adjusts the day's record, or, on a later day,
+ *  just moves the cursor. Nothing here ever finishes a book: reaching the last
+ *  page is a fact, finishing is a decision. */
+function applyProgress(
+  state: { books: Book[]; readingEvents: ReadingEvent[] },
+  bookId: string,
+  to: number,
+  now: number,
+): Partial<StoreState> {
+  const book = state.books.find((candidate) => candidate.id === bookId);
+  if (!book) return {};
+
+  const target = Math.max(0, Math.round(to));
+  const next = book.length != null ? Math.min(target, book.length) : target;
+
+  const started = next > 0 && (book.status === "backlog" || book.status === "paused");
+  const books = state.books.map((candidate) =>
+    candidate.id === bookId
+      ? {
+          ...candidate,
+          position: next,
+          status: started ? ("reading" as BookStatus) : candidate.status,
+          startedAt: started ? (candidate.startedAt ?? now) : candidate.startedAt,
+        }
+      : candidate,
+  );
+
+  if (next === book.position) return { books };
+
+  const today = toDayKey(now);
+  const existing = state.readingEvents.find(
+    (event) => event.bookId === bookId && toDayKey(event.at) === today,
+  );
+
+  let readingEvents = state.readingEvents;
+  if (existing) {
+    readingEvents =
+      next <= existing.from
+        ? state.readingEvents.filter((event) => event.id !== existing.id)
+        : state.readingEvents.map((event) =>
+            event.id === existing.id ? { ...event, to: next } : event,
+          );
+  } else if (next > book.position) {
+    readingEvents = [
+      ...state.readingEvents,
+      { id: createShortId(), bookId, at: now, from: book.position, to: next },
+    ];
+  }
+
+  return { books, readingEvents };
+}
+
+/** Move a book's bookmark to wherever its most recent sitting now ends.
+ *
+ *  The log and the cursor are two views of one fact. Correcting a row without
+ *  moving the cursor leaves the header showing the old page and — worse —
+ *  lets the next ± press extend the day's record from the uncorrected
+ *  position, silently undoing the correction the reader just made. */
+function syncPositionToLog(
+  books: Book[],
+  readingEvents: ReadingEvent[],
+  bookId: string,
+): Book[] {
+  const latest = readingEvents
+    .filter((event) => event.bookId === bookId)
+    .reduce<ReadingEvent | null>(
+      (best, event) => (!best || event.at > best.at ? event : best),
+      null,
+    );
+  const position = latest ? latest.to : 0;
+  return books.map((book) =>
+    book.id === bookId
+      ? { ...book, position: book.length != null ? Math.min(position, book.length) : position }
+      : book,
+  );
+}
+
+export type CloudStatus =
+  | "idle"
+  | "syncing"
+  | "synced"
+  | "offline"
+  | "error"
+  /** The payload outgrew what the server will accept. Distinct from `error`
+   *  because it never resolves on its own — it needs data removed. */
+  | "too-large";
 
 interface StoreState {
   hasHydrated: boolean;
@@ -217,6 +435,8 @@ interface StoreState {
   pieces: Piece[];
   habits: Habit[];
   habitEntries: HabitEntry[];
+  books: Book[];
+  readingEvents: ReadingEvent[];
   settings: Settings;
   timer: TimerState;
   cloudStatus: CloudStatus;
@@ -249,6 +469,16 @@ interface StoreState {
   deleteHabit: (id: string) => void;
   toggleHabitForDay: (habitId: string, day?: number) => void;
 
+  // books
+  addBook: (input: NewBookInput) => Book;
+  updateBook: (id: string, patch: Partial<Omit<Book, "id">>) => void;
+  deleteBook: (id: string) => void;
+  setBookStatus: (id: string, status: BookStatus) => void;
+  setBookProgress: (id: string, position: number) => void;
+  logReading: (id: string, amount: number) => void;
+  updateReadingEvent: (id: string, patch: { at?: number; from?: number; to?: number }) => void;
+  deleteReadingEvent: (id: string) => void;
+
   // sessions
   addManualSession: (input: ManualSessionInput) => void;
   updateSession: (id: string, patch: Partial<Omit<Session, "id">>) => void;
@@ -272,6 +502,8 @@ export const useStore = create<StoreState>()(
       pieces: [],
       habits: [],
       habitEntries: [],
+      books: [],
+      readingEvents: [],
       settings: DEFAULT_SETTINGS,
       timer: DEFAULT_TIMER,
       cloudStatus: "idle",
@@ -467,6 +699,143 @@ export const useStore = create<StoreState>()(
           return { habitEntries: [...s.habitEntries, entry] };
         }),
 
+      addBook: (input) => {
+        const now = Date.now();
+        const status = input.status ?? "backlog";
+        const length = input.length ?? null;
+        const book: Book = {
+          id: createId(),
+          title: input.title.trim().slice(0, 300),
+          subtitle: (input.subtitle ?? "").trim().slice(0, 300),
+          author: (input.author ?? "").trim().slice(0, 200),
+          status,
+          format: input.format ?? "paper",
+          length,
+          // Adding something you have already read is a real act — the shelf
+          // is a record, not just a queue — so a finished book arrives at its
+          // own last page rather than at zero.
+          position: status === "finished" && length != null ? length : 0,
+          coverId: input.coverId ?? null,
+          coverUrl: (input.coverUrl ?? "").trim(),
+          isbn: (input.isbn ?? "").replace(/[^0-9Xx]/g, "").slice(0, 13),
+          publishedYear: input.publishedYear ?? null,
+          workId: (input.workId ?? "").trim(),
+          description: (input.description ?? "").trim().slice(0, MAX_DESCRIPTION),
+          rating: null,
+          notes: "",
+          tags: [],
+          addedAt: now,
+          startedAt: status === "reading" || status === "finished" ? now : null,
+          finishedAt: status === "finished" ? now : null,
+        };
+        set((s) => ({ books: [...s.books, book] }));
+        return book;
+      },
+
+      updateBook: (id, patch) =>
+        set((s) => ({
+          books: s.books.map((book) => {
+            if (book.id !== id) return book;
+            const next = { ...book, ...patch };
+            // A page count corrected downwards has to bring the bookmark with
+            // it. Left alone, the book reads 100% with both + buttons dead,
+            // and the first − press clamps so far that it looks like a
+            // rejected keystroke and eats the day's log entry.
+            if (next.length != null && next.position > next.length) next.position = next.length;
+            return next;
+          }),
+        })),
+
+      deleteBook: (id) =>
+        set((s) => ({
+          books: s.books.filter((book) => book.id !== id),
+          // The log is keyed on books; an orphaned event would be invisible
+          // forever while still counting toward every total.
+          readingEvents: s.readingEvents.filter((event) => event.bookId !== id),
+        })),
+
+      setBookStatus: (id, status) =>
+        set((s) => {
+          const book = s.books.find((candidate) => candidate.id === id);
+          if (!book || book.status === status) return {};
+          const now = Date.now();
+
+          // Finishing banks whatever was left, so the day you finished shows
+          // up on the grid rather than vanishing into a status change — but
+          // only for a book that was genuinely open. Shelving a 500-page
+          // book you read years ago straight into `finished` must not write
+          // a 500-page day onto today's grid, spike every average, and start
+          // a reading streak you didn't earn.
+          const wasOpen =
+            (book.status === "reading" || book.status === "paused") && book.position > 0;
+          const bank =
+            status === "finished" && wasOpen && book.length != null && book.position < book.length;
+          const base = bank ? applyProgress(s, id, book.length as number, now) : {};
+          const books = (base.books ?? s.books).map((candidate) => {
+            if (candidate.id !== id) return candidate;
+            return {
+              ...candidate,
+              status,
+              // Unbanked, the cursor still belongs at the end of a book you
+              // just called finished.
+              position:
+                status === "finished" && candidate.length != null
+                  ? candidate.length
+                  : candidate.position,
+              startedAt:
+                status === "reading" || status === "finished"
+                  ? (candidate.startedAt ?? now)
+                  : candidate.startedAt,
+              // Cleared on every exit from `finished`, or the year count and
+              // every "days to finish" figure quietly keep the old date.
+              finishedAt: status === "finished" ? (candidate.finishedAt ?? now) : null,
+            };
+          });
+          return { ...base, books };
+        }),
+
+      setBookProgress: (id, position) =>
+        set((s) => applyProgress(s, id, position, Date.now())),
+
+      logReading: (id, amount) =>
+        set((s) => {
+          const book = s.books.find((candidate) => candidate.id === id);
+          if (!book) return {};
+          return applyProgress(s, id, book.position + amount, Date.now());
+        }),
+
+      updateReadingEvent: (id, patch) =>
+        set((s) => {
+          const event = s.readingEvents.find((candidate) => candidate.id === id);
+          if (!event) return {};
+          const next = { ...event, ...patch };
+          // Editing the newest sitting is editing where you are; editing an
+          // older one is editing history and leaves the bookmark alone.
+          const wasLatest = !s.readingEvents.some(
+            (e) => e.bookId === event.bookId && e.id !== id && e.at > event.at,
+          );
+          const readingEvents =
+            next.to <= next.from
+              ? s.readingEvents.filter((e) => e.id !== id)
+              : s.readingEvents.map((e) => (e.id === id ? next : e));
+          return wasLatest
+            ? { readingEvents, books: syncPositionToLog(s.books, readingEvents, event.bookId) }
+            : { readingEvents };
+        }),
+
+      deleteReadingEvent: (id) =>
+        set((s) => {
+          const event = s.readingEvents.find((candidate) => candidate.id === id);
+          if (!event) return {};
+          const wasLatest = !s.readingEvents.some(
+            (e) => e.bookId === event.bookId && e.id !== id && e.at > event.at,
+          );
+          const readingEvents = s.readingEvents.filter((e) => e.id !== id);
+          return wasLatest
+            ? { readingEvents, books: syncPositionToLog(s.books, readingEvents, event.bookId) }
+            : { readingEvents };
+        }),
+
       addManualSession: (input) =>
         set((s) => {
           const session: Session = {
@@ -506,6 +875,8 @@ export const useStore = create<StoreState>()(
           settings: s.settings,
           habits: s.habits,
           habitEntries: s.habitEntries,
+          books: s.books,
+          readingEvents: s.readingEvents,
         };
       },
 
@@ -531,11 +902,25 @@ export const useStore = create<StoreState>()(
               .map((entry) => sanitizeHabitEntry(entry, habitIds))
               .filter((entry): entry is HabitEntry => entry !== null)
           : [];
+        // Set explicitly, even when absent. Leaving these out of the object
+        // would graft the current library onto an imported backup and produce
+        // a state that never existed on either side.
+        const books = Array.isArray(file.books)
+          ? file.books.map(sanitizeBook).filter((book): book is Book => book !== null)
+          : [];
+        const bookIds = new Set(books.map((book) => book.id));
+        const readingEvents = Array.isArray(file.readingEvents)
+          ? file.readingEvents
+              .map((event) => sanitizeReadingEvent(event, bookIds))
+              .filter((event): event is ReadingEvent => event !== null)
+          : [];
         set({
           sessions,
           pieces,
           habits,
           habitEntries,
+          books,
+          readingEvents,
           settings: sanitizeSettings(file.settings),
           timer: DEFAULT_TIMER,
         });
@@ -587,11 +972,20 @@ export const useStore = create<StoreState>()(
             }
             return entries;
           });
-        set({ sessions, pieces, habits, habitEntries, timer: DEFAULT_TIMER });
+        const { books, readingEvents } = sampleBooks();
+        set({ sessions, pieces, habits, habitEntries, books, readingEvents, timer: DEFAULT_TIMER });
       },
 
       clearAll: () =>
-        set({ sessions: [], pieces: [], habits: [], habitEntries: [], timer: DEFAULT_TIMER }),
+        set({
+          sessions: [],
+          pieces: [],
+          habits: [],
+          habitEntries: [],
+          books: [],
+          readingEvents: [],
+          timer: DEFAULT_TIMER,
+        }),
 
       replaceCloudSnapshot: (data) => {
         const safe = sanitizeCloudSnapshot(data);
@@ -609,15 +1003,23 @@ export const useStore = create<StoreState>()(
         pieces: s.pieces,
         habits: s.habits,
         habitEntries: s.habitEntries,
+        books: s.books,
+        readingEvents: s.readingEvents,
         settings: s.settings,
         timer: s.timer,
       }),
+      // persist rehydrates in replace mode, so a key this returns as
+      // `undefined` overwrites the initializer's `[]` rather than falling
+      // back to it — every array added here has to be defaulted by hand.
       migrate: (persisted) => {
         const state = persisted as Partial<StoreState>;
         return {
           ...state,
           habits: Array.isArray(state.habits) ? state.habits : [],
           habitEntries: Array.isArray(state.habitEntries) ? state.habitEntries : [],
+          books: Array.isArray(state.books) ? state.books : [],
+          readingEvents: Array.isArray(state.readingEvents) ? state.readingEvents : [],
+          settings: sanitizeSettings(state.settings),
           cloudStatus: "idle",
         } as StoreState;
       },
@@ -637,5 +1039,7 @@ export function getCloudSnapshot(state: StoreState = useStore.getState()): Cloud
     settings: state.settings,
     habits: state.habits,
     habitEntries: state.habitEntries,
+    books: state.books,
+    readingEvents: state.readingEvents,
   };
 }

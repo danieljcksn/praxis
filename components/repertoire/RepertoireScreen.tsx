@@ -12,6 +12,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { Skeleton, SkeletonScreen } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { FilterChip } from "@/components/ui/FilterChip";
 import { Switch } from "@/components/ui/Switch";
 import { inputClass, Select } from "@/components/ui/Field";
 import { PieceCard } from "./PieceCard";
@@ -226,48 +227,6 @@ export function RepertoireScreen() {
 
       <PieceDialog open={dialogOpen} piece={editing} onClose={() => setDialogOpen(false)} />
     </div>
-  );
-}
-
-function FilterChip({
-  active,
-  color,
-  count,
-  title,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  color?: string;
-  count: number;
-  title?: string;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      title={title}
-      className={cn(
-        "flex h-8 shrink-0 items-center gap-1.5 rounded-full border px-3 text-mini",
-        "transition-[background-color,border-color,color] duration-[130ms] ease-out",
-        active
-          ? "border-border-strong bg-soft-strong text-text"
-          : "border-border text-sub hover:border-border-strong hover:text-text",
-      )}
-    >
-      {color && (
-        <span
-          className="h-1.5 w-1.5 rounded-full"
-          style={{ backgroundColor: active ? color : "currentColor", opacity: active ? 1 : 0.5 }}
-          aria-hidden
-        />
-      )}
-      {children}
-      <span className={cn("tabnum", active ? "text-sub-strong" : "text-sub/70")}>{count}</span>
-    </button>
   );
 }
 

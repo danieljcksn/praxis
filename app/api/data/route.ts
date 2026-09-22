@@ -33,7 +33,13 @@ export async function PUT(request: NextRequest) {
 
   const contentLength = Number(request.headers.get("content-length") ?? 0);
   if (contentLength > 2_000_000) {
-    return Response.json({ error: "Payload is too large." }, { status: 413 });
+    // `code` matters: a 413 never resolves by retrying, so the client has to
+    // be able to tell it apart from an ordinary failure and say something
+    // actionable instead of "sync failed".
+    return Response.json(
+      { error: "Your data has outgrown a single sync payload.", code: "too-large" },
+      { status: 413 },
+    );
   }
 
   let snapshot: unknown;
@@ -47,7 +53,37 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const { error } = await getSupabaseAdmin().from("app_state").upsert({
+    const admin = getSupabaseAdmin();
+
+    // A device running an older build reads the blob, drops the keys its
+    // sanitizer doesn't know about, and writes it back — silently deleting
+    // whatever the newer build added. Comparing the snapshot version turns
+    // that into a rejected write instead of data loss. The version lives in
+    // the jsonb rather than a column, so it is read from there.
+    const { data: current, error: readError } = await admin
+      .from("app_state")
+      .select("data")
+      .eq("id", "primary")
+      .maybeSingle();
+    // Failing open here would let the guard wave through exactly the write
+    // it exists to stop, so an unreadable row is a refusal rather than an
+    // assumption that the row is empty.
+    if (readError) throw readError;
+    const storedVersion = Number(
+      (current?.data as { version?: unknown } | null)?.version ?? 0,
+    );
+    const incomingVersion = Number((snapshot as { version?: unknown }).version ?? 0);
+    if (Number.isFinite(storedVersion) && incomingVersion < storedVersion) {
+      return Response.json(
+        {
+          error: "This device is running an older version of praxis. Reload to sync.",
+          code: "stale-client",
+        },
+        { status: 409 },
+      );
+    }
+
+    const { error } = await admin.from("app_state").upsert({
       id: "primary",
       data: snapshot,
       updated_at: new Date().toISOString(),

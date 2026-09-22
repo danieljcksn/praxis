@@ -1,17 +1,25 @@
 # praxis
 
-A private rhythm dashboard for practice, habits, training, and making. Praxis
-brings classical-guitar sessions, contribution-style habit grids, GitHub
-activity, Hevy workouts, and Strava activity into one calm view.
+A private rhythm dashboard for practice, reading, habits, training, and making.
+Praxis brings classical-guitar sessions, a book library with real jacket art,
+contribution-style habit grids, GitHub activity, Hevy workouts, and Strava
+activity into one calm view.
 
 ## What it tracks
 
-- **Overview** — today’s practice target, habits, and side-by-side contribution
-  grids for practice, habits, Hevy, and Strava.
+- **Overview** — today’s practice target, habits, whatever is open on the
+  bedside table, and side-by-side contribution grids for practice, habits,
+  reading, Hevy, and Strava.
 - **Habits** — create color-coded habits, check them off once per day, and see a
   full-year GitHub-style history for each one.
 - **Practice** — a timestamp-accurate timer with focus areas, repertoire,
   targets, notes, ratings, history, and detailed statistics.
+- **Reading** — a shelf of covers with progress, a per-day reading log, and
+  insights. Books are found by title, author, or ISBN through Open Library,
+  which fills in the cover, page count, publication year, and blurb; a
+  learning ± stepper moves the bookmark, one record per book per day drives
+  the grids, the pace, and the projected finish date, and nothing is ever
+  marked finished without a deliberate press.
 - **GitHub** — displays the public contribution calendar for `danieljcksn`,
   annual totals, active days, weekly output, streaks, and the busiest day.
 - **Hevy** — imports all workout days and displays total duration plus the exact
@@ -20,6 +28,10 @@ activity, Hevy workouts, and Strava activity into one calm view.
   days, moving time, distance, elevation, and exact daily hours.
 - **Supabase sync** — mirrors durable state to Postgres. Existing browser data is
   migrated on the first cloud connection; JSON export/import remains available.
+  The whole app shares one 2 MB payload, so a write that would exceed it is
+  refused on the client and reported as "too large to sync" rather than failing
+  silently — a silent failure would let a later reload pull the last snapshot
+  that did save and overwrite everything logged since.
 - **Appearance** — starts from the device preference, then remembers an explicit
   light or dark choice without flashing the wrong theme during page load.
 
@@ -27,7 +39,16 @@ activity, Hevy workouts, and Strava activity into one calm view.
 
 Praxis uses a semantic color system with complete dark and warm-paper light
 palettes. Surfaces, borders, contribution grids, status colors, focus states,
-overlays, shadows, and browser chrome all switch together.
+overlays, shadows, and browser chrome all switch together. Every domain owns
+one hue — practice gold, habits mint, Hevy blue, Strava orange, GitHub green,
+reading rose — and nothing borrows another's.
+
+Cover artwork sits in a single frame: one radius, one inset hairline, one 3px
+spine gradient, and a few percent of saturation pulled out so a wall of forty
+unrelated jackets stays as quiet as the rest of the app. Underneath every
+cover is a typographic plate — the title between two rules on a board tinted
+from a hash of the book — which serves as both the loading state and the
+answer for a book with no artwork, so a shelf never shows an empty rectangle.
 
 Typography is two families with one shared scale, loaded through
 `next/font/google`:
@@ -48,6 +69,35 @@ without it the clock would shift sideways every time a `1` ticked over.
 
 Both families are fetched at build time, so there are no font binaries in the
 repository.
+
+## The catalogue
+
+Book search runs through `app/api/books/route.ts` rather than from the browser.
+Open Library grants 3 requests a second to clients that identify themselves
+with a descriptive `User-Agent` and 1 to everyone else, and a browser is not
+allowed to set that header at all — so the server does it, behind a serial
+queue, a 12-second timeout, one silent retry, and a circuit breaker that stops
+calling for ten minutes after three consecutive failures.
+
+Cover images are the opposite case and load straight from
+`covers.openlibrary.org`: lookups by cover id are unmetered and cached for a
+century, so proxying them would route every byte through the server for
+nothing. Every cover URL carries `?default=false`, because without it a
+missing cover answers `200` with a 43-byte transparent GIF, which fires the
+image's `load` event and would leave an invisible pixel stretched across the
+frame instead of the plate.
+
+Search is submit-driven rather than type-ahead. Open Library's search has been
+measured anywhere between 1.5 and 9 seconds for the same shape of query, and it
+answers one request at a time — type-ahead would queue a request per keystroke
+and deliver the wrong one last.
+
+Metadata is snapshotted into your own record when a book is added and never
+re-fetched to render. The library opens instantly, works offline, and does not
+change under you because a volunteer edited a catalogue entry.
+
+`OPENLIBRARY_CONTACT` is optional; setting it to an email or URL moves praxis
+into Open Library's identified tier.
 
 ## Security model
 
@@ -96,23 +146,27 @@ has `read` scope, use **Training → Connect with Strava** once; Praxis requests
 - Instrument Sans and Instrument Serif through `next/font/google`
 - Zustand for optimistic local state and timer resilience
 - Supabase Postgres for durable state and integration caches
-- Hevy public API and Strava API v3
+- Hevy public API, Strava API v3, and the Open Library catalogue
 
 ## Project layout
 
 ```text
 app/
-  api/               password, data, Hevy, and Strava server routes
+  api/               password, data, books, Hevy, and Strava server routes
+  books/             library, one book, reading log, reading insights
   habits/            contribution-based habit tracking
   practice/          session timer
   training/          Hevy and Strava activity
 components/
   activity/          reusable contribution grid
+  books/             library, book detail, covers, progress stepper
   dashboard/         cross-domain overview
   habits/            habit cards and editor
   training/          workout and activity visualizations
   timer/             practice timer workflow
 lib/
+  books.ts           reading vocabulary, covers, pace, and rollups
+  openlibrary.ts     server-side catalogue search, throttled and fused
   github.ts          server-side GitHub contribution sync
   hevy.ts            server-side Hevy sync
   strava.ts          server-side OAuth refresh and activity sync

@@ -28,6 +28,7 @@
   --color-hevy: #70a7ff;
   --color-strava: #fc4c02;
   --color-github: #6ccf83;
+  --color-book: #d98fa8;
   --color-error: #ff737d;
   --color-error-dim: #a33a44;
 
@@ -142,6 +143,13 @@
     --dur-control: 190ms; /* toggles, chips, popovers */
     --dur-layout: 280ms; /* size + position changes */
     --dur-page: 360ms; /* content arriving */
+
+    /* Cover artwork. The hairline is the single device that makes forty
+       unrelated jackets read as one shelf, so it is stronger than a normal
+       border — a white jacket sits at 1.03:1 against the light panel and
+       would otherwise dissolve into the page. */
+    --cover-edge: rgba(242, 240, 233, 0.11);
+    --cover-quiet: saturate(0.88) brightness(0.94);
   }
 
   /* Light is a separate palette, not an inversion: warm paper, ink-brown
@@ -163,6 +171,7 @@
     --color-hevy: #356fbe;
     --color-strava: #bd3b0b;
     --color-github: #267a3a;
+    --color-book: #a3406a;
     --color-error: #bb3542;
     --color-error-dim: #92232e;
     --color-border: rgba(49, 43, 35, 0.1);
@@ -200,6 +209,12 @@
     --shadow-nav: 0 -10px 34px rgba(48, 40, 28, 0.12);
     --shadow-login: 0 30px 90px rgba(48, 40, 28, 0.14);
     --shadow-focus: 0 0 0 3px rgba(150, 103, 8, 0.14);
+
+    /* Warm paper needs the darker edge and the brightness pull more than the
+       dark canvas does, not less: glare is dark mode's problem, dissolution
+       is light mode's. */
+    --cover-edge: rgba(49, 43, 35, 0.19);
+    --cover-quiet: saturate(0.94) brightness(0.975);
   }
 
   * {
@@ -238,6 +253,13 @@
     transition-property: color, background-color, border-color, box-shadow, fill, stroke;
     transition-duration: 180ms;
     transition-timing-function: var(--ease-out);
+  }
+
+  /* A shelf can hold hundreds of framed covers; animating box-shadow on all
+     of them at once is the one place the theme switch would visibly stutter. */
+  .theme-transition .cover-frame,
+  .theme-transition .cover-art {
+    transition: none;
   }
 
   ::selection {
@@ -333,6 +355,71 @@
     animation-delay: var(--enter-delay, 0ms);
   }
 
+  /* Cover artwork, quieted. A white paperback jacket against the dark canvas
+     is a flashbang; against warm paper it dissolves. A few percent of
+     saturation and brightness is invisible as an effect and audibly settles a
+     wall of forty unrelated jackets. Released on hover, and never applied on
+     the detail view, where the artwork is the subject. */
+  .cover-art {
+    filter: var(--cover-quiet);
+    transition: filter var(--dur-micro) var(--ease-out);
+  }
+  .group:hover .cover-art,
+  .group:focus-visible .cover-art {
+    filter: none;
+  }
+
+  /* The no-cover fallback sets its own type from its own width. Instrument
+     Serif's hairlines nearly disappear below 20px, so a 98px shelf cell
+     honestly wants the sans and a 240px detail rail wants the serif — and no
+     call site has to know which one it is. */
+  .cover-plate {
+    container-type: inline-size;
+  }
+  /* Under ~72px no title is legible, and a clipped one reads as breakage —
+     so the smallest case is the bare tinted board, which is what a closed
+     book looks like from across the room anyway. The row beside it always
+     carries the title in real text. */
+  .cover-plate-body {
+    display: none;
+  }
+  .cover-plate-title {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.6875rem;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  @container (min-width: 72px) {
+    .cover-plate-body {
+      display: flex;
+    }
+  }
+  @container (min-width: 150px) {
+    .cover-plate-title {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 1.25rem;
+      letter-spacing: -0.012em;
+      line-height: 1.12;
+    }
+  }
+  @container (min-width: 230px) {
+    .cover-plate-title {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* A segmented control clips its children so the segments can share one
+     rounded border — which also clips the global focus ring, since that is
+     drawn 2px *outside* the border box. The same ring, drawn inward,
+     survives the clip and keeps one focus vocabulary across the app. */
+  .segment:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+    border-radius: 0;
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -347,6 +434,13 @@
    can be applied at only the breakpoints where the strip actually overflows. */
 @utility edge-fade-x {
   mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent 100%);
+}
+
+/* One shared inner hairline is what lets forty unrelated covers read as one
+   shelf. Inset rather than a border so it survives `overflow-hidden` on the
+   crop box and never adds to the element's size. */
+@utility cover-frame {
+  box-shadow: inset 0 0 0 1px var(--cover-edge);
 }
 
 @keyframes praxis-enter {
@@ -377,6 +471,16 @@
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* The entire visual budget for finishing a book: one ring, once. */
+@keyframes praxis-ring {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-mint) 45%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 10px transparent;
   }
 }
 

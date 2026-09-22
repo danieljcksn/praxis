@@ -45,12 +45,14 @@ function SyncStatus() {
   }, [status]);
 
   if (!visible) return null;
-  const broken = status === "offline" || status === "error";
-  const message = broken
-    ? status === "offline"
+  const broken = status === "offline" || status === "error" || status === "too-large";
+  const message = !broken
+    ? "Saving to Supabase"
+    : status === "offline"
       ? "Offline — changes are saved locally and will sync when you reconnect"
-      : "Could not reach Supabase — changes are saved locally"
-    : "Saving to Supabase";
+      : status === "too-large"
+        ? "Your data has outgrown one sync payload — nothing new is reaching Supabase. Remove some reading entries or export a backup."
+        : "Could not reach Supabase — changes are saved locally";
 
   return (
     <span
@@ -68,7 +70,13 @@ function SyncStatus() {
         <RefreshCw className="h-3.5 w-3.5 animate-spin [animation-duration:1.4s]" aria-hidden />
       )}
       <span className="hidden sm:inline">
-        {status === "offline" ? "Offline" : broken ? "Sync failed" : "Saving"}
+        {status === "offline"
+          ? "Offline"
+          : status === "too-large"
+            ? "Too large to sync"
+            : broken
+              ? "Sync failed"
+              : "Saving"}
       </span>
     </span>
   );
@@ -149,7 +157,7 @@ export function TopNav() {
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-2 px-4 sm:px-6 lg:px-8">
           <Logo />
 
-          {/* Labels only. Five words read faster than five icons, and it keeps
+          {/* Labels only. Six words read faster than six icons, and it keeps
               the bar free of the icon soup that made it hard to scan. */}
           <nav aria-label="Primary" className="ml-5 hidden items-center gap-0.5 md:flex">
             {PRIMARY_NAV.map((item) => {
@@ -197,7 +205,7 @@ export function TopNav() {
         </div>
       </header>
 
-      {/* Below md the same five destinations move to the thumb. Icons carry
+      {/* Below md the same six destinations move to the thumb. Icons carry
           the meaning here, with the label under each one — never bare. Its
           accessible name differs from the bar above so the two nav landmarks
           are distinguishable in a landmark list. */}

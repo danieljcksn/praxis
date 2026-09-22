@@ -3,20 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
-import { isActive, type NavItem } from "@/lib/nav";
+import { activeSectionHref, type NavItem } from "@/lib/nav";
 
-/** Second-level navigation for a cluster of pages that are four views of one
- *  subject. Deliberately quieter than the header: no fills, just an underline
+/** Second-level navigation for a cluster of pages that are three or four
+ *  views of one subject. Quieter than the header on purpose: no fills, just
+ *  an underline
  *  on the active view, so it reads as "where in this section" rather than
  *  competing with "where in the app". */
 export function SectionNav({ items, label }: { items: NavItem[]; label: string }) {
   const pathname = usePathname();
+  const activeHref = activeSectionHref(pathname, items);
 
   return (
     <nav aria-label={label} className="border-b border-border">
       <div className="no-scrollbar -mb-px flex gap-1 overflow-x-auto max-sm:edge-fade-x">
         {items.map((item) => {
-          const active = isActive(pathname, item.href);
+          const active = item.href === activeHref;
           const Icon = item.icon;
           return (
             <Link

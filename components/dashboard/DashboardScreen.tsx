@@ -9,46 +9,27 @@ import { useHevy } from "@/lib/hooks/useHevy";
 import { useStrava } from "@/lib/hooks/useStrava";
 import { useGithub } from "@/lib/hooks/useGithub";
 import { completedToday, entriesByDay } from "@/lib/habits";
+import { finishedBooks, formatAmount, lastReadByBook, pagesByDay, progressOf } from "@/lib/books";
 import { computeRollups, computeStreaks, practiceMinutesByDay } from "@/lib/stats";
 import { groupHevyByDay, hevyValuesByDay } from "@/lib/hevy-activity";
 import { groupStravaByDay, stravaValuesByDay } from "@/lib/strava-activity";
 import { githubActivityStats, githubValuesByDay } from "@/lib/github-activity";
-import { formatDuration, formatTime } from "@/lib/time";
+import { formatDuration, formatRelativeDay, formatTime } from "@/lib/time";
 import { cn } from "@/lib/cn";
 import { ContributionGrid } from "@/components/activity/ContributionGrid";
 import { HABIT_COLORS } from "@/components/habits/HabitDialog";
 import { HabitIcon } from "@/components/habits/HabitIcon";
 import { Card, CardLink } from "@/components/ui/Card";
 import { ButtonLink } from "@/components/ui/Button";
+import { Progress } from "@/components/ui/Progress";
 import { Skeleton, SkeletonScreen } from "@/components/ui/Skeleton";
+import { Cover } from "@/components/books/Cover";
 
 function greeting(): string {
   const hour = new Date().getHours();
   if (hour < 12) return "Good morning";
   if (hour < 18) return "Good afternoon";
   return "Good evening";
-}
-
-/** A single progress track, used by both cards on the today band so the two
- *  halves rhyme instead of inventing separate vocabularies for the same idea. */
-function Track({ percent, tone }: { percent: number; tone: "accent" | "mint" }) {
-  return (
-    <div
-      className="h-1.5 overflow-hidden rounded-full bg-inset"
-      role="progressbar"
-      aria-valuenow={Math.round(percent)}
-      aria-valuemin={0}
-      aria-valuemax={100}
-    >
-      <div
-        className={cn(
-          "h-full rounded-full transition-[width] duration-[280ms] ease-out",
-          tone === "accent" ? "bg-accent" : "bg-mint",
-        )}
-        style={{ width: `${Math.min(100, Math.max(percent > 0 ? 2 : 0, percent))}%` }}
-      />
-    </div>
-  );
 }
 
 /** One stream in the year view. The label column carries the numbers so the
@@ -114,6 +95,8 @@ export function DashboardScreen() {
   const allHabits = useStore((state) => state.habits);
   const habitEntries = useStore((state) => state.habitEntries);
   const settings = useStore((state) => state.settings);
+  const books = useStore((state) => state.books);
+  const readingEvents = useStore((state) => state.readingEvents);
   const { workouts, loading: hevyLoading } = useHevy();
   const { activities: stravaActivities, loading: stravaLoading } = useStrava();
   const { data: githubActivity, loading: githubLoading } = useGithub();
@@ -129,6 +112,25 @@ export function DashboardScreen() {
   ).length;
 
   const habitValues = useMemo(() => entriesByDay(habitEntries), [habitEntries]);
+  const lastRead = useMemo(() => lastReadByBook(readingEvents), [readingEvents]);
+  const readingValues = useMemo(() => pagesByDay(readingEvents, books), [readingEvents, books]);
+  const openBooks = useMemo(
+    () =>
+      books
+        .filter((book) => book.status === "reading")
+        .sort((a, b) => (lastRead.get(b.id) ?? b.addedAt) - (lastRead.get(a.id) ?? a.addedAt))
+        .slice(0, 3),
+    [books, lastRead],
+  );
+  const latestFinish = useMemo(() => {
+    const [most] = finishedBooks(books);
+    if (!most) return null;
+    return Date.now() - most.finishedAt <= 7 * 86_400_000 ? most : null;
+  }, [books]);
+  const pagesTotal = useMemo(
+    () => [...readingValues.values()].reduce((sum, value) => sum + value, 0),
+    [readingValues],
+  );
   const practiceMap = useMemo(() => practiceMinutesByDay(sessions), [sessions]);
   const hevyMap = useMemo(() => hevyValuesByDay(workouts), [workouts]);
   const hevyDays = useMemo(() => groupHevyByDay(workouts), [workouts]);
@@ -189,7 +191,12 @@ export function DashboardScreen() {
           </p>
 
           <div className="mt-auto pt-6">
-            <Track percent={practicePercent} tone="accent" />
+            <Progress
+              percent={practicePercent}
+              tone="accent"
+              label="Practice against today's target"
+              valueText={`${formatDuration(rollups.today)} of ${settings.dailyGoalMinutes} minutes`}
+            />
             <ButtonLink href="/practice" variant="primary" className="mt-5">
               <Play className="h-4 w-4 fill-current" aria-hidden />
               {rollups.today > 0 ? "Practice again" : "Start a session"}
@@ -215,7 +222,12 @@ export function DashboardScreen() {
                 : `${habits.length - completedHabits} left`}
           </p>
           <div className="mt-4">
-            <Track percent={habitPercent} tone="mint" />
+            <Progress
+              percent={habitPercent}
+              tone="mint"
+              label="Habits done today"
+              valueText={`${completedHabits} of ${habits.length} habits done today`}
+            />
           </div>
 
           <div className="mt-4 space-y-0.5">
@@ -302,6 +314,54 @@ export function DashboardScreen() {
         </Card>
       </div>
 
+      {/* Reading now ─────────────────────────────────────────────────────
+          Absent entirely when nothing is open. An overview that asks you
+          every morning why you aren't reading is the beginning of a guilt
+          app, and praxis has never told anyone they are behind. */}
+      {openBooks.length > 0 && (
+        <Card padded={false} className="mt-4 overflow-hidden">
+          <div className="flex flex-col divide-y divide-border md:flex-row md:divide-x md:divide-y-0">
+            {openBooks.map((book) => {
+              const percent = progressOf(book);
+              return (
+                <Link
+                  key={book.id}
+                  href={`/books/${book.id}`}
+                  className="group flex min-w-0 flex-1 items-center gap-3.5 p-4 transition-colors duration-[130ms] hover:bg-panel-hover/50"
+                >
+                  <Cover book={book} className="w-10 shrink-0" priority />
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center gap-1.5">
+                      <span className="truncate text-sm text-text" title={book.title}>
+                        {book.title}
+                      </span>
+                      <ArrowRight className="h-3 w-3 shrink-0 text-sub opacity-0 transition-[opacity,transform] duration-[130ms] group-hover:translate-x-0.5 group-hover:opacity-100" />
+                    </span>
+                    <span className="mt-1 block text-micro tabnum text-sub">
+                      {formatAmount(book.format, book.position)}
+                      {book.length != null && ` of ${book.length}`}
+                      {percent != null && ` · ${Math.round(percent * 100)}%`}
+                    </span>
+                    <Progress
+                      className="mt-2"
+                      height="h-1"
+                      percent={(percent ?? 0) * 100}
+                      tone="book"
+                      label={`Progress through ${book.title}`}
+                      valueText={
+                        percent != null
+                          ? `${formatAmount(book.format, book.position)} of ${book.length}, ${Math.round(percent * 100)} percent`
+                          : formatAmount(book.format, book.position)
+                      }
+                    />
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </Card>
+      )}
+
       {/* The year ────────────────────────────────────────────────────── */}
       <Card className="mt-4">
         <div className="mb-6 flex items-end justify-between gap-4">
@@ -309,7 +369,7 @@ export function DashboardScreen() {
             <p className="eyebrow mb-2 text-sub">The last 12 months</p>
             <h2 className="font-display text-title-lg text-text">Every stream, one timeline</h2>
           </div>
-          {/* One legend for five grids — repeating it per row would be noise. */}
+          {/* One legend for six grids — repeating it per row would be noise. */}
           <span className="hidden items-center gap-1.5 text-micro text-sub sm:flex">
             less
             {[0, 26, 48, 72, 100].map((mix) => (
@@ -348,6 +408,19 @@ export function DashboardScreen() {
           valueLabel={(value) => `${value} completed`}
           weekStartsOn={settings.weekStartsOn}
         />
+        {/* The only row in this card that can't fail: reading is local, so
+            unlike Hevy, Strava and GitHub it needs no loading or stale
+            state. */}
+        <ActivityRow
+          label="Reading"
+          href="/books"
+          total={`${pagesTotal.toLocaleString("en-US")} pages`}
+          detail={`${readingValues.size} active days`}
+          values={readingValues}
+          color="var(--color-book)"
+          valueLabel={(value) => `${value} ${value === 1 ? "page" : "pages"} read`}
+          weekStartsOn={settings.weekStartsOn}
+        />
         <ActivityRow
           label="GitHub"
           href="/github"
@@ -383,8 +456,35 @@ export function DashboardScreen() {
         />
       </Card>
 
+      {(latestFinish || latestTraining) && (
+      <div
+        className={cn(
+          "mt-4 grid gap-4",
+          latestTraining && latestFinish && "lg:grid-cols-2",
+        )}
+      >
+      {latestFinish && (
+        <CardLink href={`/books/${latestFinish.book.id}`} tone="book">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="eyebrow text-book">Latest finish</p>
+              <h2 className="mt-2.5 truncate text-title text-text" title={latestFinish.book.title}>
+                {latestFinish.book.title}
+              </h2>
+              <p className="mt-1 text-mini tabnum text-sub">
+                {formatRelativeDay(latestFinish.finishedAt)}
+                {latestFinish.book.length != null && ` · ${latestFinish.book.length} pages`}
+                {latestFinish.days != null &&
+                  ` · ${latestFinish.days} ${latestFinish.days === 1 ? "day" : "days"}`}
+              </p>
+            </div>
+            <Cover book={latestFinish.book} className="w-12 shrink-0" />
+          </div>
+        </CardLink>
+      )}
+
       {latestTraining && (
-        <CardLink href="/training" tone="hevy" className="mt-4">
+        <CardLink href="/training" tone="hevy">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <p className="eyebrow text-hevy">Latest workout</p>
@@ -412,6 +512,8 @@ export function DashboardScreen() {
           </div>
         </CardLink>
       )}
+      </div>
+      )}
     </div>
   );
 }
@@ -429,7 +531,8 @@ function DashboardSkeleton() {
         <Skeleton className="h-64 rounded-lg" delay={80} />
         <Skeleton className="h-64 rounded-lg" delay={120} />
       </div>
-      <Skeleton className="mt-4 h-[38rem] rounded-lg" delay={160} />
+      <Skeleton className="mt-4 h-[7rem] rounded-lg" delay={150} />
+      <Skeleton className="mt-4 h-[45rem] rounded-lg" delay={180} />
     </SkeletonScreen>
   );
 }

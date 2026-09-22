@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 /** Two-step confirmation for a destructive button.
  *
@@ -45,5 +45,9 @@ export function useArmedConfirm(onConfirm: () => void, disarmAfterMs = 3000) {
     setArmed(false);
   }, []);
 
-  return { armed, trigger, reset };
+  // Memoized, because callers put this object in an effect's dependency
+  // array. A fresh literal every render makes that effect run every render,
+  // and an effect that calls setState with a fresh object then never settles
+  // — "Maximum update depth exceeded" the moment the dialog opens.
+  return useMemo(() => ({ armed, trigger, reset }), [armed, trigger, reset]);
 }

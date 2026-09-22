@@ -105,3 +105,11 @@ export function toDayKey(ts: number): string {
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
 }
+
+/** Inverse of `toDayKey`. Anchored at local noon so a DST shift can never
+ *  push the value into the neighbouring day. */
+export function fromDayKey(key: string): number | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) return null;
+  const ts = new Date(`${key}T12:00:00`).getTime();
+  return Number.isFinite(ts) ? ts : null;
+}
