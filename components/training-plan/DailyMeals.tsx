@@ -3,24 +3,32 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useBodyProfile } from "@/lib/hooks/useBodyProfile";
-import { computePlan, evalGrams, todayKey, type EngineConfig } from "@/lib/training-plan/engine";
+import {
+  computePlan,
+  evalGrams,
+  todayKey,
+  type BodyProfile,
+  type EngineConfig,
+} from "@/lib/training-plan/engine";
 import type { Food, Meals } from "@/lib/training-plan/plan";
 import { cn } from "@/lib/cn";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 
 export function DailyMeals({
+  defaultProfile,
   config,
   feedings,
   examples,
   foods,
 }: {
+  defaultProfile: BodyProfile | null;
   config: EngineConfig;
   feedings: Meals["dayTemplate"]["feedings"];
   examples: Pick<Meals["dayExamples"], "note" | "trainingDay" | "restDay">;
   foods: Pick<Food, "id" | "name">[];
 }) {
-  const { profile, ready } = useBodyProfile();
+  const { profile, ready } = useBodyProfile(defaultProfile);
   const [kind, setKind] = useState<"trainingDay" | "restDay">("trainingDay");
   const today = todayKey();
   const snapshot = useMemo(

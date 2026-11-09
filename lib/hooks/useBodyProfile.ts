@@ -5,22 +5,23 @@ import { sanitizeProfile, type BodyProfile } from "@/lib/training-plan/engine";
 
 const KEY = "praxis-training-profile";
 
-/** Kept per device and out of the cloud snapshot on purpose: body measurements
- *  never leave the browser, and adding them would force a snapshot version bump
- *  across every open device. */
-export function useBodyProfile() {
+/** Edits stay per device and out of the cloud snapshot: adding a key there would
+ *  force a snapshot version bump across every open device. */
+export function useBodyProfile(fallback: BodyProfile | null) {
   const [profile, setProfile] = useState<BodyProfile | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    let stored: BodyProfile | null = null;
     try {
       const raw = window.localStorage.getItem(KEY);
-      setProfile(raw ? sanitizeProfile(JSON.parse(raw)) : null);
+      stored = raw ? sanitizeProfile(JSON.parse(raw)) : null;
     } catch {
-      setProfile(null);
+      stored = null;
     }
+    setProfile(stored ?? fallback);
     setReady(true);
-  }, []);
+  }, [fallback]);
 
   const save = useCallback((next: BodyProfile) => {
     try {

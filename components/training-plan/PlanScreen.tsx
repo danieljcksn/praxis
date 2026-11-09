@@ -75,6 +75,7 @@ function ProfileForm({
 }) {
   const [form, setForm] = useState(() => toForm(initial));
   const [absVisible, setAbsVisible] = useState(initial?.absVisible ?? false);
+  const [maxMode, setMaxMode] = useState(initial?.maxMode ?? true);
   const [error, setError] = useState<string | null>(null);
 
   const number = (key: FieldKey) => {
@@ -91,6 +92,7 @@ function ProfileForm({
       waistCm: number("waistCm"),
       neckCm: number("neckCm"),
       absVisible,
+      maxMode,
       startDay: form.startDay,
       targetDay: form.targetDay,
       targetLabel: form.targetLabel.trim(),
@@ -171,6 +173,15 @@ function ProfileForm({
           />
           Foto matinal, relaxado, mostra contorno abdominal
         </label>
+        <label className="mt-3 flex cursor-pointer items-center gap-2.5 text-sm text-sub-strong">
+          <input
+            type="checkbox"
+            className="h-4 w-4 accent-[var(--color-hevy)]"
+            checked={maxMode}
+            onChange={(event) => setMaxMode(event.target.checked)}
+          />
+          Modo extremo: corta cedo e treina no limite
+        </label>
         {error && (
           <Alert className="mt-4" tone="error">
             {error}
@@ -192,17 +203,19 @@ function ProfileForm({
 }
 
 export function PlanScreen({
+  defaultProfile,
   config,
   checkin,
   timeline,
   levers,
 }: {
+  defaultProfile: BodyProfile | null;
   config: EngineConfig;
   checkin: Checkin;
   timeline: TimelineItem[];
   levers: { rank: number; name: string; why: string }[];
 }) {
-  const { profile, ready, save } = useBodyProfile();
+  const { profile, ready, save } = useBodyProfile(defaultProfile);
   const [editing, setEditing] = useState(false);
   const today = todayKey();
   const snapshot = useMemo(
@@ -258,7 +271,7 @@ export function PlanScreen({
         action={
           profile && !editing ? (
             <Button variant="subtle" onClick={() => setEditing(true)}>
-              Editar medidas
+              Ajustar números
             </Button>
           ) : undefined
         }
@@ -324,12 +337,14 @@ export function PlanScreen({
               <h2 className="mt-2 text-title text-text">{snapshot.branch.label}</h2>
               <p className="mt-1 text-sm text-sub">{snapshot.branch.summary}</p>
               <dl className="mt-4 divide-y divide-border text-sm">
-                <div className="flex justify-between gap-3 py-2">
-                  <dt className="text-sub">Gordura estimada</dt>
-                  <dd className="tabnum text-text">
-                    {snapshot.bodyFatPct != null ? `${snapshot.bodyFatPct.toFixed(1).replace(".", ",")}%` : "meça"}
-                  </dd>
-                </div>
+                {snapshot.bodyFatPct != null && (
+                  <div className="flex justify-between gap-3 py-2">
+                    <dt className="text-sub">Gordura estimada</dt>
+                    <dd className="tabnum text-text">
+                      {snapshot.bodyFatPct.toFixed(1).replace(".", ",")}%
+                    </dd>
+                  </div>
+                )}
                 <div className="flex justify-between gap-3 py-2">
                   <dt className="text-sub">Manutenção estimada</dt>
                   <dd className="tabnum text-text">{kcal(snapshot.maintenance.mid)} kcal</dd>
@@ -341,11 +356,23 @@ export function PlanScreen({
                   </dd>
                 </div>
               </dl>
-              <p className="mt-3 text-mini text-sub">
-                A fita erra cerca de 7 pontos para cada lado. Refaça em 4 semanas antes de confiar no ramo.
-              </p>
+              {snapshot.bodyFatPct != null && (
+                <p className="mt-3 text-mini text-sub">
+                  A fita erra cerca de 7 pontos para cada lado. Refaça em 4 semanas antes de confiar no ramo.
+                </p>
+              )}
             </Card>
           </div>
+
+          {profile.maxMode && (
+            <CardLink href="/training/workouts#modo-extremo" tone="hevy" className="mt-4">
+              <p className="eyebrow text-hevy">Ligado</p>
+              <h2 className="mt-2 text-title text-text">Modo extremo</h2>
+              <p className="mt-1 text-sm text-sub">
+                Déficit cedo, sexta sessão semanal e regras sem folga. Veja tudo o que ele exige.
+              </p>
+            </CardLink>
+          )}
 
           <TextCard eyebrow="Calendário" title="Fases até a data" description="As calorias usam sua manutenção medida quando você preencher esse campo.">
             <ul className="divide-y divide-border">
@@ -436,14 +463,6 @@ export function PlanScreen({
           </TextCard>
         </div>
       </div>
-
-      <CardLink href="/training/workouts#modo-extremo" tone="hevy" className="mt-4">
-        <p className="eyebrow text-hevy">Tudo no limite</p>
-        <h2 className="mt-2 text-title text-text">Modo extremo</h2>
-        <p className="mt-1 text-sm text-sub">
-          Sexta sessão semanal e regras sem folga para chegar ao topo do que é possível naturalmente.
-        </p>
-      </CardLink>
 
       <div className="mt-4 grid items-start gap-4 lg:grid-cols-2">
         <TextCard eyebrow="Prioridades" title="O que mais importa, em ordem">

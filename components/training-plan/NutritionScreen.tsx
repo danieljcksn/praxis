@@ -1,3 +1,4 @@
+import type { BodyProfile } from "@/lib/training-plan/engine";
 import type { TrainingPlan } from "@/lib/training-plan/plan";
 import { PageHeader, SectionHeading } from "@/components/layout/PageHeader";
 import { Card, CardHeader } from "@/components/ui/Card";
@@ -10,7 +11,13 @@ const SWAP_TITLES: Record<string, string> = {
   fat20g: "20 g de gordura",
 };
 
-export function NutritionScreen({ plan }: { plan: TrainingPlan }) {
+export function NutritionScreen({
+  plan,
+  defaultProfile,
+}: {
+  plan: TrainingPlan;
+  defaultProfile: BodyProfile | null;
+}) {
   const { macros, meals, supplements, faq } = plan;
   const config = {
     energy: plan.energy,
@@ -29,6 +36,7 @@ export function NutritionScreen({ plan }: { plan: TrainingPlan }) {
       />
 
       <DailyMeals
+        defaultProfile={defaultProfile}
         config={config}
         feedings={meals.dayTemplate.feedings}
         examples={meals.dayExamples}
