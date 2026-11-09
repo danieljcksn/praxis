@@ -5,7 +5,14 @@ import { CloudSync } from "@/components/layout/CloudSync";
 import { TimerLifecycle } from "@/components/layout/TimerLifecycle";
 import { TopNav } from "@/components/layout/TopNav";
 import { SectionNav } from "@/components/layout/SectionNav";
-import { BOOKS_NAV, PRACTICE_NAV, inBooksSection, inPracticeSection } from "@/lib/nav";
+import {
+  BOOKS_NAV,
+  PRACTICE_NAV,
+  TRAINING_NAV,
+  inBooksSection,
+  inPracticeSection,
+  inTrainingSection,
+} from "@/lib/nav";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -15,7 +22,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     ? { items: PRACTICE_NAV, label: "Practice views" }
     : inBooksSection(pathname)
       ? { items: BOOKS_NAV, label: "Reading views" }
-      : null;
+      : inTrainingSection(pathname)
+        ? { items: TRAINING_NAV, label: "Training views" }
+        : null;
 
   return (
     <>

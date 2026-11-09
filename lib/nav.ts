@@ -1,4 +1,6 @@
 import {
+  Activity,
+  BookMarked,
   BookOpen,
   CalendarDays,
   ChartColumn,
@@ -8,7 +10,9 @@ import {
   Home,
   Library,
   ListMusic,
+  Target,
   Timer,
+  Utensils,
 } from "lucide-react";
 
 export interface NavItem {
@@ -53,6 +57,14 @@ export const BOOKS_NAV: NavItem[] = [
   { href: "/books/insights", label: "Insights", icon: ChartColumn, hint: "Pace and totals" },
 ];
 
+export const TRAINING_NAV: NavItem[] = [
+  { href: "/training", label: "Activity", icon: Activity, hint: "Hevy and Strava" },
+  { href: "/training/plan", label: "Plan", icon: Target, hint: "Today's targets and the calendar" },
+  { href: "/training/workouts", label: "Workouts", icon: Dumbbell, hint: "Sessions and progression" },
+  { href: "/training/nutrition", label: "Nutrition", icon: Utensils, hint: "Food, macros and supplements" },
+  { href: "/training/guide", label: "Guide", icon: BookMarked, hint: "The reasoning, in depth" },
+];
+
 const PRACTICE_HREFS = new Set(PRACTICE_NAV.map((item) => item.href));
 const BOOKS_HREFS = new Set(BOOKS_NAV.map((item) => item.href));
 
@@ -72,6 +84,10 @@ export function inPracticeSection(pathname: string): boolean {
  *  of Library rather than as something inside it. */
 export function inBooksSection(pathname: string): boolean {
   return BOOKS_HREFS.has(pathname);
+}
+
+export function inTrainingSection(pathname: string): boolean {
+  return isActive(pathname, "/training");
 }
 
 /** Within a strip, the active view is the deepest href that matches, so
