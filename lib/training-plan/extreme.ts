@@ -1,13 +1,14 @@
 export const EXTREME_MODE = {
   title: "Modo extremo",
   intro:
-    "O máximo que dá para espremer naturalmente neste prazo. Ele não aumenta o teto biológico: ele te coloca no topo da faixa em vez do meio. Comer mais do que o plano manda não entra aqui, porque acima do superávit prescrito o excedente vira gordura.",
+    "Este é o plano que está valendo. Ele troca conforto por resultado: o déficit começa mais cedo, o volume sobe até o limite que você consegue recuperar e a rotina não tem folga. Comer além do prescrito continua fora, porque o excedente vira gordura e esconde o músculo que você construiu.",
   ceiling:
-    "Melhor cenário realista em 20 semanas, para quem já é magro o bastante para comer acima da manutenção: 2,5 a 3,5 kg de massa livre de gordura na balança, incluindo 0,5 a 1 kg de água e glicogênio. O impacto visual vem da soma: músculo concentrado em ombros, costas e braços, com a cintura menor.",
+    "Com execução completa, em 20 semanas: 4 a 6,5 kg a menos de gordura (o caminho conservador tira 2 a 4,5), 4 a 8 cm a menos de cintura e 0,5 a 2,5 kg a mais de massa magra. A balança cai, e o corpo parece maior porque ombros, costas e braços crescem enquanto a cintura some.",
   entry: [
-    "Entra só depois de 4 semanas seguidas sem nenhuma sessão perdida.",
+    "Começa na semana 1, sem fase de liberação.",
     "A semana nunca passa de 105 séries, ou 100 em déficit. Quando o mesociclo já tiver somado séries, corte da sessão de domingo até caber.",
     "Nenhum músculo passa do teto semanal da tabela de séries.",
+    "O déficit segue a licença do plano: registro, proteína, sessões e sono em dia. Sem isso, coma manutenção e teste de novo no domingo seguinte.",
   ],
   rules: [
     "Zero sessão perdida. Uma semana inteira parada custa mais do que qualquer ajuste aqui consegue devolver.",
@@ -16,13 +17,16 @@ export const EXTREME_MODE = {
     "Toda comida pesada e registrada, todos os dias, inclusive fim de semana.",
     "Proteína batida 7 dias por semana.",
     "Última série de todo exercício seguro levada até a falha técnica. Agachamento, dobradiças e remadas livres continuam fora disso.",
+    "Em déficit, suba os passos até 12.000 antes de cortar comida.",
+    "Pague uma sessão com um bom treinador na semana 1 para acertar agachamento e terra romeno. É o jeito mais barato de não perder semanas por dor.",
+    "Terno com ombro estruturado e cintura ajustada, com a última prova na data do plano.",
   ],
   stop: [
     "Sono médio abaixo de 7 horas, energia em 2 ou menos por 7 dias, ou duas âncoras caindo: a sessão de domingo sai primeiro.",
     "Dor em lombar ou ombro: a sessão sai, e a dor é avaliada antes de voltar.",
   ],
   session: {
-    name: "Domingo: ombro, peito alto e braços",
+    name: "Ombro, peito alto e braços",
     minutes: 40,
     note: "A corrida de domingo fica opcional. Quinta continua sem musculação.",
     exercises: [

@@ -69,6 +69,10 @@ export function WorkoutsScreen({ program, cardio }: { program: Program; cardio: 
                 <a href={`#${day.sessionId}`} className="text-right text-text underline decoration-border-strong underline-offset-2 hover:decoration-hevy">
                   {sessionName.get(day.sessionId)}
                 </a>
+              ) : day.day === "domingo" ? (
+                <a href="#modo-extremo" className="text-right text-text underline decoration-border-strong underline-offset-2 hover:decoration-hevy">
+                  {EXTREME_MODE.session.name}
+                </a>
               ) : (
                 <span className="text-right text-sub-strong">{day.note}</span>
               )}

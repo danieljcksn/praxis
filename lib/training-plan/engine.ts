@@ -13,7 +13,16 @@ export interface BodyProfile {
   liftSessionMinutes: number;
   runKmPerWeek: number;
   measuredMaintenanceKcal: number | null;
+  maxMode: boolean;
 }
+
+/** Trades adherence margin for the earliest fat loss the plan allows, so the
+ *  highest-body-fat calendar runs for everyone who is not already lean. */
+const MAX_MODE_BRANCH = {
+  label: "Modo extremo: corta cedo, treina no limite",
+  summary:
+    "O maior ganho visual disponível vem de tirar gordura enquanto o músculo cresce. Calibra por 4 semanas, começa o déficit cedo, com licença, e nunca passa de manutenção menos 650 kcal.",
+};
 
 export interface Coefficients {
   bmrOffset: number;
@@ -253,7 +262,19 @@ export function computePlan(
 ): PlanSnapshot {
   const bodyFatPct = estimateBodyFat(profile, config.bodyFat.knownError.meanBiasPoints);
   const picked = pickBranch(profile, bodyFatPct, config);
-  const branch = picked ?? config.branches.find((item) => item.id === "b") ?? config.branches[0];
+  const fallback = config.branches.find((item) => item.id === "b") ?? config.branches[0];
+  const highest = config.branches.find((item) => item.id === "c");
+  const useMaxCalendar = profile.maxMode && picked?.id !== "a" && highest != null;
+  const branch: Branch = useMaxCalendar
+    ? {
+        ...highest,
+        ...MAX_MODE_BRANCH,
+        phases: highest.phases.map((phase) => ({
+          ...phase,
+          why: phase.why.replace(/O ramo C/g, "Você"),
+        })),
+      }
+    : (picked ?? fallback);
 
   const { low, mid, high } = config.energy.coefficients;
   const maintenanceMid = estimateMaintenance(profile, mid);
@@ -306,7 +327,7 @@ export function computePlan(
   return {
     bodyFatPct,
     branch,
-    branchPending: picked == null,
+    branchPending: picked == null && !useMaxCalendar,
     maintenance: {
       low: round50(estimateMaintenance(profile, low)),
       mid: round50(maintenanceMid),
@@ -365,5 +386,6 @@ export function sanitizeProfile(value: unknown): BodyProfile | null {
     liftSessionMinutes: num("liftSessionMinutes") ?? 75,
     runKmPerWeek: typeof o.runKmPerWeek === "number" && o.runKmPerWeek >= 0 ? o.runKmPerWeek : 10,
     measuredMaintenanceKcal: num("measuredMaintenanceKcal"),
+    maxMode: o.maxMode !== false,
   };
 }
