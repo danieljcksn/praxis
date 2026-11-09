@@ -12,6 +12,9 @@ import { cn } from "@/lib/cn";
 import { PRIMARY_NAV, isActive, isPrimaryActive } from "@/lib/nav";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
+/** Trackpads report sub-pixel jitter; below this a direction change is noise. */
+const REVEAL_STEP_PX = 6;
+
 function Logo() {
   return (
     <Link
@@ -132,9 +135,35 @@ function useScrolled(): boolean {
   return scrolled;
 }
 
+/** Visible at the very top and on any upward scroll; out of the way otherwise. */
+function useHeaderRevealed(): boolean {
+  const [revealed, setRevealed] = useState(true);
+  useEffect(() => {
+    let last = Math.max(window.scrollY, 0);
+    const onScroll = () => {
+      // Clamped because rubber-banding past either end reports movement that
+      // never happened, and would flash the bar at the bottom of a page.
+      const limit = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
+      const y = Math.min(Math.max(window.scrollY, 0), limit);
+      if (y === 0) {
+        setRevealed(true);
+        last = 0;
+        return;
+      }
+      if (Math.abs(y - last) < REVEAL_STEP_PX) return;
+      setRevealed(y < last);
+      last = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return revealed;
+}
+
 export function TopNav() {
   const pathname = usePathname();
   const scrolled = useScrolled();
+  const revealed = useHeaderRevealed();
 
   return (
     <>
@@ -148,8 +177,10 @@ export function TopNav() {
       <header
         className={cn(
           "sticky top-0 z-30 w-full bg-bg/85 backdrop-blur-xl",
-          "border-b transition-[border-color,box-shadow] duration-[190ms] ease-out",
+          "border-b transition-[transform,border-color,box-shadow] duration-[190ms] ease-out",
           scrolled ? "border-border shadow-card" : "border-transparent",
+          // Tabbing into a hidden bar has to bring it back.
+          revealed ? "translate-y-0" : "-translate-y-full focus-within:translate-y-0",
         )}
       >
         {/* Matches the main container exactly, so the wordmark lines up with
