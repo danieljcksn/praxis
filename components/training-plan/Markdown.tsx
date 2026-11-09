@@ -29,7 +29,7 @@ function inline(text: string): ReactNode[] {
             href={link[2]}
             target="_blank"
             rel="noreferrer"
-            className="break-words text-hevy underline decoration-hevy/35 underline-offset-2 hover:decoration-hevy"
+            className="break-words text-text underline decoration-border-strong underline-offset-4 hover:decoration-text"
           >
             {link[1]}
           </a>
@@ -67,11 +67,11 @@ export function Markdown({ source }: { source: string }) {
     if (heading) {
       blocks.push(
         heading[1] === "####" ? (
-          <h3 key={key} className="mt-6 text-lead font-medium text-text">
+          <h3 key={key} className="mt-7 text-title text-text">
             {inline(heading[2])}
           </h3>
         ) : (
-          <h2 key={key} className="mt-9 font-display text-title-lg text-text">
+          <h2 key={key} className="mt-10 text-title-lg font-semibold text-text">
             {inline(heading[2])}
           </h2>
         ),
@@ -89,22 +89,22 @@ export function Markdown({ source }: { source: string }) {
         index += 1;
       }
       blocks.push(
-        <div key={key} className="my-5 overflow-x-auto rounded-md border border-border">
-          <table className="w-full border-collapse text-left text-mini">
-            <thead className="bg-soft text-sub-strong">
+        <div key={key} className="my-6 overflow-x-auto">
+          <table className="w-full border-collapse text-left text-base">
+            <thead className="text-sub">
               <tr>
                 {head.map((cell, cellIndex) => (
-                  <th key={cellIndex} scope="col" className="px-3 py-2 font-medium">
+                  <th key={cellIndex} scope="col" className="py-2 pr-4 align-bottom font-normal">
                     {inline(cell)}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody>
               {rows.map((row, rowIndex) => (
-                <tr key={rowIndex}>
+                <tr key={rowIndex} className="border-t border-border">
                   {row.map((cell, cellIndex) => (
-                    <td key={cellIndex} className="px-3 py-2 align-top text-sub-strong">
+                    <td key={cellIndex} className="py-2.5 pr-4 align-top text-sub-strong">
                       {inline(cell)}
                     </td>
                   ))}
@@ -124,7 +124,7 @@ export function Markdown({ source }: { source: string }) {
         index += 1;
       }
       blocks.push(
-        <blockquote key={key} className="my-5 border-l-2 border-hevy/40 pl-4 text-sub-strong">
+        <blockquote key={key} className="my-6 border-l-2 border-border-strong pl-4 text-text">
           {inline(quote.join(" "))}
         </blockquote>,
       );
@@ -173,5 +173,5 @@ export function Markdown({ source }: { source: string }) {
     );
   }
 
-  return <div className="max-w-[70ch] text-base leading-[1.7]">{blocks}</div>;
+  return <div className="text-title font-normal leading-[1.7]">{blocks}</div>;
 }

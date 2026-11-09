@@ -25,6 +25,8 @@ export interface StageOverride {
   reps?: number | string;
   rir?: string | number;
   eccentricSeconds?: number;
+  hevyName?: string;
+  lastSetToFailure?: boolean;
   repsMin?: number;
   repsMax?: number;
 }

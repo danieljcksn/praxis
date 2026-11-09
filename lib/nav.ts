@@ -37,7 +37,7 @@ export const PRIMARY_NAV: NavItem[] = [
   { href: "/practice", label: "Practice", icon: Timer, hint: "Session timer" },
   { href: "/books", label: "Reading", icon: BookOpen, hint: "Books and progress" },
   { href: "/habits", label: "Habits", icon: CircleCheck, hint: "Daily check-ins" },
-  { href: "/training", label: "Training", icon: Dumbbell, hint: "Hevy and Strava" },
+  { href: "/training", label: "Training", icon: Dumbbell, hint: "Today's training and food" },
   { href: "/github", label: "GitHub", icon: GitGraph, hint: "Contribution activity" },
 ];
 
@@ -58,11 +58,11 @@ export const BOOKS_NAV: NavItem[] = [
 ];
 
 export const TRAINING_NAV: NavItem[] = [
-  { href: "/training", label: "Activity", icon: Activity, hint: "Hevy and Strava" },
-  { href: "/training/plan", label: "Plan", icon: Target, hint: "Today's targets and the calendar" },
-  { href: "/training/workouts", label: "Workouts", icon: Dumbbell, hint: "Sessions and progression" },
-  { href: "/training/nutrition", label: "Nutrition", icon: Utensils, hint: "Food, macros and supplements" },
-  { href: "/training/guide", label: "Guide", icon: BookMarked, hint: "The reasoning, in depth" },
+  { href: "/training", label: "Hoje", icon: Target, hint: "O treino e a comida de hoje" },
+  { href: "/training/workouts", label: "Treinos", icon: Dumbbell, hint: "Todas as sessões" },
+  { href: "/training/nutrition", label: "Comida", icon: Utensils, hint: "Cardápio e suplementos" },
+  { href: "/training/guide", label: "Guia", icon: BookMarked, hint: "O porquê de cada decisão" },
+  { href: "/training/activity", label: "Atividade", icon: Activity, hint: "Hevy e Strava" },
 ];
 
 const PRACTICE_HREFS = new Set(PRACTICE_NAV.map((item) => item.href));

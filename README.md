@@ -28,9 +28,9 @@ activity into one calm view.
   start/end time of each active day.
 - **Strava** — refreshes short-lived OAuth tokens server-side and imports activity
   days, moving time, distance, elevation, and exact daily hours.
-- **Training plan** — calories, macros and phases computed from measurements
-  kept only in the browser, plus the sessions, the nutrition reference, and a
-  long-form guide. Everything personal stays out of the repository.
+- **Training coach** — opens on what to do today: the session for this week of
+  the plan, the day's menu, and the calendar to the target date. Personal numbers
+  come from the deployment environment and never enter the repository.
 - **Supabase sync** — mirrors durable state to Postgres. Existing browser data is
   migrated on the first cloud connection; JSON export/import remains available.
   The whole app shares one 2 MB payload, so a write that would exceed it is
