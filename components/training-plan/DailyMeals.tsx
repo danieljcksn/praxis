@@ -25,7 +25,7 @@ export function DailyMeals({
   defaultProfile: BodyProfile | null;
   config: EngineConfig;
   feedings: Meals["dayTemplate"]["feedings"];
-  examples: Pick<Meals["dayExamples"], "note" | "trainingDay" | "restDay">;
+  examples: Meals["dayExamples"];
   foods: Pick<Food, "id" | "name">[];
 }) {
   const { profile, ready } = useBodyProfile(defaultProfile);
@@ -56,6 +56,9 @@ export function DailyMeals({
 
   const { kcal, proteinG, carbsG, fatG } = snapshot.today;
   const vars = { proteinTargetG: proteinG, carbsTargetG: carbsG, fatTargetG: fatG };
+  const dayMeals = snapshot.today.deficit
+    ? examples[kind === "trainingDay" ? "deficitTrainingDay" : "deficitRestDay"]
+    : examples[kind];
 
   return (
     <Card>
@@ -88,7 +91,7 @@ export function DailyMeals({
       </div>
 
       <div className="mt-5 grid gap-4 md:grid-cols-2">
-        {examples[kind].map((meal) => {
+        {dayMeals.map((meal) => {
           const feeding = feedings.find((item) => item.id === meal.feedingId);
           return (
             <div key={meal.feedingId} className="rounded-md border border-border p-4">

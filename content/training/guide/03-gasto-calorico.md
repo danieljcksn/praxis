@@ -11,7 +11,7 @@ Seu gasto diário (a manutenção) é a soma de seis parcelas. Algumas são gran
 | Passos | Caminhada planejada ou não | 8 a 12% |
 | Musculação | Calorias líquidas da sessão | 3 a 5% |
 | Corrida | Quando acontece | 3 a 5% |
-| Efeito térmico da comida | Custo de digerir e armazenar | 10 a 12% |
+| Efeito térmico da comida | Custo de digerir e armazenar | 10 a 12,5% |
 
 ### Metabolismo de repouso: pare de refinar
 
@@ -23,7 +23,7 @@ O plano usa a equação de Ten-Haaf por massa livre de gordura quando houver est
 
 Sem estimativa de gordura, usa a versão por peso, altura e idade, menos 90 kcal: **11,936 × peso + 587,728 × altura em metros - 8,129 × idade + 220,306 - 90**. O desconto de 90 kcal é correção própria, porque a amostra original tinha cerca de 12% de gordura e tende a superestimar quem carrega mais.
 
-Dê a esse número uma margem de 150 kcal para mais ou para menos e siga em frente.
+Dê a esse número uma margem de 150 kcal para menos e 120 kcal para mais e siga em frente.
 
 ### Atividade espontânea
 
@@ -35,7 +35,9 @@ Caminhar custa cerca de 0,5 kcal por kg por quilômetro, descontado o repouso. A
 
 **Passos × (0,415 × altura em metros ÷ 1.000) × peso × 0,5**
 
-Para 10.000 passos, um homem de 80 kg e 1,78 m caminha 7,4 km e gasta perto de 295 kcal acima do repouso. Relógios mostram o bruto, mais de 400 kcal, e pedem que você coma de volta. Andar acima de 4,2 km/h custa um pouco mais, cerca de 5 kcal por km acima da fórmula (Universidade de Shinshu; Margaria, 1968). Os valores por km são heurísticos, então trate a estimativa como aproximação.
+Para 10.000 passos, um homem de 80 kg e 1,78 m caminha 7,4 km e gasta perto de 295 kcal acima do repouso. Relógios mostram o bruto, cerca de 394 kcal, e pedem que você coma de volta. Andar acima de 4,2 km/h custa um pouco mais, cerca de 5 kcal por km acima da fórmula (Universidade de Shinshu, s.d.; Margaria, 1968). Os valores por km são heurísticos, então trate a estimativa como aproximação.
+
+Conte aqui só passos de caminhada. O celular soma os passos dados correndo, e a corrida já tem a parcela dela: sem descontar, a mesma atividade entra duas vezes.
 
 Um detalhe: uma análise com 1.754 adultos estimou que cerca de 28% da energia gasta em atividade é compensada, principalmente com repouso mais baixo (Careau et al., 2021). O dado é transversal, em não atletas, e sugere que o gasto de atividade aparece menos no total do que parece no papel. Mais um motivo para calibrar pela balança.
 
@@ -51,7 +53,7 @@ Correr custa perto de 1 kcal por kg por km, quase independentemente da velocidad
 
 ### Efeito térmico
 
-Digerir gasta entre 10 e 12% do que você come, e proteína custa mais que carboidrato e gordura. Em câmara metabólica, dieta rica em proteína e carboidrato gerou 14,6% de efeito térmico contra 10,5% da dieta rica em gordura (Westerterp et al., 1999). A diferença em quem sobe de 1,2 para 2 g/kg de proteína fica perto de 50 kcal por dia, e esse efeito já está incluído na manutenção medida. Não desconte nada de proteína da sua meta.
+Digerir gasta entre 10 e 12,5% do que você come, e proteína custa mais que carboidrato e gordura. Em câmara metabólica, dieta rica em proteína e carboidrato gerou 14,6% de efeito térmico contra 10,5% da dieta rica em gordura (Westerterp et al., 1999). A diferença em quem sobe de 1,2 para 2 g/kg de proteína fica perto de 50 kcal por dia, e esse efeito já está incluído na manutenção medida. Não desconte nada de proteína da sua meta.
 
 ### O cálculo completo
 
@@ -66,12 +68,12 @@ Exemplo com um homem de 80 kg, 1,78 m, 30 anos, 20% de gordura, 10.000 passos, 5
 | Repouso | 1.790 | 1.940 | 2.060 |
 | Atividade espontânea | 185 | 255 | 320 |
 | Passos | 265 | 295 | 320 |
-| Musculação | 95 | 120 | 135 |
-| Corrida | 105 | 115 | 120 |
+| Musculação | 95 | 120 | 137 |
+| Corrida | 103 | 115 | 120 |
 | Efeito térmico | 10% | 11% | 12,5% |
 | Manutenção | cerca de 2.710 | cerca de 3.060 | cerca de 3.380 |
 
-O erro individual é de pelo menos 10% para cada lado. Há uma checagem independente para conferir a ordem de grandeza: água duplamente marcada em homens jovens de cerca de 74 kg mediu perto de 3.155 kcal por dia, com gasto total de 1,8 vez o repouso (Diaz et al., 1992), e o modelo acima dá cerca de 1,6 vez. O erro provavelmente vai mais para baixo do que para cima.
+O erro individual é de pelo menos 10% para cada lado. Há uma checagem independente para conferir a ordem de grandeza: água duplamente marcada em homens jovens de cerca de 74 kg mediu perto de 3.155 kcal por dia, com gasto total de 1,8 vez o repouso (Diaz et al., 1992), e o modelo acima dá cerca de 1,6 vez. Se o modelo errar, o mais provável é que a manutenção real fique acima da estimada.
 
 ### Mitos que atrapalham a conta
 
@@ -81,7 +83,7 @@ Manutenção muda com o peso. Em modelos dinâmicos, cada quilo de peso corporal
 
 ### A regra
 
-A partir da estimativa, o plano começa com 95% da manutenção calculada e comida registrada todo dia. Com duas semanas, você só tem sanidade do número. Com quatro, começa a ter um valor próprio, e esse valor substitui a fórmula (capítulo 8).
+A partir da estimativa, com corrida valendo zero até virar hábito, o plano começa com 95% da manutenção calculada e comida registrada todo dia. Com duas semanas, você só tem sanidade do número. Com quatro, começa a ter um valor próprio, e esse valor substitui a fórmula (capítulo 8).
 
 ### Fontes
 

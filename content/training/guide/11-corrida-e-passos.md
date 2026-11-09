@@ -4,7 +4,7 @@ Passos e corrida têm dois efeitos no plano: aumentam o gasto energético e mant
 
 ### Cardio atrapalha hipertrofia?
 
-Treinar musculação e cardio juntos produz diferença quase nula em hipertrofia, em dados de recreacionais e destreinados. Uma revisão guarda-chuva com 17 meta-análises e 144 estudos estimou diferença de -0,04 na hipertrofia, intervalo de -0,15 a 0,06 (Held et al., 2026). A meta-análise de 2022 com 43 estudos chegou a resultado igual, sem efeito de modalidade, frequência ou separação entre sessões para hipertrofia (Schumann et al., 2022). A intervenção média durou cerca de 10 semanas, e poucas pessoas treinavam musculação mais de 3 vezes por semana. Uma extrapolação para quem levanta 5 vezes por semana e corre 2 merece cuidado.
+Treinar musculação e cardio juntos produz diferença quase nula em hipertrofia, em dados de recreacionais e destreinados. Uma revisão guarda-chuva com 17 meta-análises e 144 estudos estimou, na parte de hipertrofia (5 meta-análises e 33 estudos), diferença de -0,04, intervalo de -0,15 a 0,06 (Held et al., 2026). Uma meta-análise de 2022 com 43 estudos, 15 deles com hipertrofia como desfecho, chegou a resultado igual, sem efeito de modalidade, frequência ou separação entre sessões (Schumann et al., 2022). A intervenção média durou cerca de 10 semanas, e poucas pessoas treinavam musculação mais de 3 vezes por semana. Uma extrapolação para quem levanta 5 vezes por semana e corre 2 merece cuidado.
 
 Existe um sinal em fibras musculares em biópsia. Uma meta-análise com 15 estudos encontrou penalidade pequena na hipertrofia das fibras (SMD -0,23), com um sinal maior em fibras tipo I quando a modalidade era corrida (SMD -0,81, com 3 estudos). Os próprios autores chamam isso de preliminar (Lundberg et al., 2022). Eles sugerem que quem prioriza massa considere bicicleta, com ressalvas. Em força de membros inferiores, intervalos de corrida não diferiram significativamente de levantar só, e corrida contínua moderada teve um custo pequeno (Chen et al., 2024).
 
@@ -29,23 +29,25 @@ O plano fixa corrida conversacional nas primeiras 6 semanas: dá para falar fras
 
 ### Progressão de corrida
 
-Se você corre pouco, 2 sessões por semana já são um aumento grande. Em um estudo com 1.696 corredores iniciantes, 10,9% se lesionaram em 6 semanas, e a falta de experiência em corrida foi um fator importante (NLstart2run). No DANO-RUN, com 930 iniciantes, IMC entre 25 e 30 não aumentou significativamente o risco (DANO-RUN), o que sugere que o peso importa menos do que a progressão.
+Se você corre pouco, 2 sessões por semana já são um aumento grande. Em um estudo com 1.696 corredores iniciantes, 10,9% se lesionaram em 6 semanas, e a falta de experiência em corrida foi um fator importante (Kluitenberg et al., 2015). Em 930 iniciantes, IMC entre 25 e 30 não aumentou significativamente o risco (Nielsen et al., 2013), o que sugere que o peso importa menos do que a progressão.
 
-| Semanas | Dose |
+Nas semanas 1 e 2, a dose de corrida cai no dia seguinte às pernas, com a dor muscular no pico, e quem chega dolorido troca por bicicleta leve ou caminhada.
+
+| Fase | Dose |
 |---|---|
-| 1 a 4 | 2 x 20 a 25 minutos leves |
-| 5 e 6 | 2 x 25 a 30 minutos |
-| 7 e 8 | 1 ou 2 corridas leves, ou bicicleta |
-| 9 a 13 | 2 x 30 a 35 minutos |
-| 14 | Leve ou nada |
-| 15 a 17 | 2 leves |
+| Semanas 1 a 4 | 2 x 20 a 25 minutos leves |
+| Semanas 5 e 6 | 2 x 25 a 30 minutos |
+| Bloco de festas | 1 ou 2 corridas leves, ou bicicleta |
+| Bloco principal | 2 x 30 a 35 minutos |
+| Janela de Carnaval | Leve ou nada |
+| Bloco final | 2 leves |
 | Última semana | Última corrida 4 dias antes da data |
 
 ### Passos: um gasto que precisa de horário
 
-Cada 1.000 passos custam perto de 0,4 a 0,45 kcal por kg de peso corporal, e 10.000 passos levam cerca de 90 minutos. Isso cabe mal numa rotina de escritório sem horário fixo: depois do almoço, depois do jantar, em ligações, na volta do trabalho.
+Cada 1.000 passos custam perto de 0,35 a 0,42 kcal por kg de peso corporal, conforme a altura, e 10.000 passos levam cerca de 90 minutos. Isso cabe mal numa rotina de escritório sem horário fixo: depois do almoço, depois do jantar, em ligações, na volta do trabalho.
 
-O erro comum é duplo. O relógio costuma mostrar o valor bruto, e o valor líquido é bem menor. E a maior parte das pessoas adiciona passos a uma manutenção estimada que já supunha uma vida ativa. Para calcular a manutenção real, fixe os passos da primeira quinzena e mantenha estável ao longo do plano. Assim, o gasto de passos deixa de ser uma variável que confunde a balança.
+O erro comum é duplo. O relógio costuma mostrar o valor bruto, e o valor líquido é bem menor. E a maior parte das pessoas adiciona passos a uma manutenção estimada que já supunha uma vida ativa. Conte só passos de caminhada: o celular soma os passos de corrida, e a corrida já tem a parcela dela no cálculo. Para calcular a manutenção real, fixe os passos da primeira quinzena e mantenha estável ao longo do plano. Assim, o gasto de passos deixa de ser uma variável que confunde a balança.
 
 Passos muito baixos cobram seu preço. Em 11 homens que reduziram de 13.054 para 1.192 passos por dia por uma semana, a síntese miofibrilar caiu cerca de 27% (Shad et al., 2019). Isso reforça não deixar dias de descanso virarem imobilidade total, mas não prova que 10.000 superam 6.000 ou 8.000.
 
@@ -72,8 +74,8 @@ Se as repetições do primeiro exercício de pernas caírem 2 ou mais em 2 sess�
 - [Fyfe et al., 2016, Front Physiol](https://www.frontiersin.org/article/10.3389/fphys.2016.00487/full)
 - [Sabag et al., resumo no repositório da Western Sydney University](https://researchers.westernsydney.edu.au/en/publications/does-concurrent-high-intensity-interval-training-and-resistance-t/)
 - [Lee et al., 2020, PLoS One](https://journals.plos.org/plosone/doi?id=10.1371/journal.pone.0233134)
-- [NLstart2run](https://pure.eur.nl/en/publications/the-nlstart2run-study-incidence-and-risk-factors-of-running-relat/)
-- [DANO-RUN](https://pmc.ncbi.nlm.nih.gov/articles/PMC4555503)
+- [Kluitenberg et al., 2015, Scand J Med Sci Sports](https://pure.eur.nl/en/publications/the-nlstart2run-study-incidence-and-risk-factors-of-running-relat/)
+- [Nielsen et al., 2013, Orthop J Sports Med](https://pmc.ncbi.nlm.nih.gov/articles/PMC4555503)
 - [Shad et al., 2019](https://cris.maastrichtuniversity.nl/en/publications/one-week-of-step-reduction-lowers-myofibrillar-protein-synthesis-)
 - [Margaria, 1968](https://smithengineering.queensu.ca/mme/faculty/deluzio/jam/files/10.26.10_JunTian.pdf)
 - [Careau et al., 2021](https://researchonline.ljmu.ac.uk/id/eprint/15443/)

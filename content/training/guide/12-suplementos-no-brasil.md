@@ -4,13 +4,13 @@ A lista de suplementos que importam cabe em duas linhas, e o problema real é co
 
 ### Creatina monoidratada
 
-Creatina aumenta os estoques musculares de fosfocreatina e, com isso, o trabalho que você consegue fazer em cada sessão. A carga de 20 g por dia (5 g, 4 vezes) por 5 a 7 dias satura em cerca de uma semana; 3 a 5 g por dia chegam lá em 3 a 4 semanas (Kreider et al., 2017). Para uma janela de 20 semanas, a carga antecipa o benefício em quase um mês, mas não é obrigatória (Antonio et al., 2021).
+Creatina aumenta os estoques musculares de fosfocreatina e, com isso, o trabalho que você consegue fazer em cada sessão. A carga de 20 g por dia (5 g, 4 vezes) por 5 a 7 dias satura em cerca de uma semana; 3 a 5 g por dia chegam lá em 3 a 4 semanas (Kreider et al., 2017). Para uma janela de 20 semanas, a carga antecipa o benefício em 2 a 3 semanas, mas não é obrigatória (Antonio et al., 2021). Mantenha a creatina todo dia até a data: parar antes mudaria a água intramuscular e o peso na reta final.
 
 **Dose:** 5 g por dia, em qualquer horário, com comida. Na fase de carga, nunca 10 g de uma vez: uma dose única de 10 g causou diarreia em 55,6% dos jogadores, contra 28,6% em 2 doses de 5 g (Ostojic e Ahmetovic, 2008).
 
 **Efeito real:** cerca de 1 kg de massa magra em treinos, parte dela água (Branch, 2003; Desai et al., 2024). Por imagem direta, o efeito sobre o músculo fica pequeno, em torno de 0,11 de SMD (Burke et al., 2023). O mecanismo depende de as repetições extras acontecerem de fato (Nuckols, Stronger by Science).
 
-**Água e balança:** as duas primeiras semanas sobem o peso por água. Isso não é músculo nem é gordura. Na prática, comece a média de peso válida no dia 14 se fez carga, e no dia 28 se não fez. Não tome diurético, não corte comida por isso, não interprete como falha.
+**Água e balança:** as duas primeiras semanas sobem o peso por água, sem músculo nem gordura nessa conta. Na prática, comece a média de peso válida no dia 14 se fez carga, e no dia 28 se não fez. Não tome diurético, não corte comida por isso, não interprete como falha.
 
 **Cabelo:** a história vem de um estudo de 2009, com 20 jogadores de rugby em 25 g por dia, que mediu DHT e não mediu cabelo. Um ensaio de 12 semanas com 38 homens treinados a 5 g por dia não encontrou mudança em DHT ou nas medidas capilares (Lak et al., 2025). Quem tem histórico familiar forte de calvície precoce e prefere não testar nada pode pular a carga, porque só a dose diária foi testada de forma direta.
 
@@ -27,9 +27,9 @@ Para reduzir o risco:
 - Divida proteína pelos gramas da porção. Procure pelo menos 70 a 80%.
 - Rejeite tudo que listar glicina, taurina, arginina, alanina, ácido glutâmico ou creatina como ingredientes à parte.
 - A leucina deve aparecer perto de 10 a 12 g a cada 100 g de proteína.
-- Registre a porção a 80% do rótulo até confiar no lote, porque a tolerância legal pode chegar a 20% (Metrópoles, Abenutri).
+- Registre a porção a 80% do rótulo até confiar no lote, porque a tolerância legal pode chegar a 20% (Metrópoles, s.d.).
 
-Whey pode piorar acne em alguns homens jovens, em dados observacionais: num estudo caso-controle, o uso foi mais comum em homens com acne, 47% contra 27,7% (estudo jordaniano, 2024). Se piorar, troque proteína por comida.
+Whey pode piorar acne em alguns homens jovens, em dados observacionais: num estudo caso-controle, o uso foi mais comum em homens com acne, 47% contra 27,7% (Muhaidat et al., 2024). Se piorar, troque proteína por comida.
 
 ### Creatina no Brasil
 
@@ -37,11 +37,11 @@ Em testes da Anvisa com 41 produtos, 40 tinham erro de rótulo e só 1 estava ab
 
 ### Como conferir no Brasil
 
-1. Consulte produto e empresa em consultas.anvisa.gov.br. Notificação prova papelada, não conteúdo.
+1. Consulte produto e empresa em consultas.anvisa.gov.br. A notificação mostra que a empresa declarou o produto; o teor real segue sem verificação.
 2. Compre no site da marca ou em revenda autorizada.
-3. Confira lote, validade e lacre. Preço muito abaixo do mercado é o principal sinal de golpe (Correio 24 Horas).
+3. Confira lote, validade e lacre. Preço muito abaixo do mercado é o principal sinal de golpe (Correio 24 Horas, s.d.).
 4. Peça laudo por lote, de preferência com perfil de aminoácidos.
-5. Selos como Informed Sport e Informed Choice testam lotes específicos quanto a substâncias proibidas, e são mais fortes que uma notificação (Maxi Nutrition).
+5. Selos como Informed Sport e Informed Choice testam lotes específicos quanto a substâncias proibidas, e dizem mais que uma notificação (Maxi Nutrition, s.d.). Esta pesquisa não confirmou nenhum produto com esses selos à venda no Brasil; se achar um, confirme o lote no site do certificador.
 
 O teste do iodo em casa só detecta amido e não prova nada sobre pureza.
 
@@ -49,7 +49,7 @@ O teste do iodo em casa só detecta amido e não prova nada sobre pureza.
 
 Cafeína dá um ganho agudo pequeno de força e resistência em doses de 3 a 6 mg/kg (Guest et al., 2021). A mesma cafeína, se tomada à noite, tira em média 45 minutos de sono, e doses de pré-treino exigem cerca de 13 horas antes de dormir para não custar sono (Gardiner et al., 2023).
 
-**Regra:** último café 9 horas antes de dormir. Em treino noturno, sem pré-treino com cafeína. Em sessões de manhã, até 2 mg/kg com a refeição.
+**Regra:** último café 9 horas antes de dormir. Em treino noturno, sem pré-treino com cafeína. Em sessões de manhã, até 3 mg/kg com a refeição, o piso da faixa em que o efeito aparece.
 
 ### O que não comprar
 
@@ -58,12 +58,13 @@ Cafeína dá um ganho agudo pequeno de força e resistência em doses de 3 a 6 m
 | Pré-treinos e termogênicos | Maior risco de estimulantes não declarados; DMAA é proibido no Brasil desde 2012 |
 | Testosterona booster, tribulus, ashwagandha | Ashwagandha é proibida como suplemento pela Anvisa; a maioria dos boosters não tem dados (Clemesha et al., 2019) |
 | BCAA e EAA | Sem acréscimo com proteína suficiente |
-| Glutamina, HMB, ZMA, beta-alanina, citrulina | Sem efeito relevante para hipertrofia em quem come bem (Jakubowski et al., 2019) |
+| HMB | Sem efeito relevante em massa magra em quem treina e come bem (Jakubowski et al., 2019) |
+| Glutamina, ZMA, beta-alanina, citrulina | Não entraram na evidência verificada deste guia; sem dado levantado aqui que justifique o gasto |
 | Vitamina D sem exame | Sem efeito em massa em quem não tem deficiência (Kazeminasab et al., 2025; Savolainen et al., 2024) |
 | Ômega-3 para músculo | Sem efeito relevante em massa (Santo Andre et al., 2023) |
 | Importados sem notificação | Sem rastreabilidade |
 
-Suplementos podem conter substâncias não declaradas. Em um levantamento internacional, 14,8% de 634 produtos não hormonais tinham esteroides anabolizantes não declarados, com taxa maior em empresas que vendiam pró-hormônios (Geyer et al., 2004). Como quem treina natural não tem como detectar isso pelo rótulo, compre o mínimo possível e evite empresas que vendem hormônios ou promessas hormonais. Fique com whey de laticínio: pós vegetais tiveram os maiores níveis de chumbo no teste da Consumer Reports, enquanto duas wheys ficaram dentro do limite de preocupação.
+Suplementos podem conter substâncias não declaradas. Em um levantamento internacional, 14,8% de 634 produtos não hormonais tinham esteroides anabolizantes não declarados, com taxa maior em empresas que vendiam pró-hormônios (Geyer et al., 2004). Como quem treina natural não tem como detectar isso pelo rótulo, compre o mínimo possível e evite empresas que vendem hormônios ou promessas hormonais. Fique com whey de laticínio: pós vegetais tiveram os maiores níveis de chumbo no teste da Consumer Reports, enquanto duas wheys ficaram dentro do limite de preocupação (Consumer Reports, s.d., por reportagem da KTVU).
 
 ### Fontes
 
@@ -80,7 +81,7 @@ Suplementos podem conter substâncias não declaradas. Em um levantamento intern
 - [O Povo, recapitulação da análise da Abenutri](https://www.opovo.com.br/noticias/saude/2025/06/04/whey-protein-relembre-marcas-reprovadas-na-ultima-analise-do-suplemento.html)
 - [Roiffe et al., 2019, Braz J Food Technol](https://scielo.br/j/bjft/a/brc5xKz73T9yt4RHZrTq3Kc/abstract/?lang=en)
 - [Metrópoles, como se proteger de whey adulterado](https://www.metropoles.com/saude/whey-protein-adulterado-como-se-proteger)
-- [Estudo caso-controle sobre whey e acne, 2024](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11022506/)
+- [Muhaidat et al., 2024, Dermatol Res Pract](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11022506/)
 - [Agência Gov, análise de creatinas pela Anvisa](https://agenciagov.ebc.com.br/noticias/202504/creatinas-anvisa-divulga-resultados-de-analise-em-suplementos)
 - [Itatiaia, estudo da Abenutri sobre creatinas](https://www.itatiaia.com.br/saude/dezoito-marcas-de-creatina-sao-reprovadas-em-estudo-da-abenutri/)
 - [Voto 135/2025 da Anvisa](https://www.gov.br/anvisa/pt-br/composicao/diretoria-colegiada/reunioes-da-diretoria/votos/2025/rop-8.2025/2-5.pdf)

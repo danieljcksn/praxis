@@ -7,6 +7,8 @@ export interface BodyProfile {
   absVisible: boolean;
   startDay: string;
   targetDay: string;
+  holidayStart: string;
+  carnivalStart: string;
   targetLabel: string;
   stepsPerDay: number;
   liftSessionsPerWeek: number;
@@ -35,7 +37,14 @@ export interface Coefficients {
 
 export type PhaseDays =
   | { anchor: "startDate"; first: number; last: number }
-  | { anchor: "targetDate"; firstDaysBefore: number; lastDaysBefore: number };
+  | { anchor: "targetDate"; firstDaysBefore: number; lastDaysBefore: number }
+  | {
+      anchor: "calendar";
+      from: { date: CalendarAnchor; offset: number };
+      to: { date: CalendarAnchor; offset: number };
+    };
+
+export type CalendarAnchor = "startDate" | "targetDate" | "holidayStart" | "carnivalStart";
 
 export interface Phase {
   id: string;
@@ -76,6 +85,8 @@ export interface EngineConfig {
       maintenanceOrSurplus: { min: number };
       deficit: { min: number };
     };
+    fatGPerKgMin: number;
+    carbsRule: { gPerKgFloor: number };
   };
   bodyFat: {
     waistToHeightFallback: {
@@ -202,7 +213,14 @@ export function macrosFor(
     ? config.fatGPerKgByPhase.deficit.min
     : config.fatGPerKgByPhase.maintenanceOrSurplus.min;
   const proteinG = round5(protein);
-  const fatG = round5(weightKg * fatRate);
+  let fatG = round5(weightKg * fatRate);
+  const carbFloorG = weightKg * config.carbsRule.gPerKgFloor;
+  if ((kcal - 4 * proteinG - 9 * fatG) / 4 < carbFloorG) {
+    fatG = Math.max(
+      round5(weightKg * config.fatGPerKgMin),
+      round5((kcal - 4 * proteinG - 4 * carbFloorG) / 9),
+    );
+  }
   return {
     kcal,
     proteinG,
@@ -239,20 +257,37 @@ function pickBranch(
   return band ? byId(band.branchId) : null;
 }
 
+export function calendarAnchors(profile: BodyProfile): Record<CalendarAnchor, string> {
+  return {
+    startDate: profile.startDay,
+    targetDate: profile.targetDay,
+    holidayStart: profile.holidayStart,
+    carnivalStart: profile.carnivalStart,
+  };
+}
+
 export function phaseBounds(
   phase: Phase,
-  startDay: string,
-  targetDay: string,
+  profile: BodyProfile,
 ): { first: string; last: string } {
-  return phase.days.anchor === "startDate"
-    ? {
-        first: addDaysKey(startDay, phase.days.first),
-        last: addDaysKey(startDay, phase.days.last),
-      }
-    : {
-        first: addDaysKey(targetDay, -phase.days.firstDaysBefore),
-        last: addDaysKey(targetDay, -phase.days.lastDaysBefore),
-      };
+  const { days } = phase;
+  if (days.anchor === "startDate") {
+    return {
+      first: addDaysKey(profile.startDay, days.first),
+      last: addDaysKey(profile.startDay, days.last),
+    };
+  }
+  if (days.anchor === "targetDate") {
+    return {
+      first: addDaysKey(profile.targetDay, -days.firstDaysBefore),
+      last: addDaysKey(profile.targetDay, -days.lastDaysBefore),
+    };
+  }
+  const anchors = calendarAnchors(profile);
+  return {
+    first: addDaysKey(anchors[days.from.date], days.from.offset),
+    last: addDaysKey(anchors[days.to.date], days.to.offset),
+  };
 }
 
 export function computePlan(
@@ -279,7 +314,7 @@ export function computePlan(
   const { low, mid, high } = config.energy.coefficients;
   const maintenanceMid = estimateMaintenance(profile, mid);
   const calibrationKcal = round50(maintenanceMid * 0.95);
-  const floorKcal = round50(27.6 * profile.weightKg);
+  const floorKcal = round50(27.5 * profile.weightKg);
   const measuredBase = profile.measuredMaintenanceKcal ?? calibrationKcal;
 
   const resolve = (phase: Phase, dayOfPhase: number) => {
@@ -300,7 +335,7 @@ export function computePlan(
   };
 
   const rows: PhaseRow[] = branch.phases.map((phase) => {
-    const { first, last } = phaseBounds(phase, profile.startDay, profile.targetDay);
+    const { first, last } = phaseBounds(phase, profile);
     const span = Math.max(0, diffDays(last, first));
     const values = Array.from({ length: span + 1 }, (_, day) => resolve(phase, day).kcal);
     const toKg = (rate: number | null) =>
@@ -380,11 +415,13 @@ export function sanitizeProfile(value: unknown): BodyProfile | null {
     absVisible: o.absVisible === true,
     startDay: o.startDay,
     targetDay: o.targetDay,
+    holidayStart: isDayKey(o.holidayStart) ? o.holidayStart : `${o.startDay.slice(0, 4)}-12-21`,
+    carnivalStart: isDayKey(o.carnivalStart) ? o.carnivalStart : addDaysKey(o.targetDay, -49),
     targetLabel: typeof o.targetLabel === "string" ? o.targetLabel.slice(0, 40) : "",
     stepsPerDay: num("stepsPerDay") ?? 10_000,
     liftSessionsPerWeek: num("liftSessionsPerWeek") ?? 5,
     liftSessionMinutes: num("liftSessionMinutes") ?? 75,
-    runKmPerWeek: typeof o.runKmPerWeek === "number" && o.runKmPerWeek >= 0 ? o.runKmPerWeek : 10,
+    runKmPerWeek: typeof o.runKmPerWeek === "number" && o.runKmPerWeek >= 0 ? o.runKmPerWeek : 0,
     measuredMaintenanceKcal: num("measuredMaintenanceKcal"),
     maxMode: o.maxMode !== false,
   };

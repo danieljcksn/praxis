@@ -6,6 +6,7 @@ import { Beef, Droplets, Flame, Wheat } from "lucide-react";
 import { useBodyProfile } from "@/lib/hooks/useBodyProfile";
 import {
   addDaysKey,
+  calendarAnchors,
   computePlan,
   formatDay,
   sanitizeProfile,
@@ -29,7 +30,7 @@ const signed = (value: number) =>
   `${value > 0 ? "+" : ""}${value.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}`;
 
 const FIELDS = [
-  ["heightCm", "Altura (cm)", "185"],
+  ["heightCm", "Altura (cm)", ""],
   ["weightKg", "Peso (kg)", "em jejum"],
   ["ageYears", "Idade", ""],
   ["waistCm", "Cintura no umbigo (cm)", "em jejum, relaxado"],
@@ -56,7 +57,7 @@ function toForm(profile: BodyProfile | null): FormState {
     stepsPerDay: text(profile?.stepsPerDay, "10000"),
     liftSessionsPerWeek: text(profile?.liftSessionsPerWeek, "5"),
     liftSessionMinutes: text(profile?.liftSessionMinutes, "75"),
-    runKmPerWeek: text(profile?.runKmPerWeek, "10"),
+    runKmPerWeek: text(profile?.runKmPerWeek, "0"),
     measuredMaintenanceKcal: text(profile?.measuredMaintenanceKcal),
     startDay: profile?.startDay ?? todayKey(),
     targetDay: profile?.targetDay ?? "",
@@ -95,6 +96,8 @@ function ProfileForm({
       maxMode,
       startDay: form.startDay,
       targetDay: form.targetDay,
+      holidayStart: initial?.holidayStart,
+      carnivalStart: initial?.carnivalStart,
       targetLabel: form.targetLabel.trim(),
       stepsPerDay: number("stepsPerDay"),
       liftSessionsPerWeek: number("liftSessionsPerWeek"),
@@ -232,27 +235,28 @@ export function PlanScreen({
     );
   }
 
+  const anchors = profile ? calendarAnchors(profile) : null;
   const events = timeline
     .map((item) => ({
       ...item,
-      date: !profile
-        ? null
-        : item.daysFromStart != null
-          ? addDaysKey(profile.startDay, item.daysFromStart)
-          : addDaysKey(profile.targetDay, -(item.daysBeforeTarget ?? 0)),
+      date:
+        !profile || !anchors
+          ? null
+          : item.daysFromStart != null
+            ? addDaysKey(profile.startDay, item.daysFromStart)
+            : item.anchor
+              ? addDaysKey(anchors[item.anchor], item.daysFromAnchor ?? 0)
+              : addDaysKey(profile.targetDay, -(item.daysBeforeTarget ?? 0)),
     }))
     .sort((a, b) => (a.date ?? "").localeCompare(b.date ?? ""));
 
   const ignored = checkin.ignoreScaleWindows.map((window) => {
-    if (!profile) return window.reason;
-    const [first, last] =
-      window.anchor === "startDate"
-        ? [addDaysKey(profile.startDay, window.firstDay ?? 0), addDaysKey(profile.startDay, window.lastDay ?? 0)]
-        : [addDaysKey(profile.targetDay, -(window.firstDaysBefore ?? 0)), addDaysKey(profile.targetDay, -(window.lastDaysBefore ?? 0))];
-    return `${formatDay(first)} a ${formatDay(last)}: ${window.reason}`;
+    if (!profile || !anchors) return window.reason;
+    const base = anchors[window.anchor];
+    return `${formatDay(addDaysKey(base, window.firstDay))} a ${formatDay(addDaysKey(base, window.lastDay))}: ${window.reason}`;
   });
 
-  const { anchors, ...protocol } = checkin.protocol;
+  const { anchors: anchorExercises, ...protocol } = checkin.protocol;
   const protocolLines = Object.entries(protocol)
     .filter(([, value]) => typeof value === "string")
     .map(([, value]) => value as string);
@@ -408,9 +412,9 @@ export function PlanScreen({
       <div className="mt-4 grid items-start gap-4 lg:grid-cols-2">
         <TextCard eyebrow="Rotina" title="O que medir">
           <BulletList items={protocolLines} />
-          {Array.isArray(anchors) && (
+          {Array.isArray(anchorExercises) && (
             <div className="mt-4">
-              <Labeled label="Exercícios âncora">{anchors.join(" · ")}</Labeled>
+              <Labeled label="Exercícios âncora">{anchorExercises.join(" · ")}</Labeled>
             </div>
           )}
           <div className="mt-4 space-y-4">
@@ -488,7 +492,9 @@ export function PlanScreen({
                     ? formatDay(event.date)
                     : event.daysFromStart != null
                       ? `D${event.daysFromStart}`
-                      : `-${event.daysBeforeTarget}d`}
+                      : event.daysBeforeTarget != null
+                        ? `-${event.daysBeforeTarget}d`
+                        : ""}
                 </span>
                 <div className="min-w-0">
                   <p className="text-text">{event.title}</p>

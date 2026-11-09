@@ -1,5 +1,5 @@
 import raw from "@/content/training/plan.json";
-import type { EngineConfig } from "./engine";
+import type { CalendarAnchor, EngineConfig } from "./engine";
 
 export interface Exercise {
   name: string;
@@ -13,6 +13,20 @@ export interface Exercise {
   substitution: string;
   isAnchor?: boolean;
   lastSetToFailure?: boolean;
+  rampSets?: number | null;
+  stageOverride?: StageOverride[] | null;
+}
+
+export interface StageOverride {
+  weeks?: string;
+  when?: string;
+  name?: string;
+  sets?: number;
+  reps?: number | string;
+  rir?: string | number;
+  eccentricSeconds?: number;
+  repsMin?: number;
+  repsMax?: number;
 }
 
 export interface WorkoutSession {
@@ -41,12 +55,19 @@ export interface Program {
   mesocycles: {
     id: string;
     name: string;
-    weeks: { from: number; to: number };
+    weeks: { from: number | null; to: number | null };
+    branches: string[];
     setsPerWeek: { min: number; max: number };
     focus: string;
     changes: { sessionId: string; hevyName: string; deltaSets: number }[];
   }[];
   sessions: WorkoutSession[];
+  warmup: {
+    general: string;
+    ramp: { pctLoad: number; reps: string }[];
+    firstRepRule: string;
+  };
+  returnProtocol: { when: string; rules: string[] };
   sessionLengthNote: string;
   hevyNote: string;
   progression: { name: string; replaces: string; rules: string[]; firstWeek: string };
@@ -104,7 +125,13 @@ export interface Meals {
   foodsPer100g: Food[];
   rawVersusCookedWarning: string;
   swapTables: Record<string, { food: string; grams: number }[]>;
-  dayExamples: { note: string; trainingDay: MealExample[]; restDay: MealExample[] };
+  dayExamples: {
+    note: string;
+    trainingDay: MealExample[];
+    restDay: MealExample[];
+    deficitTrainingDay: MealExample[];
+    deficitRestDay: MealExample[];
+  };
   highCalorieTactics: string[];
   eatingOut: { restaurant: string[]; christmas: string[]; carnival: string[] };
 }
@@ -124,11 +151,9 @@ export interface Checkin {
   };
   firstTwoWeeks: { creatineLoad: string; noLoad: string; rule: string };
   ignoreScaleWindows: {
-    anchor: string;
-    firstDay?: number;
-    lastDay?: number;
-    firstDaysBefore?: number;
-    lastDaysBefore?: number;
+    anchor: CalendarAnchor;
+    firstDay: number;
+    lastDay: number;
     reason: string;
   }[];
   deficitLicence: { text: string; requires: string[]; branchBAlsoRequires: string };
@@ -144,6 +169,8 @@ export interface TimelineItem {
   id: string;
   daysFromStart?: number;
   daysBeforeTarget?: number;
+  anchor?: CalendarAnchor;
+  daysFromAnchor?: number;
   category: string;
   title: string;
   detail: string;

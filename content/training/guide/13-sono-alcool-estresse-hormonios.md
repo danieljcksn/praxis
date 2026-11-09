@@ -12,7 +12,7 @@ Sono curto também aumenta fome. Em uma meta-análise, a restrição parcial aum
 
 **Regra:** 8 a 8,5 horas na cama, 7 horas ou mais dormidas. Horário fixo para acordar, com margem de 30 a 45 minutos, inclusive no fim de semana. Quarto escuro, silencioso, a 17 a 22 °C, com o ar-condicionado fazendo parte do plano no verão (Walsh et al., 2021). Sono regular é um preditor melhor de mortalidade do que duração, em um estudo de 60.977 pessoas (Windred et al., 2024), e o mesmo raciocínio serve aqui.
 
-Uma noite ruim custa pouco: força máxima cai perto de 3%, repetições em séries cansativas caem perto de 10%, com estimativas imprecisas (Craven et al., 2022, analisado no Stronger By Science). O problema real são noites curtas em sequência. Depois de uma noite ruim, treine em versão reduzida, sem pular. Sonecas de 20 a 30 minutos entre 13h e 16h ajudam quando dá (Mesas et al., 2023; Walsh et al., 2021).
+Uma noite ruim custa pouco: força máxima cai perto de 3%, repetições em séries cansativas caem perto de 10%, com estimativas imprecisas (Craven et al., 2022, analisado no Stronger By Science). O problema real são noites curtas em sequência. Depois de uma noite ruim, treine em versão reduzida, sem pular. Sonecas de 20 a 30 minutos entre 13h e 16h ajudam quando dá (Mesas et al., 2023; Walsh et al., 2021). Estender o sono foi a intervenção de melhor efeito em desempenho em atletas, numa revisão de 10 estudos (Bonnar et al., 2018). Por isso, como heurística, reserve uma janela de 9 horas na cama nos 5 a 7 dias antes de uma interrupção conhecida, como festas ou uma viagem.
 
 **Sinais para procurar médico:** ronco alto, pausas respiratórias, acordar cansado depois de 8 horas, sonolência no trabalho, ou incapacidade de dormir na maioria das noites por 3 a 4 semanas. Apneia é mais comum em homens grandes e com pescoço largo, e ela pede avaliação, porque esticar o tempo na cama não resolve e pode piorar insônia (Walsh et al., 2021).
 
@@ -27,6 +27,8 @@ Termine o treino 2 a 3 horas antes de dormir sempre que possível, e tire corrid
 O custo mais confiável do álcool é o sono. Em revisão de 27 estudos, doses de 0,5 g/kg ou menos já atrasaram e reduziram o sono REM, e dormir mais rápido só apareceu em doses de 0,85 g/kg ou mais, que pioram a segunda metade da noite (Gardiner et al., 2025). A síntese muscular é o segundo custo: depois de treino, 1,5 g/kg (cerca de 12 doses) reduziu a síntese miofibrilar em 24% com proteína e em 37% com carboidrato, comparado com proteína sozinha (Parr et al., 2014). Doses menores têm efeito muito menor. Consumo diário de 40 g por 3 semanas reduziu testosterona em homens de meia-idade em cerca de 7% (Sierksma et al., 2004).
 
 **Regra do plano: abstêmio por padrão, com exceções marcadas.** Uma noite de festa até 0,5 g/kg no Natal. No Ano-Novo, até cerca de 1 g/kg, com jantar completo antes. No Carnaval, no máximo 2 dias com bebida em 4 de festa, sem pernas no mesmo dia nem na véspera. Zero álcool nas 2 semanas finais. Quando houver bebida, termine pelo menos 3 horas antes de dormir, e trate a noite seguinte como noite de recuperação. Esses limites são heurísticos, baseados nos dados de dose acima.
+
+Na conta de calorias, álcool tem 7 kcal por grama e entra na meta do dia. Uma lata de cerveja de 350 ml a 5% traz cerca de 14 g de álcool e perto de 140 kcal; uma dose de destilado de 50 ml a 40%, cerca de 16 g e perto de 110 kcal, sem contar a mistura. Registre tudo. Nos dias de bebida, tire as calorias do carboidrato e da gordura e deixe a proteína intacta (heurística, sem ensaio em quem treina).
 
 ### Estresse
 
@@ -55,6 +57,7 @@ O único marcador firme de excesso de treino em quem levanta peso é queda suste
 - [Al Khatib et al., 2017, Eur J Clin Nutr](https://www.nature.com/articles/ejcn2016201.pdf)
 - [Tasali et al., 2022, JAMA Intern Med](https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/2788694)
 - [Walsh et al., 2021, Br J Sports Med](https://opus.lib.uts.edu.au/bitstream/10453/156483/2/Finalmanuscript.pdf)
+- [Bonnar et al., 2018, Sports Med](https://pubmed.ncbi.nlm.nih.gov/29352373/)
 - [Windred et al., 2024, Sleep](https://www.ukbiobank.ac.uk/publications/sleep-regularity-is-a-stronger-predictor-of-mortality-risk-than-sleep-duration-a-prospective-cohort-study/)
 - [Craven et al., 2022, análise do Stronger By Science](https://www.strongerbyscience.com/research-spotlight-sleep-loss/)
 - [Mesas et al., 2023, Br J Sports Med](https://bjsm.bmj.com/content/57/7/417)

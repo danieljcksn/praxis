@@ -1,4 +1,4 @@
-import type { Cardio, Exercise, Program } from "@/lib/training-plan/plan";
+import type { Cardio, Exercise, Program, StageOverride } from "@/lib/training-plan/plan";
 import { EXTREME_MODE } from "@/lib/training-plan/extreme";
 import { PageHeader, SectionHeading } from "@/components/layout/PageHeader";
 import { Badge, Card, CardHeader } from "@/components/ui/Card";
@@ -9,6 +9,22 @@ function formatRest(seconds: number): string {
   const rest = seconds % 60;
   if (!minutes) return `${rest}s`;
   return rest ? `${minutes}min${rest}` : `${minutes}min`;
+}
+
+function stageLine(stage: StageOverride): string {
+  const reps =
+    stage.repsMin != null
+      ? ` de ${stage.repsMin} a ${stage.repsMax}`
+      : stage.reps != null
+        ? ` de ${stage.reps}`
+        : "";
+  const parts = [
+    stage.name,
+    stage.sets != null ? `${stage.sets} séries${reps}` : null,
+    stage.rir != null ? `sobram ${stage.rir}` : null,
+    stage.eccentricSeconds != null ? `descida em ${stage.eccentricSeconds} s` : null,
+  ].filter(Boolean);
+  return `${stage.weeks ? `Semana ${stage.weeks}` : `Ao chegar a ${stage.when}`}: ${parts.join(", ")}`;
 }
 
 function ExerciseRow({ exercise }: { exercise: Exercise }) {
@@ -29,9 +45,15 @@ function ExerciseRow({ exercise }: { exercise: Exercise }) {
       </div>
       <p className="mt-1 text-micro tabnum text-sub">
         Sobram {exercise.rir} reps{exercise.lastSetToFailure ? ", última série à falha" : ""} · descanso{" "}
-        {formatRest(exercise.restSeconds)} · Hevy: {exercise.hevyName}
+        {formatRest(exercise.restSeconds)}
+        {exercise.rampSets ? ` · aquecer em ${exercise.rampSets} séries` : ""} · Hevy: {exercise.hevyName}
       </p>
       <p className="mt-1.5 text-mini text-sub-strong">{exercise.cue}</p>
+      {exercise.stageOverride?.map((stage) => (
+        <p key={stageLine(stage)} className="mt-1 text-micro text-hevy">
+          {stageLine(stage)}
+        </p>
+      ))}
       <p className="mt-1 text-micro text-sub">Troca: {exercise.substitution}</p>
     </li>
   );
@@ -40,11 +62,11 @@ function ExerciseRow({ exercise }: { exercise: Exercise }) {
 const RUN_LABELS: Record<string, string> = {
   weeks1to4: "Semanas 1 a 4",
   weeks5to6: "Semanas 5 e 6",
-  weeks7to8: "Semanas 7 e 8",
-  weeks9to13: "Semanas 9 a 13",
-  weeks14: "Semana 14",
-  weeks15to17: "Semanas 15 a 17",
-  finalBlock: "Final",
+  holidays: "Festas",
+  mainBlock: "Bloco principal",
+  carnival: "Carnaval",
+  closingBlock: "Bloco final",
+  finalBlock: "Últimos dias",
 };
 
 export function WorkoutsScreen({ program, cardio }: { program: Program; cardio: Cardio }) {
@@ -105,6 +127,18 @@ export function WorkoutsScreen({ program, cardio }: { program: Program; cardio: 
         ))}
       </div>
       <p className="mt-3 text-mini text-sub">{program.hevyNote}</p>
+
+      <TextCard eyebrow="Antes da primeira série" title="Aquecimento" description={program.warmup.general}>
+        <ul className="divide-y divide-border text-sm">
+          {program.warmup.ramp.map((step) => (
+            <li key={step.pctLoad} className="flex justify-between gap-3 py-2">
+              <span className="tabnum text-sub-strong">{step.pctLoad}% da carga</span>
+              <span className="shrink-0 tabnum text-hevy">{step.reps} reps</span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-3 text-sm text-text">{program.warmup.firstRepRule}</p>
+      </TextCard>
 
       <Card id="modo-extremo" className="mt-4 scroll-mt-20 border-hevy/25">
         <CardHeader eyebrow="Tudo no limite" tone="hevy" title={EXTREME_MODE.title} description={EXTREME_MODE.intro} />
@@ -173,18 +207,19 @@ export function WorkoutsScreen({ program, cardio }: { program: Program; cardio: 
           </div>
         </TextCard>
 
-        <TextCard eyebrow="Blocos" title="Como o treino evolui">
+        <TextCard eyebrow="Blocos" title="Como o treino evolui" description="No modo extremo, siga o que cada bloco diz para o ramo C.">
           <ul className="space-y-4">
             {program.mesocycles.map((block) => (
               <li key={block.id} className="text-sm">
                 <p className="text-text">
                   {block.name}
                   <span className="tabnum text-sub">
-                    {" "}· semanas {block.weeks.from} a {block.weeks.to} · {block.setsPerWeek.min} a {block.setsPerWeek.max} séries
+                    {block.weeks.from != null ? ` · semanas ${block.weeks.from} a ${block.weeks.to}` : ""}
+                    {block.branches.includes("c") ? ` · ${block.setsPerWeek.min} a ${block.setsPerWeek.max} séries` : ""}
                   </span>
                 </p>
                 <p className="mt-0.5 text-sub-strong">{block.focus}</p>
-                {block.changes.length > 0 && (
+                {block.branches.includes("c") && block.changes.length > 0 && (
                   <p className="mt-1 text-mini text-sub">
                     {block.changes
                       .map((change) => `${change.deltaSets > 0 ? "+" : ""}${change.deltaSets} ${names.get(change.hevyName) ?? change.hevyName}`)
@@ -219,6 +254,9 @@ export function WorkoutsScreen({ program, cardio }: { program: Program; cardio: 
           </TextCard>
           <TextCard eyebrow="Dia ruim" title="Versão de pouca energia" description={program.lowEnergyVersion.when}>
             <BulletList items={program.lowEnergyVersion.rules} />
+          </TextCard>
+          <TextCard eyebrow="Depois de parar" title="Como voltar" description={program.returnProtocol.when}>
+            <BulletList items={program.returnProtocol.rules} />
           </TextCard>
           <TextCard eyebrow="Pior caso" title={`Sessão mínima, ${program.minimumViableSession.minutes} minutos`} description={program.minimumViableSession.rule}>
             <ul className="divide-y divide-border text-sm">

@@ -8,14 +8,14 @@ A proteína adicionada ao treino aumenta ganho de massa magra até um ponto. Em 
 
 Uma dissidência precisa ser citada: em 2025, van Loon defendeu 1,2 a 1,5 g/kg para ativos em geral (van Loon, 2025). A diferença não muda a decisão aqui, porque a extra custa só dinheiro e calorias que cabem no plano.
 
-Doses muito acima disso não mostraram ganho adicional. Em 48 homens treinados, 16 semanas com 3,2 e com 1,6 g/kg produziram ganho de massa magra semelhante, com 12 pessoas por braço e sem tamanho amostral calculado (estudo de 2024 em PMC11349518). Cite esse dado com cautela, porque um ensaio com tão pouca gente pode perder efeito pequeno.
+Doses muito acima disso não mostraram ganho adicional. Em 48 homens treinados, 16 semanas com 3,2 e com 1,6 g/kg produziram ganho de massa magra semelhante, com 12 pessoas por braço e sem tamanho amostral calculado (Bagheri et al., 2024). Cite esse dado com cautela, porque um ensaio com tão pouca gente pode perder efeito pequeno.
 
 **Metas do plano, em gramas por quilo de peso corporal:**
 
 | Situação | Alvo | Faixa de trabalho |
 |---|---|---|
-| Manutenção ou superávit | 1,95 g/kg | 1,7 a 2,2 g/kg |
-| Déficit | 2,18 g/kg | 2,0 a 2,3 g/kg |
+| Manutenção ou superávit | 2,0 g/kg | 1,7 a 2,2 g/kg |
+| Déficit | 2,2 g/kg | 2,0 a 2,3 g/kg |
 | Piso em qualquer dia | 1,6 g/kg | |
 | Teto prático | 2,3 g/kg | |
 
@@ -35,7 +35,7 @@ A ideia de que o corpo só aproveita 30 g por refeição foi derrubada. Depois d
 
 O piso acontece em outro lugar. Em homens jovens, a síntese miofibrilar estabilizou perto de 0,24 g/kg por refeição, com variação (Moore et al., 2015). Depois de treino de corpo inteiro, 40 g superou 20 g em homens treinados (Macnaughton et al., 2016). A soma prática dessas evidências é:
 
-**Quatro refeições com 0,45 a 0,52 g/kg, espaçadas de 3 a 5 horas, nenhuma abaixo de 30 a 35 g.** Isso cobre quase toda a faixa recomendada por Schoenfeld e Aragon (2018), de 0,4 g/kg por refeição até 0,55 g/kg em dietas de 2,2 g/kg.
+**Quatro refeições com 0,45 a 0,55 g/kg, espaçadas de 3 a 5 horas, nenhuma abaixo de 30 a 35 g.** O topo da faixa é o que fecha a meta de déficit em 4 refeições (2,2 ÷ 4 = 0,55 g/kg), e o conjunto cobre quase toda a faixa recomendada por Schoenfeld e Aragon (2018), de 0,4 g/kg por refeição até 0,55 g/kg em dietas de 2,2 g/kg.
 
 Distribuição importa menos do que o total. Evidências sobre café da manhã sem proteína e massa magra são fracas e divergentes (Hudson et al., 2020), e seis refeições não superaram três em comparações isoenergéticas (Mass Research Review, 2025). A regra sensata é não deixar o café da manhã perto de zero, e escolher o número de refeições que torna o total mais fácil.
 
@@ -45,7 +45,7 @@ Se você perdeu uma refeição, transfira a proteína para as próximas, inclusi
 
 ### Antes de dormir
 
-A digestão de proteína continua à noite e a síntese miofibrilar sobe com proteína pré-sono. Em homens jovens, 30 g de caseína depois de treino à noite aumentaram a síntese noturna em 37% em comparação com proteína sozinha (revisão de 2019). A superioridade em ganho de músculo a longo prazo está confundida por proteína total maior nos estudos (Reis et al., 2021).
+A digestão de proteína continua à noite e a síntese miofibrilar sobe com proteína pré-sono. Em homens jovens, 30 g de caseína depois de treino à noite aumentaram a síntese noturna em 37% em comparação com proteína sozinha (Snijders et al., 2019). A superioridade em ganho de músculo a longo prazo está confundida por proteína total maior nos estudos (Reis et al., 2021).
 
 Na prática, o jantar pós-treino já é a última refeição. Basta chegar a 30 a 40 g nele, e essa proteína conta para a meta do dia.
 
@@ -71,7 +71,7 @@ Em adultos sem doença renal, dietas ricas em proteína não mudaram a taxa de f
 - [Nunes et al., 2022, J Cachexia Sarcopenia Muscle](https://pubmed.ncbi.nlm.nih.gov/35187864/)
 - [Nuckols, crítica ao ponto de corte de 1,62 g/kg](https://www.strongerbyscience.com/?p=61316)
 - [van Loon, 2025, GSSI](https://www.gssiweb.org/research/article/the-impact-of-protein-quantity--quality-distribution--and-food-matrix-on-muscleprotein-synthesis)
-- [Ensaio com 3,2 e 1,6 g/kg, 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11349518/)
+- [Bagheri et al., 2024, Front Nutr](https://pmc.ncbi.nlm.nih.gov/articles/PMC11349518/)
 - [Longland et al., 2016, Am J Clin Nutr](https://pubmed.ncbi.nlm.nih.gov/26817506/)
 - [Trommelen et al., 2023, Cell Rep Med](https://pmc.ncbi.nlm.nih.gov/articles/PMC10772463/)
 - [Moore et al., 2015, J Gerontol A](https://dspace.stir.ac.uk/handle/1893/21695?mode=full)
@@ -79,7 +79,7 @@ Em adultos sem doença renal, dietas ricas em proteína não mudaram a taxa de f
 - [Schoenfeld e Aragon, 2018, JISSN](https://pmc.ncbi.nlm.nih.gov/articles/PMC5828430/)
 - [Hudson, Bergia e Campbell, 2020, Nutrients](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7285146/)
 - [Mass Research Review, 2025](https://massresearchreview.com/2025/06/27/how-much-protein-can-you-really-use-from-a-single-meal/)
-- [Revisão sobre proteína pré-sono, 2019](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6415027/)
+- [Snijders et al., 2019, Front Nutr](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6415027/)
 - [Reis et al., 2021, revisão sistemática](https://pubmed.ncbi.nlm.nih.gov/32811763/)
 - [Churchward-Venne et al., 2012, J Physiol](https://pmc.ncbi.nlm.nih.gov/articles/PMC3424729)
 - [Devries et al., 2018, material da McMaster](https://news.mcmaster.ca/myth-busted-researchers-show-that-a-high-protein-diet-does-not-affect-kidney-function/)

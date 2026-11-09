@@ -1,6 +1,6 @@
 ## 16. Os erros que mais custam músculo
 
-Ao longo de um projeto de 20 semanas, poucos erros respondem pela maior parte do que é perdido. A lista abaixo está ordenada pelo tamanho provável do prejuízo. Vários deles se disfarçam de disciplina.
+Ao longo de um projeto de 20 semanas, poucos erros respondem pela maior parte do que é perdido. A lista abaixo está ordenada pelo tamanho provável do prejuízo, e essa ordem é julgamento do guia, sem estudo que a teste.
 
 ### 1. Interromper o treino
 
@@ -12,11 +12,11 @@ Esse é o erro mais comum e o mais barato de corrigir. Quando o número vem pré
 
 ### 3. Comer pouco e sem regularidade
 
-Pular almoço e treinar à noite com o corpo em jejum, duas ou três vezes por semana, é a receita para treinar mal e dormir mal. Refeições regulares e carboidrato antes de sessões longas elevam o volume de treino (King et al., 2022). Comida é parte do plano, e cumprir a meta do dia conta tanto quanto cumprir a meta de séries.
+Chegar a um treino longo depois de um jejum longo reduz o que a sessão entrega: carboidrato antes ou durante rendeu mais do que placebo ou água, inclusive em quem vinha de 8 horas ou mais sem comer (King et al., 2022). Cumprir a meta do dia conta tanto quanto cumprir a meta de séries.
 
 ### 4. Comer muito achando que o excesso vira músculo
 
-Superávits de 500 a 600 kcal mostraram muito mais gordura e pouca vantagem em massa magra em atletas (Garthe et al., 2013). O teto desse plano é +250 kcal, e só para quem é magro de verdade. Gordura ganha nessa fase terá de sair depois, por meio de um déficit que custa treino.
+Em atletas de elite, comer cerca de 600 kcal por dia a mais que o outro grupo (diferença entre grupos, sem superávit medido) gerou muito mais gordura e nenhuma vantagem significativa em massa magra (Garthe et al., 2013). O teto desse plano é +250 kcal sobre a manutenção medida, e só para quem é magro de verdade. Gordura ganha nessa fase terá de sair depois, por meio de um déficit que custa treino.
 
 ### 5. Déficit agressivo e tardio
 
@@ -28,7 +28,7 @@ Sono curto em déficit deslocou perda de gordura para perda de massa magra (Nede
 
 ### 7. Não treinar o que você não vê
 
-Depois de meses olhando para peito e braços, o que costuma estar quase zerado são posteriores de coxa, dobradiça de quadril, deltoide posterior e panturrilhas. Esses são os grupos que respondem bem com pouco volume novo, e a falta deles aparece em corrida, em postura e em dor no ombro.
+Depois de meses olhando para peito e braços, o que costuma estar quase zerado são posteriores de coxa, dobradiça de quadril, deltoide posterior e panturrilhas. A leitura de que grupos pouco treinados respondem bem a pouco volume novo é heurística, sem ensaio direto.
 
 ### 8. Mudar o programa o tempo todo
 
@@ -44,7 +44,7 @@ Uma pesagem depois de sal, cerveja ou carboidrato não diz nada. A média de 7 d
 
 ### 11. Comer as calorias do relógio
 
-Erro médio de 28% em gasto energético (Choe e Kang, 2025), mais a contagem de calorias líquidas contra calorias brutas, somam uma excelente receita para adicionar 300 kcal por dia sem perceber. Passo é dado, caloria do relógio é chute.
+O erro médio de 28% em gasto energético (Choe e Kang, 2025), somado à diferença entre calorias líquidas e brutas, pode acrescentar 300 kcal por dia sem você perceber. Use o relógio para contar passos e deixe de lado o número de calorias.
 
 ### 12. Beber nas semanas em que o plano precisa de sono
 
@@ -64,7 +64,7 @@ Exercício novo com carga alta é convite para lesão, e uma lesão custa semana
 
 ### 16. Apostar no último mês
 
-As últimas semanas não salvam o projeto, e tentativas de salvá-lo costumam custar caro. Carga de água, jejum, excesso de carboidrato e treino dobrado têm evidência fraca e risco real. O projeto é decidido nas semanas chatas do meio, com peso, comida e fita registrados, e sessão marcada que acontece.
+Carga de água, jejum, excesso de carboidrato e treino dobrado nas últimas semanas têm evidência fraca e risco real (capítulo 15). O resultado sai das semanas do meio, com peso, comida e fita registrados e sessões marcadas que acontecem.
 
 ### Fontes
 

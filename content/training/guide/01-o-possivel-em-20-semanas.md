@@ -6,17 +6,17 @@ Vinte semanas de treino natural sério mudam um corpo de forma visível. A parte
 
 Músculo cresce quando a síntese de proteína miofibrilar fica acima da quebra por tempo suficiente, sessão após sessão, semana após semana. O saldo de cada dia é minúsculo. Ele depende do estímulo do treino, da proteína e de energia suficiente. Passando disso, comida a mais vira gordura, porque o custo energético do tecido muscular é baixo (capítulo 4).
 
-A melhor referência recente de ganho de massa livre de gordura em programas de treino é uma revisão narrativa que resume cerca de 1,4 kg a cada 12 semanas, com intervalo interquartil de 1 a 2 kg (Trexler et al., 2026). Só o resumo foi lido e o ano é inferido, então a precisão é de ordem de grandeza. Projetando linearmente para 20 semanas, dá cerca de 2,3 kg, numa faixa de 1,6 a 3,3 kg. A projeção é aritmética própria.
+A melhor referência recente de ganho de massa livre de gordura em programas de treino é uma revisão narrativa que resume cerca de 1,4 kg a cada 12 semanas, com intervalo interquartil de 1 a 2 kg (Trexler et al., 2026). Só o resumo foi lido e o ano é inferido, então a precisão é de ordem de grandeza. Projetando linearmente para 20 semanas, dá cerca de 2,3 kg, numa faixa de 1,7 a 3,3 kg. A projeção é aritmética própria.
 
 Uma meta-análise em homens saudáveis mostrou ganho médio de massa magra de 1,65 kg, com 1,09 kg em treinados e 1,70 kg em não treinados, sem diferença estatística entre eles; músculo esquelético medido de forma direta subiu 1,11 kg (Benito et al., 2020). Esses programas duravam poucos meses, então as médias subestimam um pouco o que cabe em 20 semanas. Em compensação, todos os estudos incluem água e glicogênio na conta.
 
-Quem sai de uma pausa longa tem um bônus plausível, porque parte do que volta é tecido que já existiu: retomar depois de uma parada recuperou rápido o que tinha sido perdido em ensaio com pessoas não treinadas (Halonen et al., 2024). Mas ninguém mediu quantos quilos isso rende em alguém no seu caso, e não dá para contar com esse bônus como garantido.
+Quem sai de uma pausa longa tem um bônus plausível, porque parte do que volta é tecido que já existiu: retomar depois de uma parada recuperou rápido o que tinha sido perdido em ensaio com pessoas não treinadas (Halonen et al., 2024). Mas ninguém mediu quantos quilos isso rende em quem já treinou por meses antes da pausa, e não dá para contar com esse bônus como garantido.
 
 A conta honesta para um homem natural treinando sério:
 
 | Medida | Faixa realista em 20 semanas |
 |---|---|
-| Massa livre de gordura, incluindo 0,5 a 1 kg de água e glicogênio | +1,5 a +3,5 kg |
+| Massa livre de gordura, incluindo 0,5 a 1 kg de água e glicogênio | +1,0 a +3,5 kg |
 | Tecido contrátil de fato | +0,5 a +2,5 kg |
 | Espessura dos músculos prioritários | +5 a +10% |
 | Circunferência medida na fita | cerca de metade desse percentual |
@@ -40,16 +40,18 @@ O plano separa os cenários pelo percentual de gordura estimado na largada. A ta
 | Ponto de partida | Massa livre de gordura | Gordura | Cintura | Gordura final |
 |---|---|---|---|---|
 | Abaixo de 16% (ramo A) | +2 a +3,5 kg | +0,5 a +1,5 kg | 0 a +2 cm | 16 a 17% |
-| Entre 16 e 24% (ramo B) | +1 a +3 kg | -2 a -4,5 kg | -2 a -5,5 cm | 14 a 21%, conforme a largada |
-| Acima de 24% (ramo C) | +0,5 a +2,5 kg | -4 a -6,5 kg | -4 a -8 cm | 18 a 23,5%, conforme a largada |
+| Entre 16 e 24% (ramo B) | +1 a +3 kg | -2 a -3,9 kg | -2 a -4,7 cm | 14 a 22%, conforme a largada |
+| Acima de 24% (ramo C) | +1 a +2,5 kg | -4 a -6,5 kg | -4 a -8 cm | 18 a 23%, conforme a largada |
 
-Quem começa no ramo B, partindo de 21% de gordura, termina perto de 16 a 18,5%. Quem começa em 27%, termina perto de 20,5 a 23,5%. O ramo C chega bem mais magro, mas ainda com gordura visível. Aceitar isso de antemão evita o erro de encurtar o caminho com déficit agressivo.
+Quem começa no ramo B, partindo de 21% de gordura, termina perto de 16,7 a 18,9%. Quem começa em 27%, termina perto de 20,5 a 23,2%. O ramo C chega bem mais magro, mas ainda com gordura visível. Aceitar isso de antemão evita o erro de encurtar o caminho com déficit agressivo.
+
+O preço dessa escolha precisa ficar explícito. Quem cai no ramo B ou C passa cerca de 8 semanas em déficit de 400 a 650 kcal, e a melhor estimativa disponível aponta ganho líquido de massa magra perto de zero a partir de 500 kcal por dia (Murphy e Koehler, 2022). O plano aceita esse custo porque a cintura pesa mais na aparência dentro da janela. Quem prefere priorizar músculo pode ficar em manutenção até o bloco final e cortar só ali: por aritmética própria, isso poupa cerca de 16.500 kcal de déficit, deixa 1,8 a 2,1 kg de gordura a mais e soma cerca de 2 cm na cintura, em troca de semanas de treino com comida suficiente. É troca entre os dois objetivos, sem resposta certa.
 
 A transformação disponível nessas 20 semanas é uma cintura menor, ombros e costas mais largos, força nitidamente maior e um histórico real de treino. Uma transformação de massa, de ganhar 10 kg de músculo, leva anos.
 
 ### O teto que importa depois da data
 
-O índice de massa livre de gordura (FFMI) divide massa livre de gordura em kg pela altura em metros ao quadrado, com correção de 6,1 × (1,80 - altura em metros). A média de atletas naturais treinados fica perto de 22; o limite observado em atletas naturais testados fica em torno de 25, com poucas pessoas chegando lá (Kouri, citado em Helms, 2014). Atletas universitários medidos por DXA tiveram média de 21,5 a 22,8 (Currier et al., 2019; Magee et al., 2024).
+O índice de massa livre de gordura (FFMI) divide massa livre de gordura em kg pela altura em metros ao quadrado, com correção de 6,3 × (1,80 - altura em metros). A média de atletas naturais treinados fica perto de 22; o limite observado em atletas naturais testados fica em torno de 25, com poucas pessoas chegando lá (Kouri, citado em Helms, 2014). Atletas universitários medidos por DXA tiveram média de 21,5 a 22,8 (Currier et al., 2019; Magee et al., 2024).
 
 Essa régua vale para o plano de longo prazo. Sem ela, é fácil confundir 20 semanas com o projeto inteiro. A meta de muitos anos para quem quer ficar enorme de forma natural é FFMI entre 22 e 25, e a fase seguinte à data é um superávit controlado de 5 a 10%.
 
@@ -62,6 +64,7 @@ Planeje para 0,5 a 2,5 kg de músculo novo e uma cintura que desce, se a gordura
 - [Trexler et al., 2026, Strength Cond J, Fat-free mass accretion](https://www.citedrive.com/en/discovery/fat-free-mass-accretion-limits-targets-and-best-practices/)
 - [Benito et al., 2020, IJERPH, meta-análise](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7068252/)
 - [Halonen et al., 2024, Scand J Med Sci Sports](https://pubmed.ncbi.nlm.nih.gov/39364857/)
+- [Murphy e Koehler, 2022, Scand J Med Sci Sports](https://pubmed.ncbi.nlm.nih.gov/34623696/)
 - [Maeo et al., 2021, Med Sci Sports Exerc](https://pmc.ncbi.nlm.nih.gov/articles/PMC7969179/)
 - [Larsen et al., 2025, Front Physiol](https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1611468/full)
 - [Xia et al., 2025, reportagem da PsyPost](https://www.psypost.org/what-is-the-most-attractive-body-fat-percentage-for-men-new-research-offers-an-answer)

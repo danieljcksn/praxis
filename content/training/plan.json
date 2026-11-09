@@ -1,4 +1,13 @@
 {
+  "calendar": {
+    "inputs": [
+      { "id": "startDate", "label": "Início do plano", "required": true },
+      { "id": "targetDate", "label": "Data-alvo", "required": true },
+      { "id": "holidayStart", "label": "Segunda-feira que abre o bloco de festas de fim de ano", "required": true },
+      { "id": "carnivalStart", "label": "Primeiro dia da janela de Carnaval ou do feriado prolongado que você espera ter", "required": true }
+    ],
+    "note": "Nenhuma data fica gravada neste arquivo. Fases e janelas com anchor igual a calendar usam { date, offset }: offset é o número de dias depois da data citada e, quando negativo, antes dela."
+  },
   "energy": {
     "intro": "Estimativa de partida para o gasto diário. Serve para definir a primeira ingestão; quem manda depois é o peso medido contra a comida registrada.",
     "expressionLanguage": "Expressões em sintaxe JavaScript. log10 é o logaritmo de base 10. round50 arredonda para o múltiplo de 50 mais próximo.",
@@ -7,10 +16,10 @@
       { "id": "heightCm", "label": "Altura (cm)", "required": true, "default": null },
       { "id": "ageYears", "label": "Idade (anos)", "required": true, "default": null },
       { "id": "bodyFatPct", "label": "Gordura corporal estimada (%)", "required": false, "default": null },
-      { "id": "stepsPerDay", "label": "Passos por dia (média real)", "required": true, "default": 10000 },
+      { "id": "stepsPerDay", "label": "Passos por dia (média real, sem os passos dados correndo)", "required": true, "default": 10000 },
       { "id": "liftSessionsPerWeek", "label": "Sessões de musculação por semana", "required": true, "default": 5 },
       { "id": "liftSessionMinutes", "label": "Duração média da sessão (min)", "required": true, "default": 75 },
-      { "id": "runKmPerWeek", "label": "Quilômetros corridos por semana (só o que realmente acontece)", "required": true, "default": 10 }
+      { "id": "runKmPerWeek", "label": "Quilômetros corridos por semana (só o que realmente acontece)", "required": true, "default": 0 }
     ],
     "formulas": {
       "fatFreeMassKg": "bodyweightKg * (1 - bodyFatPct / 100)",
@@ -26,7 +35,7 @@
       "subtotal": "bmr + neatNonSteps + stepsKcal + liftKcalPerDay + runKcalPerDay",
       "maintenance": "subtotal / (1 - tef)",
       "calibrationIntake": "round50(maintenance * 0.95)",
-      "hardFloorKcal": "round50(27.6 * bodyweightKg)"
+      "hardFloorKcal": "round50(27.5 * bodyweightKg)"
     },
     "coefficients": {
       "low": { "bmrOffset": -150, "neatKcalPerKg": 2.3, "walkKcalPerKgKm": 0.45, "liftKcalPerKgMin": 0.022, "runKcalPerKgKm": 0.9, "tef": 0.1 },
@@ -37,7 +46,7 @@
       "stepsPerDay": 10000,
       "liftSessionsPerWeek": 5,
       "liftSessionMinutes": 75,
-      "runKmPerWeek": 10,
+      "runKmPerWeek": 0,
       "bodyFatPct": null,
       "coefficientSet": "mid"
     },
@@ -48,6 +57,7 @@
       "bmrNote": "A fórmula sem gordura corporal usa a equação de Ten-Haaf por peso, altura e idade, menos 90 kcal. A amostra original era bem mais magra (cerca de 12% de gordura), e o desconto de 90 kcal é correção própria para homens acima de 18% de gordura.",
       "walkNote": "O custo de 0,5 kcal por kg por km é líquido do repouso. Relógios costumam mostrar o bruto, cerca de um terço maior.",
       "runNote": "Credite corrida apenas quando ela acontecer. Enquanto não for hábito, runKmPerWeek entra como 0.",
+      "stepsNote": "stepsPerDay exclui os passos dados correndo. Relógio e celular somam tudo: desconte os passos das corridas, senão a corrida entra duas vezes na conta.",
       "wearableNote": "Use relógio ou celular para passos. Erro médio de 28% em gasto energético torna a caloria do relógio inútil para definir comida (Choe e Kang, 2025)."
     }
   },
@@ -65,8 +75,8 @@
       "use": "Só quando não houver medida de pescoço. Serve para classificar o ramo, nunca para citar percentual.",
       "bands": [
         { "branchId": "a", "ratioMaxExclusive": 0.46 },
-        { "branchId": "b", "ratioMin": 0.46, "ratioMaxExclusive": 0.515 },
-        { "branchId": "c", "ratioMin": 0.515 }
+        { "branchId": "b", "ratioMin": 0.46, "ratioMaxExclusive": 0.51 },
+        { "branchId": "c", "ratioMin": 0.51 }
       ],
       "referenceLines": [
         { "ratio": 0.55, "label": "Limite de saúde adotado pelo Departamento de Defesa dos EUA" },
@@ -82,14 +92,14 @@
       "practicalBandPoints": 7,
       "text": "Em homens até 30 anos, a fita leu 2,6 pontos abaixo do DXA em média, com desvio de 3,7 pontos. Isso dá erro individual aproximado de 7 pontos para cima ou para baixo. Por isso a fita escolhe o ramo só de forma provisória e a tendência da cintura ao longo do tempo manda mais que qualquer leitura isolada.",
       "overrides": "DXA em condições iguais substitui a fita. Bioimpedância de academia não substitui: erro médio absoluto de cerca de 21% contra DXA (Carrier et al., 2025).",
-      "tieBreak": "Leituras a menos de 2 cm de cintura menos pescoço de uma linha de corte vão para o ramo mais gordo. Os limites deste arquivo já incorporam essa regra."
+      "tieBreak": "Os cortes deste arquivo são arredondados e ficam deslocados para o lado do ramo mais gordo, porque uma leitura de fita a menos de 2 cm de um corte (cintura menos pescoço) não distingue um ramo do outro. São heurística própria."
     }
   },
   "branches": [
     {
       "id": "a",
       "label": "Ramo A: magro de verdade, constrói",
-      "condition": { "metric": "estimatedBodyFatPct", "maxExclusive": 16.3, "alsoRequires": "Foto matinal relaxada mostrando contorno abdominal" },
+      "condition": { "metric": "estimatedBodyFatPct", "maxExclusive": 16, "alsoRequires": "Foto matinal relaxada mostrando contorno abdominal" },
       "summary": "Só aqui existe superávit, e ele é pequeno. A cintura vigia cada caloria extra.",
       "phases": [
         {
@@ -101,74 +111,69 @@
           "kcalDeltaPct": -5,
           "ratePctPerWeekMin": null,
           "ratePctPerWeekMax": null,
-          "training": "80 a 85 séries por semana. Prioridade é esforço: sem repetição pré-decidida, teste de falha na primeira semana só em máquinas, isoladores e remada apoiada. Dobradiça de quadril em estágios, com 3 ou mais repetições na reserva.",
-          "cardio": "Passos fixos na média das duas primeiras semanas, mirando 10.000. Duas corridas leves de 20 a 25 minutos no dia seguinte às pernas. Bicicleta depois da musculação no máximo 10 minutos.",
+          "training": "82 a 88 séries por semana, subindo nas duas primeiras semanas pela rampa de cada exercício. Prioridade é esforço: sem repetição pré-decidida, teste de falha na primeira semana só nos exercícios liberados, sem posterior de coxa nem panturrilha antes da semana 3. Dobradiça de quadril em estágios, com 3 ou mais repetições na reserva.",
+          "cardio": "Passos fixos na média das duas primeiras semanas, mirando 10.000. Duas corridas leves de 20 a 25 minutos no dia seguinte às pernas; nas semanas 1 e 2, troque por bicicleta leve ou caminhada se as pernas estiverem doloridas. Bicicleta depois da musculação no máximo 10 minutos.",
           "why": "A manutenção é desconhecida e o maior erro seria decidir déficit ou superávit sobre um chute. Comer igual por 28 dias mede o gasto real e entrega o que costuma faltar: comida suficiente todo dia."
         },
         {
           "id": "p2_primeiro_bloco",
           "name": "Primeiro bloco",
-          "weeksFromStart": { "from": 4, "to": 6 },
-          "days": { "anchor": "startDate", "first": 28, "last": 41 },
+          "days": { "anchor": "calendar", "from": { "date": "startDate", "offset": 28 }, "to": { "date": "holidayStart", "offset": -1 } },
           "kcalBase": "M0",
           "kcalDeltaAbs": 200,
           "ratePctPerWeekMin": 0.15,
           "ratePctPerWeekMax": 0.3,
-          "training": "85 a 95 séries por semana.",
+          "training": "94 séries por semana, com a soma feita antes de qualquer déficit.",
           "cardio": "Duas corridas leves de 25 a 30 minutos.",
           "why": "Uma pessoa já magra tem margem para um superávit pequeno. Acima de 0,3% por semana o ganho extra vira quase só gordura."
         },
         {
           "id": "p3_festas",
           "name": "Bloco de festas",
-          "weeksFromStart": { "from": 6, "to": 8 },
-          "days": { "anchor": "startDate", "first": 42, "last": 55 },
+          "days": { "anchor": "calendar", "from": { "date": "holidayStart", "offset": 0 }, "to": { "date": "holidayStart", "offset": 13 } },
           "kcalBase": "M1",
           "kcalDeltaAbs": 0,
           "ratePctPerWeekMin": null,
           "ratePctPerWeekMax": null,
-          "training": "Semana 7: metade das séries, cargas mantidas, 3 ou mais repetições na reserva. Semana 8: volume completo. Marque as sessões antes das festas.",
+          "training": "Primeira semana do bloco: metade das séries, cargas mantidas, 3 ou mais repetições na reserva. Segunda semana: volume completo. Marque pelo menos 6 sessões nestas duas semanas antes de elas chegarem, porque academias fecham em feriado.",
           "cardio": "Passos mantidos. Uma ou duas corridas leves ou bicicleta.",
-          "why": "As festas de fim de ano quebram qualquer plano rígido. Coloque aqui a semana de volume reduzido e a manutenção. Se as festas do seu calendário caírem em outras semanas, mova esta janela para cima delas."
+          "why": "Comer em manutenção e marcar o volume reduzido nestas duas semanas tira a decisão do improviso. A janela segue a data que você informar em holidayStart."
         },
         {
           "id": "p4_bloco_principal",
           "name": "Bloco principal",
-          "weeksFromStart": { "from": 8, "to": 12.71 },
-          "days": { "anchor": "startDate", "first": 56, "last": 88 },
+          "days": { "anchor": "calendar", "from": { "date": "holidayStart", "offset": 14 }, "to": { "date": "carnivalStart", "offset": -1 } },
           "kcalBase": "M1",
           "kcalDeltaAbs": 250,
           "ratePctPerWeekMin": 0.15,
           "ratePctPerWeekMax": 0.3,
-          "training": "95 a 105 séries por semana.",
+          "training": "100 séries por semana, até 105 na segunda metade do bloco se as âncoras subirem e o sono médio passar de 7 horas.",
           "cardio": "Duas corridas de 30 a 35 minutos. Uma delas pode virar tiros de 1 a 2 minutos depois de 4 a 6 semanas de corrida leve.",
           "why": "É o bloco mais longo de treino pesado sem festas. Com a cintura estável e as repetições subindo, o superávit pequeno se justifica.",
-          "gate": { "daysBeforeTarget": 55, "rule": "Se a cintura estiver 2 cm ou mais acima da leitura do dia 27: manutenção até o fim do Carnaval. 3 cm ou mais: manutenção menos 300 kcal até o Carnaval, que continua em manutenção." }
+          "gate": { "anchor": "carnivalStart", "daysFromAnchor": -6, "rule": "Se a cintura estiver 2 cm ou mais acima da leitura do dia 27: manutenção até o fim do Carnaval. 3 cm ou mais: manutenção menos 300 kcal até o Carnaval, que continua em manutenção." }
         },
         {
           "id": "p5_carnaval",
           "name": "Janela de Carnaval",
-          "weeksFromEnd": { "from": 7, "to": 6.29 },
-          "days": { "anchor": "targetDate", "firstDaysBefore": 49, "lastDaysBefore": 45 },
+          "days": { "anchor": "calendar", "from": { "date": "carnivalStart", "offset": 0 }, "to": { "date": "carnivalStart", "offset": 4 } },
           "kcalBase": "M2",
           "kcalDeltaAbs": 0,
           "ratePctPerWeekMin": null,
           "ratePctPerWeekMax": null,
           "training": "Semana de volume reduzido, ou 2 sessões de corpo inteiro se houver viagem.",
           "cardio": "Leve ou nenhum.",
-          "why": "Cinco dias de manutenção cabem no plano. O dano real vem de transformar a festa em semana perdida."
+          "why": "Cinco dias em manutenção cabem no plano sem mudar o resultado. A semana de volume reduzido coincide com a festa para não perder treino."
         },
         {
           "id": "p6_bloco_final",
           "name": "Bloco final",
-          "weeksFromEnd": { "from": 6.29, "to": 2.86 },
-          "days": { "anchor": "targetDate", "firstDaysBefore": 44, "lastDaysBefore": 21 },
+          "days": { "anchor": "calendar", "from": { "date": "carnivalStart", "offset": 5 }, "to": { "date": "targetDate", "offset": -21 } },
           "kcalBase": "M2",
           "kcalDeltaAbs": 0,
           "kcalDeltaAbsIf": { "if": "waistCm - waistCmAtDay27 >= 2", "kcalDeltaAbs": -300 },
           "ratePctPerWeekMin": -0.05,
           "ratePctPerWeekMax": 0.05,
-          "training": "90 a 100 séries por semana, cargas e esforço mantidos. Nenhum exercício novo nos últimos 28 dias.",
+          "training": "100 séries por semana, cargas e esforço mantidos. Nenhum exercício novo nos últimos 28 dias.",
           "cardio": "Duas corridas leves.",
           "why": "O superávit acaba aqui porque a meta agora é chegar firme, com cintura controlada e peso estável."
         },
@@ -183,14 +188,14 @@
           "ratePctPerWeekMax": 0.1,
           "training": "85 a 95 séries até 6 dias antes da data. Última sessão pesada de pernas ou dobradiça 6 dias antes. Na última semana, 3 sessões com 40 a 50% das séries e sem falha. Último pump de superiores 2 ou 3 dias antes, nada na véspera.",
           "cardio": "Última corrida 4 dias antes.",
-          "why": "Três semanas em manutenção devolvem glicogênio, firmam o músculo e deixam o terno previsível. Espere 0,5 a 1 kg a mais na primeira semana, depois peso estável."
+          "why": "Três semanas em manutenção devolvem glicogênio e deixam o peso previsível para qualquer prova de roupa. Espere 0,5 a 1 kg a mais na primeira semana, depois peso estável."
         }
       ]
     },
     {
       "id": "b",
       "label": "Ramo B: intermediário, mantém e depois corta",
-      "condition": { "metric": "estimatedBodyFatPct", "min": 16.3, "maxExclusive": 23.7 },
+      "condition": { "metric": "estimatedBodyFatPct", "min": 16, "maxExclusive": 24 },
       "summary": "Ramo esperado para a maioria. Oito semanas alimentadas para fixar treino e medir manutenção, depois um déficit moderado que termina 3 semanas antes da data.",
       "phases": [
         {
@@ -202,56 +207,52 @@
           "kcalDeltaPct": -5,
           "ratePctPerWeekMin": null,
           "ratePctPerWeekMax": null,
-          "training": "80 a 85 séries por semana. Prioridade é esforço: sem repetição pré-decidida, teste de falha na primeira semana só em máquinas, isoladores e remada apoiada. Dobradiça de quadril em estágios, com 3 ou mais repetições na reserva.",
-          "cardio": "Passos fixos na média das duas primeiras semanas, mirando 10.000. Duas corridas leves de 20 a 25 minutos no dia seguinte às pernas. Bicicleta depois da musculação no máximo 10 minutos.",
+          "training": "82 a 88 séries por semana, subindo nas duas primeiras semanas pela rampa de cada exercício. Prioridade é esforço: sem repetição pré-decidida, teste de falha na primeira semana só nos exercícios liberados, sem posterior de coxa nem panturrilha antes da semana 3. Dobradiça de quadril em estágios, com 3 ou mais repetições na reserva.",
+          "cardio": "Passos fixos na média das duas primeiras semanas, mirando 10.000. Duas corridas leves de 20 a 25 minutos no dia seguinte às pernas; nas semanas 1 e 2, troque por bicicleta leve ou caminhada se as pernas estiverem doloridas. Bicicleta depois da musculação no máximo 10 minutos.",
           "why": "O ramo B não sabe ainda quanto pode comer. Calibrar primeiro evita cortar sobre um número inventado no mesmo mês em que o esforço e a dobradiça entram."
         },
         {
           "id": "p2_primeiro_bloco",
           "name": "Primeiro bloco",
-          "weeksFromStart": { "from": 4, "to": 6 },
-          "days": { "anchor": "startDate", "first": 28, "last": 41 },
+          "days": { "anchor": "calendar", "from": { "date": "startDate", "offset": 28 }, "to": { "date": "holidayStart", "offset": -1 } },
           "kcalBase": "M0",
           "kcalDeltaAbs": 0,
           "ratePctPerWeekMin": null,
           "ratePctPerWeekMax": null,
-          "training": "85 a 95 séries por semana.",
+          "training": "94 séries por semana, com a soma feita antes de qualquer déficit.",
           "cardio": "Duas corridas leves de 25 a 30 minutos.",
           "why": "Mantém a mesma ingestão. Estas duas semanas decidem a licença de déficit e dão o primeiro valor confiável de manutenção."
         },
         {
           "id": "p3_festas",
           "name": "Bloco de festas",
-          "weeksFromStart": { "from": 6, "to": 8 },
-          "days": { "anchor": "startDate", "first": 42, "last": 55 },
+          "days": { "anchor": "calendar", "from": { "date": "holidayStart", "offset": 0 }, "to": { "date": "holidayStart", "offset": 13 } },
           "kcalBase": "M1",
           "kcalDeltaAbs": 0,
           "ratePctPerWeekMin": null,
           "ratePctPerWeekMax": null,
-          "training": "Semana 7: metade das séries, cargas mantidas, 3 ou mais repetições na reserva. Semana 8: volume completo. Marque as sessões antes das festas.",
+          "training": "Primeira semana do bloco: metade das séries, cargas mantidas, 3 ou mais repetições na reserva. Segunda semana: volume completo. Marque pelo menos 6 sessões nestas duas semanas antes de elas chegarem, porque academias fecham em feriado.",
           "cardio": "Passos mantidos. Uma ou duas corridas leves ou bicicleta.",
-          "why": "Déficit durante festas costuma virar culpa e abandono. Treine, coma manutenção e proteja o hábito. Se as festas do seu calendário caírem em outras semanas, mova esta janela para cima delas."
+          "why": "Déficit em cima de festas tem alta chance de virar abandono (heurística, sem ensaio direto). Treine e coma em manutenção. A janela segue a data que você informar em holidayStart."
         },
         {
           "id": "p4_bloco_principal",
           "name": "Bloco principal",
-          "weeksFromStart": { "from": 8, "to": 12.71 },
-          "days": { "anchor": "startDate", "first": 56, "last": 88 },
+          "days": { "anchor": "calendar", "from": { "date": "holidayStart", "offset": 14 }, "to": { "date": "carnivalStart", "offset": -1 } },
           "kcalBase": "M1",
           "kcalDeltaAbs": -500,
-          "kcalDeltaAbsIf": { "if": "estimatedBodyFatPct < 20.9", "kcalDeltaAbs": -400 },
+          "kcalDeltaAbsIf": { "if": "estimatedBodyFatPct < 21", "kcalDeltaAbs": -400 },
           "ratePctPerWeekMin": -0.65,
-          "ratePctPerWeekMax": -0.4,
-          "training": "90 a 100 séries por semana, nunca aumentadas em déficit.",
+          "ratePctPerWeekMax": -0.3,
+          "training": "94 séries por semana, o mesmo volume do bloco anterior. Volume nunca sobe em déficit.",
           "cardio": "Duas corridas leves de 30 a 35 minutos. Sem tiros.",
           "why": "A gordura é o que mais aparece, e o melhor bloco para cortar é este, longo e sem festas. Exige licença de déficit.",
-          "recompositionClause": "Se a cintura caiu 1,5 cm ou mais entre os dias 14 e 41 e pelo menos 2 âncoras ganharam 2 ou mais repetições com a mesma carga, fique em manutenção e comece o déficit até o dia 70 no máximo."
+          "recompositionClause": "Se a cintura caiu 1,5 cm ou mais entre o dia 14 e a véspera do bloco de festas e pelo menos 2 âncoras ganharam 2 ou mais repetições com a mesma carga, fique em manutenção e comece o déficit no máximo 14 dias depois do início do bloco principal."
         },
         {
           "id": "p5_carnaval",
           "name": "Janela de Carnaval",
-          "weeksFromEnd": { "from": 7, "to": 6.29 },
-          "days": { "anchor": "targetDate", "firstDaysBefore": 49, "lastDaysBefore": 45 },
+          "days": { "anchor": "calendar", "from": { "date": "carnivalStart", "offset": 0 }, "to": { "date": "carnivalStart", "offset": 4 } },
           "kcalBase": "M2",
           "kcalDeltaAbs": 0,
           "ratePctPerWeekMin": null,
@@ -263,13 +264,12 @@
         {
           "id": "p6_bloco_final",
           "name": "Bloco final",
-          "weeksFromEnd": { "from": 6.29, "to": 2.86 },
-          "days": { "anchor": "targetDate", "firstDaysBefore": 44, "lastDaysBefore": 21 },
+          "days": { "anchor": "calendar", "from": { "date": "carnivalStart", "offset": 5 }, "to": { "date": "targetDate", "offset": -21 } },
           "kcalBase": "M2",
           "kcalDeltaAbs": -400,
           "ratePctPerWeekMin": -0.5,
           "ratePctPerWeekMax": -0.3,
-          "training": "80 a 90 séries por semana, cargas e esforço mantidos. Nenhum exercício novo nos últimos 28 dias.",
+          "training": "88 séries por semana, cargas e esforço mantidos. Nenhum exercício novo nos últimos 28 dias.",
           "cardio": "Duas corridas leves.",
           "why": "Último corte, menor que o anterior. Nenhum déficit começa a menos de 40 dias da data, e nunca se compensa atraso com déficit maior."
         },
@@ -284,14 +284,14 @@
           "ratePctPerWeekMax": 0.1,
           "training": "85 a 95 séries até 6 dias antes da data. Última sessão pesada de pernas ou dobradiça 6 dias antes. Na última semana, 3 sessões com 40 a 50% das séries e sem falha. Último pump de superiores 2 ou 3 dias antes, nada na véspera.",
           "cardio": "Última corrida 4 dias antes.",
-          "why": "Terminar o déficit 3 semanas antes recupera glicogênio e deixa o peso estável para o ajuste final do terno. Espere 0,5 a 1 kg a mais na primeira semana."
+          "why": "Terminar o déficit 3 semanas antes recupera glicogênio e deixa o peso estável para o ajuste final da roupa. Espere 0,5 a 1 kg a mais na primeira semana."
         }
       ]
     },
     {
       "id": "c",
       "label": "Ramo C: gordura alta, corta cedo",
-      "condition": { "metric": "estimatedBodyFatPct", "min": 23.7 },
+      "condition": { "metric": "estimatedBodyFatPct", "min": 24 },
       "summary": "O maior ganho visual disponível é tirar gordura. Déficit começa cedo, com licença, e nunca passa de manutenção menos 650 kcal.",
       "phases": [
         {
@@ -303,28 +303,26 @@
           "kcalDeltaPct": -5,
           "ratePctPerWeekMin": null,
           "ratePctPerWeekMax": null,
-          "training": "80 a 85 séries por semana. Prioridade é esforço: sem repetição pré-decidida, teste de falha na primeira semana só em máquinas, isoladores e remada apoiada. Dobradiça de quadril em estágios, com 3 ou mais repetições na reserva.",
-          "cardio": "Passos fixos na média das duas primeiras semanas, mirando 10.000. Duas corridas leves de 20 a 25 minutos no dia seguinte às pernas. Bicicleta depois da musculação no máximo 10 minutos.",
+          "training": "82 a 88 séries por semana, subindo nas duas primeiras semanas pela rampa de cada exercício. Prioridade é esforço: sem repetição pré-decidida, teste de falha na primeira semana só nos exercícios liberados, sem posterior de coxa nem panturrilha antes da semana 3. Dobradiça de quadril em estágios, com 3 ou mais repetições na reserva.",
+          "cardio": "Passos fixos na média das duas primeiras semanas, mirando 10.000. Duas corridas leves de 20 a 25 minutos no dia seguinte às pernas; nas semanas 1 e 2, troque por bicicleta leve ou caminhada se as pernas estiverem doloridas. Bicicleta depois da musculação no máximo 10 minutos.",
           "why": "Mesmo com gordura alta, 28 dias alimentados fazem o treino ficar sério e dão a manutenção de que o déficit depende."
         },
         {
           "id": "p2_primeiro_bloco",
           "name": "Primeiro bloco",
-          "weeksFromStart": { "from": 4, "to": 6 },
-          "days": { "anchor": "startDate", "first": 28, "last": 41 },
+          "days": { "anchor": "calendar", "from": { "date": "startDate", "offset": 28 }, "to": { "date": "holidayStart", "offset": -1 } },
           "kcalBase": "M0",
           "kcalDeltaAbs": -500,
           "ratePctPerWeekMin": -0.8,
-          "ratePctPerWeekMax": -0.5,
-          "training": "85 séries por semana, sem aumentar.",
+          "ratePctPerWeekMax": -0.4,
+          "training": "88 séries por semana, sem aumentar.",
           "cardio": "Duas corridas leves de 25 a 30 minutos.",
           "why": "Com gordura alta o déficit já paga logo. A licença exige registro, proteína, treinos e sono em ordem."
         },
         {
           "id": "p3_festas",
           "name": "Bloco de festas",
-          "weeksFromStart": { "from": 6, "to": 8 },
-          "days": { "anchor": "startDate", "first": 42, "last": 55 },
+          "days": { "anchor": "calendar", "from": { "date": "holidayStart", "offset": 0 }, "to": { "date": "holidayStart", "offset": 13 } },
           "kcalBase": "M1",
           "kcalDeltaAbs": -500,
           "dayRules": [
@@ -334,46 +332,43 @@
           ],
           "ratePctPerWeekMin": null,
           "ratePctPerWeekMax": null,
-          "training": "Semana 7: metade das séries, cargas mantidas, 3 ou mais repetições na reserva. Semana 8: volume completo.",
+          "training": "Primeira semana do bloco: metade das séries, cargas mantidas, 3 ou mais repetições na reserva. Segunda semana: volume completo. Marque pelo menos 6 sessões antes de o bloco começar.",
           "cardio": "Passos mantidos. Uma ou duas corridas leves ou bicicleta.",
-          "why": "Três dias de déficit antes das festas, manutenção durante elas, volta firme depois. Janela móvel: encaixe em cima das festas do seu calendário."
+          "why": "Três dias de déficit antes das festas, manutenção durante elas e dois dias em manutenção menos 650 para retomar. A janela segue a data que você informar em holidayStart."
         },
         {
           "id": "p4_bloco_principal",
           "name": "Bloco principal",
-          "weeksFromStart": { "from": 8, "to": 12.71 },
-          "days": { "anchor": "startDate", "first": 56, "last": 88 },
+          "days": { "anchor": "calendar", "from": { "date": "holidayStart", "offset": 14 }, "to": { "date": "carnivalStart", "offset": -1 } },
           "kcalBase": "M1",
           "kcalDeltaAbs": -650,
           "ratePctPerWeekMin": -0.8,
-          "ratePctPerWeekMax": -0.5,
-          "training": "90 a 100 séries por semana, nunca aumentadas em déficit.",
+          "ratePctPerWeekMax": -0.4,
+          "training": "88 séries por semana, o mesmo volume do início. Volume nunca sobe em déficit.",
           "cardio": "Duas corridas leves de 30 a 35 minutos. Sem tiros.",
           "why": "Maior déficit do plano. Só existe aqui, em quem tem bastante gordura para perder, e sempre acima do piso calórico."
         },
         {
           "id": "p5_carnaval",
           "name": "Janela de Carnaval",
-          "weeksFromEnd": { "from": 7, "to": 6.29 },
-          "days": { "anchor": "targetDate", "firstDaysBefore": 49, "lastDaysBefore": 45 },
+          "days": { "anchor": "calendar", "from": { "date": "carnivalStart", "offset": 0 }, "to": { "date": "carnivalStart", "offset": 4 } },
           "kcalBase": "M2",
           "kcalDeltaAbs": 0,
           "ratePctPerWeekMin": null,
           "ratePctPerWeekMax": null,
           "training": "Semana de volume reduzido, ou 2 sessões de corpo inteiro se houver viagem.",
           "cardio": "Leve ou nenhum.",
-          "why": "Depois de semanas em déficit, cinco dias em manutenção preservam adesão sem custo real."
+          "why": "Depois de semanas em déficit, cinco dias em manutenção ajudam a manter a adesão. Pausas assim reduziram fome sem poupar mais músculo (Peos et al., 2021)."
         },
         {
           "id": "p6_bloco_final",
           "name": "Bloco final",
-          "weeksFromEnd": { "from": 6.29, "to": 2.86 },
-          "days": { "anchor": "targetDate", "firstDaysBefore": 44, "lastDaysBefore": 21 },
+          "days": { "anchor": "calendar", "from": { "date": "carnivalStart", "offset": 5 }, "to": { "date": "targetDate", "offset": -21 } },
           "kcalBase": "M2",
           "kcalDeltaAbs": -450,
           "ratePctPerWeekMin": -0.6,
           "ratePctPerWeekMax": -0.35,
-          "training": "80 a 90 séries por semana, cargas e esforço mantidos. Nenhum exercício novo nos últimos 28 dias.",
+          "training": "88 séries por semana, cargas e esforço mantidos. Nenhum exercício novo nos últimos 28 dias.",
           "cardio": "Duas corridas leves.",
           "why": "Déficit mais brando no fim. Se a projeção ficar curta, aceite a cintura um pouco maior."
         },
@@ -395,8 +390,8 @@
   ],
   "macros": {
     "proteinGPerKg": {
-      "maintenanceOrSurplus": 1.95,
-      "deficit": 2.18,
+      "maintenanceOrSurplus": 2.0,
+      "deficit": 2.2,
       "dailyFloor": 1.6,
       "practicalCeiling": 2.3,
       "note": "A evidência achata perto de 1,6 g/kg, com incerteza até 2,2 (Morton et al., 2018). O alvo maior no déficit cobre o intervalo inteiro. Conte toda a proteína do dia, incluindo arroz e feijão."
@@ -411,23 +406,23 @@
     "perMeal": {
       "feedingsDefault": 4,
       "proteinGPerKgPerMealMin": 0.45,
-      "proteinGPerKgPerMealMax": 0.52,
+      "proteinGPerKgPerMealMax": 0.55,
       "absoluteFloorG": 30,
       "spacingHours": { "min": 3, "max": 5 },
       "note": "Quatro refeições espaçadas de 3 a 5 horas; nenhuma abaixo de 30 a 35 g. A última perto de dormir; o jantar pós-treino cumpre esse papel. Se pular uma refeição, leve a proteína para as seguintes: doses grandes são usadas ao longo de horas (Trommelen et al., 2023)."
     },
     "fatGPerKgMin": 0.75,
     "fatGPerKgByPhase": {
-      "maintenanceOrSurplus": { "min": 0.92, "max": 0.98 },
+      "maintenanceOrSurplus": { "min": 0.9, "max": 1.0 },
       "deficit": { "min": 0.8, "max": 0.8 }
     },
     "fatPctEnergyMin": 20,
     "fibreG": {
       "per1000Kcal": 14,
-      "dailyMin": 30,
-      "dailyMax": 45,
+      "dailyMin": 34,
+      "dailyMax": 49,
       "finalTwoDaysMaxPer1000Kcal": 14,
-      "note": "Meta prática. A pesquisa verificada não trouxe alvo específico de fibra para quem treina. Arroz com feijão já resolve a maior parte."
+      "note": "Meta prática, sem alvo específico de fibra para quem treina na pesquisa verificada. No dia a dia, 14 g por 1.000 kcal é o mínimo e pode ser ultrapassado; nos dois últimos dias antes da data o mesmo número vira teto. Arroz com feijão já resolve a maior parte."
     },
     "carbsRule": {
       "rule": "O que sobra das calorias depois de proteína e gordura, com piso de 3 g/kg por dia.",
@@ -445,18 +440,21 @@
       "sundayDecision": "Uma decisão por domingo, sempre com a média de 7 dias e a cintura juntas.",
       "tape": "Domingo: cintura no umbigo, pescoço, ombros, peito, quadril, coxa e braço. Fita sempre no mesmo lugar, nas mesmas condições.",
       "photos": "A cada 2 semanas: mesmo lugar, luz, distância e horário, relaxado, de frente, lado e costas.",
-      "dailyRatings": "Toda manhã, de 1 a 5: sono, energia, dor muscular, estresse e motivação. Menos de 30 segundos.",
+      "dailyRatings": "Toda manhã, de 1 a 5: sono, energia, dor muscular, estresse e motivação. Anote também as horas dormidas, porque a média da semana decide a licença de déficit. Menos de 30 segundos.",
       "anchors": ["Incline Bench Press (Dumbbell)", "Lat Pulldown (Cable)", "Iso-Lateral Row (Machine)", "Hack Squat (Machine)", "Seated Leg Curl (Machine)"],
       "anchorRule": "Compare só o mesmo exercício, na mesma máquina e na mesma academia. Anote a academia no Hevy.",
-      "firstWeekFailureTest": "Na semana 1, leve a última série à falha técnica apenas em máquinas, isoladores e remada com peito apoiado. Nunca em agachamento, dobradiça, remada baixa no cabo ou remada com barra."
+      "firstWeekFailureTest": "Na semana 1, leve a última série à falha técnica só em supino e crucifixo na máquina, puxada, remada iso-lateral, remada com peito apoiado, pullover, elevações laterais, crucifixo inverso, extensora e braços. Nunca em agachamento, hack squat, leg press, panturrilha em pé (a carga passa pela coluna), desenvolvimento, dobradiça, elevação pélvica, remada baixa no cabo ou remada com barra. Posterior de coxa e panturrilha só entram a partir da semana 3, e a panturrilha vai para o leg press quando for à falha.",
+      "effortLog": "Registre o RPE da última série no Hevy. Todo domingo, conte que parte das séries sem falha terminou em um número redondo pré-decidido: essa parcela precisa cair semana a semana.",
+      "recalibration": "A cada 4 semanas, repita o teste de falha em duas máquinas liberadas e compare as repetições com o que você achava ter na reserva.",
+      "offRamp": "Se pesar comida ou subir na balança todo dia começar a produzir compulsão, restrição que você não consegue soltar ou refeições evitadas, afrouxe na mesma semana (estime porções, pese-se uma vez por semana) e procure um profissional de saúde."
     },
     "maintenanceEstimate": {
       "formula": "meanLoggedKcal + kgLostPerWeek * 1100",
       "note": "M é a média de calorias registradas nos dias limpos mais 1.100 kcal por dia para cada kg perdido por semana. Se o peso subiu, kgLostPerWeek é negativo e o termo é subtraído.",
       "checkpoints": [
-        { "id": "M0", "dayFromStart": 27, "rule": "Continua igual à ingestão de calibração, salvo se os 14 dias limpos indicarem erro acima de 500 kcal por dia (cerca de 0,45 kg por semana). Nesse caso, ande metade do caminho até o valor calculado." },
-        { "id": "M1", "dayFromStart": 41, "rule": "Primeiro valor real, com 28 dias limpos (dias 14 a 41). Margem ainda de 290 a 350 kcal por dia." },
-        { "id": "M2", "daysBeforeTarget": 55, "rule": "Atualização usando só dias limpos." },
+        { "id": "M0", "dayFromStart": 27, "rule": "Continua igual à ingestão de calibração, salvo se os 14 dias limpos indicarem erro acima de 500 kcal por dia (cerca de 0,45 kg por semana). Nesse caso, ande metade do caminho até o valor calculado.", "ruleNoLoad": "Sem carga de creatina não há dia limpo até aqui: M0 fica igual à ingestão de calibração." },
+        { "id": "M1", "anchor": "holidayStart", "daysFromAnchor": -1, "rule": "Primeiro valor real, com 28 dias limpos, do dia 14 até a véspera do bloco de festas. Margem ainda de 290 a 350 kcal por dia.", "ruleNoLoad": "Sem carga de creatina só há 14 dias limpos: use a regra do M0 (muda só com erro acima de 500 kcal por dia, andando metade do caminho)." },
+        { "id": "M2", "anchor": "carnivalStart", "daysFromAnchor": -6, "rule": "Atualização usando só dias limpos." },
         { "id": "M3", "daysBeforeTarget": 21, "rule": "Última atualização, usando só dias limpos, para o bloco de manutenção." }
       ]
     },
@@ -464,34 +462,36 @@
       "creatineLoad": "Se fizer a carga de creatina (dias 0 a 4), o peso sobe por água entre 0,5 e 1 kg ou mais. Não reduza calorias e não conte como músculo. Comece a média de peso válida no dia 14.",
       "noLoad": "Se tomar 3 a 5 g por dia sem carga (histórico familiar forte de calvície precoce ou desconforto gástrico), a água entra ao longo de 3 a 4 semanas e os dados limpos só começam no dia 28.",
       "rule": "Nas duas primeiras semanas, o peso não muda comida. O que muda comida nesse período é erro grosseiro: fome persistente, mais de 2 refeições perdidas, passos muito abaixo do planejado.",
-      "noScale": { "fromDay": 0, "toDay": 13 }
+      "noScale": { "fromDay": 0, "toDay": 13, "toDayNoLoad": 27 }
     },
     "ignoreScaleWindows": [
-      { "anchor": "startDate", "firstDay": 0, "lastDay": 13, "reason": "Creatina e início do plano" },
-      { "anchor": "startDate", "firstDay": 45, "lastDay": 62, "reason": "Festas de fim de ano e retorno" },
-      { "anchor": "targetDate", "firstDaysBefore": 49, "lastDaysBefore": 41, "reason": "Carnaval e retorno" }
+      { "anchor": "startDate", "firstDay": 0, "lastDay": 13, "lastDayNoLoad": 27, "reason": "Creatina e início do plano" },
+      { "anchor": "holidayStart", "firstDay": 3, "lastDay": 19, "reason": "Festas de fim de ano e retorno" },
+      { "anchor": "carnivalStart", "firstDay": 0, "lastDay": 8, "reason": "Carnaval e retorno" }
     ],
     "deficitLicence": {
-      "text": "Requisitos para qualquer déficit começar. Falhou: fica em manutenção e testa de novo a cada domingo. Licença tardia encurta o déficit, nunca aumenta.",
+      "text": "Requisitos para qualquer déficit começar. São heurística própria, sem ensaio direto. Falhou: fica em manutenção e testa de novo a cada domingo. Licença tardia encurta o déficit, nunca aumenta.",
       "requires": [
         "Pelo menos 12 de 14 dias registrados e pesados.",
         "Proteína igual ou acima de 1,7 g/kg em pelo menos 12 dias.",
         "Pelo menos 8 sessões de musculação.",
         "Sono médio de 7 horas ou mais.",
-        "Nenhuma pendência de dor em lombar ou ombro."
+        "Nenhuma dor articular ou na coluna sem resolver."
       ],
-      "branchCWindow": { "firstDay": 14, "lastDay": 27 },
-      "branchBWindow": { "firstDay": 28, "lastDay": 41 },
-      "branchBAlsoRequires": "Pelo menos 6 sessões e nenhum intervalo acima de 7 dias nos dias 42 a 55.",
+      "branchCWindow": { "anchor": "startDate", "firstDay": 14, "lastDay": 27 },
+      "branchBWindow": { "anchor": "holidayStart", "firstDay": -14, "lastDay": -1 },
+      "branchBAlsoRequires": "Ramo B: pelo menos 6 sessões e nenhum intervalo acima de 7 dias durante o bloco de festas.",
       "latestStart": { "daysBeforeTarget": 40 }
     },
     "branchDecision": {
       "text": "Fita nos dias 0 e 27. O ramo é a média das duas leituras e vale a partir do dia 28. A fase 1 é igual nos três ramos, então uma fita errada não custa nada até lá.",
-      "reTape": { "dayFromStart": 62, "effectiveDay": 63, "text": "Pode mudar um ramo." },
-      "exits": { "estimatedBodyFatPctMax": 14.7, "bodyweightRatioToStartMax": 0.91, "text": "Com qualquer uma das duas, vá para manutenção imediatamente." }
+      "reTape": { "anchor": "holidayStart", "daysFromAnchor": 20, "effectiveDaysFromAnchor": 21, "text": "Reteste no primeiro domingo limpo depois das festas: pode mudar um ramo." },
+      "exits": { "estimatedBodyFatPctMax": 15, "bodyweightRatioToStartMax": 0.9, "text": "Em semana de déficit, com gordura estimada em 15% ou menos ou peso em 90% do inicial ou menos, vá para manutenção imediatamente." }
     },
     "variables": {
-      "sleepMeanH": "Sono médio na semana (horas)",
+      "branch": "Ramo em vigor (a, b ou c)",
+      "consecutiveAnchorDownSundays": "Domingos seguidos com anchorsDownCount em 2 ou mais",
+      "sleepMeanH": "Sono médio na semana (horas), da anotação diária de horas dormidas",
       "energyMean7d": "Energia média de 7 dias, de 1 a 5",
       "inDeficit": "Semana em déficit",
       "anchorsDownCount": "Número de âncoras com 2 ou mais repetições a menos, mesma carga, em 2 sessões seguidas",
@@ -517,36 +517,45 @@
       "meanKgAt14DaysBefore": "Média de peso de 7 dias registrada 14 dias antes da data",
       "consecutiveSundays": "Número de domingos seguidos em que a condição apareceu"
     },
-    "ruleOrder": "Avaliação no domingo, na ordem abaixo: a primeira regra que combinar decide. kcalChange pode ser número (delta em kcal por dia), 0, null (sem mudança e sem contagem), ou 'toMaintenance'.",
+    "ruleOrder": "Avaliação no domingo, na ordem abaixo: a primeira regra que combinar decide, exceto as marcadas com continueEvaluating, que só alteram o treino e deixam a avaliação seguir. kcalChange pode ser número (delta em kcal por dia), 0, null (sem mudança e sem contagem), ou 'toMaintenance'. Toda mudança passa por kcalClamp.",
+    "kcalClamp": {
+      "text": "O alvo final nunca passa de manutenção medida mais 250 kcal, nunca fica abaixo de manutenção menos 650 e nunca fica abaixo do piso calórico. Se manutenção menos 650 cair abaixo do piso, vale o piso.",
+      "maxDeltaFromMaintenance": 250,
+      "minDeltaFromMaintenance": -650,
+      "floorFormula": "hardFloorKcal"
+    },
     "rules": [
       { "id": "recuperacao_sono", "if": "inDeficit && sleepMeanH < 7", "ifLabel": "Sono médio abaixo de 7 horas em semana de déficit", "then": "Manutenção por 7 dias. Não reinicia a contagem de 14 dias de mudança de calorias.", "kcalChange": "toMaintenance" },
-      { "id": "recuperacao_energia", "if": "energyMean7d <= 2", "ifLabel": "Energia em 2 ou menos por 7 dias", "then": "Manutenção por 7 dias.", "kcalChange": "toMaintenance" },
-      { "id": "recuperacao_ancoras", "if": "anchorsDownCount >= 2", "ifLabel": "Duas ou mais âncoras com 2 repetições a menos na mesma carga, 2 sessões seguidas", "then": "Adicione 150 a 200 kcal de carboidrato antes do treino. Se repetir na semana seguinte: manutenção e séries reduzidas em 30 a 50% por 7 dias.", "kcalChange": 175 },
-      { "id": "estresse_alto", "if": "stressRating >= 4", "ifLabel": "Estresse em 4 ou 5", "then": "Séries reduzidas em um terço, cargas mantidas.", "kcalChange": 0 },
-      { "id": "saida", "if": "estimatedBodyFatPct <= 14.7 || bodyweightRatioToStart <= 0.91", "ifLabel": "Saída: gordura estimada em 14,7% ou menos, ou peso em 91% do inicial ou menos", "then": "Vá para manutenção imediatamente.", "kcalChange": "toMaintenance" },
-      { "id": "semana_invalida", "if": "loggedDays < 6 || weighIns < 5 || stepsDeltaFromBaseline > 1000 || illness || inIgnoredWindow", "ifLabel": "Semana inválida: menos de 6 dias registrados, menos de 5 pesagens, passos fora em mais de 1.000 por dia, doença ou janela ignorada", "then": "Sem mudança de calorias. Corrija a causa.", "kcalChange": null },
-      { "id": "carencia", "if": "daysSinceLastCalorieChange < 14", "ifLabel": "Última mudança de calorias há menos de 14 dias", "then": "Não mude. Fases 1, 3 e Carnaval só mudam por M0, M1 ou recuperação.", "kcalChange": null },
+      { "id": "recuperacao_energia", "if": "inDeficit && energyMean7d <= 2", "ifLabel": "Energia em 2 ou menos por 7 dias em semana de déficit", "then": "Manutenção por 7 dias.", "kcalChange": "toMaintenance" },
+      { "id": "recuperacao_ancoras_1", "if": "inDeficit && anchorsDownCount >= 2 && consecutiveAnchorDownSundays == 1", "ifLabel": "Em déficit, duas ou mais âncoras com 2 repetições a menos na mesma carga, 2 sessões seguidas, primeiro domingo", "then": "Adicione 150 a 200 kcal de carboidrato antes do treino, uma única vez nesta sequência.", "kcalChange": 175 },
+      { "id": "recuperacao_ancoras_2", "if": "anchorsDownCount >= 2 && consecutiveAnchorDownSundays >= 2", "ifLabel": "Queda de âncoras repetida no domingo seguinte", "then": "Manutenção por 7 dias, se estiver em déficit, e séries reduzidas em 30 a 50% por 7 dias, cargas mantidas.", "kcalChange": "toMaintenance" },
+      { "id": "saida", "if": "inDeficit && (estimatedBodyFatPct <= 15 || bodyweightRatioToStart <= 0.9)", "ifLabel": "Saída do déficit: gordura estimada em 15% ou menos, ou peso em 90% do inicial ou menos", "then": "Vá para manutenção imediatamente.", "kcalChange": "toMaintenance" },
+      { "id": "estresse_alto", "if": "stressRating >= 4", "ifLabel": "Estresse em 4 ou 5", "then": "Só treino: séries reduzidas em um terço, cargas mantidas. Continue descendo a lista para decidir a comida.", "kcalChange": null, "continueEvaluating": true },
+      { "id": "semana_invalida", "if": "loggedDays < 6 || weighIns < 5 || stepsDeltaFromBaseline > 1000 || stepsDeltaFromBaseline < -1000 || illness || inIgnoredWindow", "ifLabel": "Semana inválida: menos de 6 dias registrados, menos de 5 pesagens, passos fora em mais de 1.000 por dia para cima ou para baixo, doença ou janela ignorada", "then": "Sem mudança de calorias. Corrija a causa.", "kcalChange": null },
+      { "id": "carencia", "if": "daysSinceLastCalorieChange < 14 || phase == 'p1_calibracao' || phase == 'p3_festas' || phase == 'p5_carnaval'", "ifLabel": "Última mudança de calorias há menos de 14 dias, ou fase de calibração, festas ou Carnaval", "then": "Não mude. Essas fases só mudam por M0, M1 ou recuperação.", "kcalChange": null },
       { "id": "deficit_cintura_ok", "if": "inDeficit && waistSlopeCmPerWeek4w <= -0.3", "ifLabel": "Déficit com cintura caindo 0,3 cm por semana ou mais em 4 semanas", "then": "Nenhuma redução, mesmo com peso lento.", "kcalChange": 0 },
       { "id": "deficit_rapido", "if": "inDeficit && R < bandMin - 0.1 && consecutiveSundays >= 2", "ifLabel": "Perdendo mais rápido que o teto da faixa em mais de 0,1 ponto, 2 domingos seguidos", "then": "Adicione 150 kcal.", "kcalChange": 150 },
       { "id": "deficit_lento_1", "if": "inDeficit && R > bandMax && waistChange4wCm >= 0 && consecutiveSundays >= 3 && timesBelowBand == 0", "ifLabel": "Abaixo da faixa por 3 semanas válidas, cintura estável, primeira vez", "then": "Audite registro e passos, depois corte 150 kcal de carboidrato.", "kcalChange": -150 },
       { "id": "deficit_lento_2", "if": "inDeficit && R > bandMax && waistChange4wCm >= 0 && consecutiveSundays >= 3 && timesBelowBand == 1", "ifLabel": "Abaixo da faixa de novo, segunda vez", "then": "Some 2.000 passos por dia, com teto de 12.000 (cerca de 70 kcal).", "kcalChange": 0 },
       { "id": "deficit_lento_3", "if": "inDeficit && R > bandMax && waistChange4wCm >= 0 && consecutiveSundays >= 3 && timesBelowBand == 2", "ifLabel": "Abaixo da faixa de novo, terceira vez", "then": "Corte 100 kcal.", "kcalChange": -100 },
       { "id": "deficit_na_faixa", "if": "inDeficit && R >= bandMin && R <= bandMax", "ifLabel": "Dentro da faixa", "then": "Nada.", "kcalChange": 0 },
-      { "id": "build_rapido", "if": "phase != 'p7_manutencao_pico' && !inDeficit && (R > 0.3 || waistChange4wCm >= 1.5)", "ifLabel": "Construção: ganho acima de 0,3% por semana ou cintura subiu 1,5 cm em 4 semanas", "then": "Corte 200 kcal.", "kcalChange": -200 },
-      { "id": "build_cintura", "if": "phase != 'p7_manutencao_pico' && !inDeficit && waistChange4wCm >= 1.0 && waistChange4wCm < 1.5", "ifLabel": "Construção: cintura subiu entre 1,0 e 1,4 cm em 4 semanas", "then": "Corte 100 kcal.", "kcalChange": -100 },
-      { "id": "build_ok", "if": "phase != 'p7_manutencao_pico' && !inDeficit && anchorPrWeeks < 3 && waistChange4wCm < 1.0", "ifLabel": "Construção: repetições subindo e cintura estável", "then": "Nenhuma mudança, mesmo com peso estável.", "kcalChange": 0 },
-      { "id": "build_lento", "if": "phase != 'p7_manutencao_pico' && !inDeficit && anchorPrWeeks >= 3 && R <= 0 && sleepMeanH >= 7 && loggedDays >= 6", "ifLabel": "Construção: 3 a 4 semanas sem recorde de âncora, peso estável ou caindo, sono e registro bons", "then": "Adicione 150 kcal.", "kcalChange": 150 },
+      { "id": "build_rapido", "if": "branch == 'a' && (phase == 'p2_primeiro_bloco' || phase == 'p4_bloco_principal' || phase == 'p6_bloco_final') && !inDeficit && (R > 0.3 || waistChange4wCm >= 1.5)", "ifLabel": "Ramo A, construção: ganho acima de 0,3% por semana ou cintura subiu 1,5 cm em 4 semanas", "then": "Corte 200 kcal.", "kcalChange": -200 },
+      { "id": "build_cintura", "if": "branch == 'a' && (phase == 'p2_primeiro_bloco' || phase == 'p4_bloco_principal' || phase == 'p6_bloco_final') && !inDeficit && waistChange4wCm >= 1.0 && waistChange4wCm < 1.5", "ifLabel": "Ramo A, construção: cintura subiu entre 1,0 e 1,4 cm em 4 semanas", "then": "Corte 100 kcal.", "kcalChange": -100 },
+      { "id": "build_ok", "if": "branch == 'a' && (phase == 'p2_primeiro_bloco' || phase == 'p4_bloco_principal' || phase == 'p6_bloco_final') && !inDeficit && anchorPrWeeks < 3 && waistChange4wCm < 1.0", "ifLabel": "Ramo A, construção: repetições subindo e cintura estável", "then": "Nenhuma mudança, mesmo com peso estável.", "kcalChange": 0 },
+      { "id": "build_lento", "if": "branch == 'a' && (phase == 'p2_primeiro_bloco' || phase == 'p4_bloco_principal') && !inDeficit && anchorPrWeeks >= 3 && R <= 0 && sleepMeanH >= 7 && loggedDays >= 6", "ifLabel": "Ramo A, construção: 3 a 4 semanas sem recorde de âncora, peso estável ou caindo, sono e registro bons", "then": "Adicione 150 kcal e suba M em 150: peso parado com esse superávit prova que a manutenção era maior que a medida.", "kcalChange": 150, "rebaseMaintenance": 150 },
       { "id": "hold_semana1", "if": "phase == 'p7_manutencao_pico' && daysBeforeTarget >= 14", "ifLabel": "Manutenção, primeira semana", "then": "Sem mudança.", "kcalChange": null },
-      { "id": "hold_ajuste", "if": "phase == 'p7_manutencao_pico' && daysBeforeTarget >= 7 && abs(sevenDayMeanKg - meanKgAt14DaysBefore) > 0.5", "ifLabel": "Manutenção: média de 7 dias a mais de 0,5 kg da média 14 dias antes", "then": "Ajuste de 150 kcal no sentido oposto.", "kcalChange": 150 },
-      { "id": "hold_final", "if": "phase == 'p7_manutencao_pico' && daysBeforeTarget < 7", "ifLabel": "Manutenção: última semana", "then": "Nada muda.", "kcalChange": null }
+      { "id": "hold_acima", "if": "phase == 'p7_manutencao_pico' && daysBeforeTarget >= 7 && sevenDayMeanKg - meanKgAt14DaysBefore > 0.5", "ifLabel": "Manutenção: média de 7 dias mais de 0,5 kg acima da média 14 dias antes da data", "then": "Corte 150 kcal.", "kcalChange": -150 },
+      { "id": "hold_abaixo", "if": "phase == 'p7_manutencao_pico' && daysBeforeTarget >= 7 && sevenDayMeanKg - meanKgAt14DaysBefore < -0.5", "ifLabel": "Manutenção: média de 7 dias mais de 0,5 kg abaixo da média 14 dias antes da data", "then": "Adicione 150 kcal.", "kcalChange": 150 },
+      { "id": "hold_final", "if": "phase == 'p7_manutencao_pico' && daysBeforeTarget < 7", "ifLabel": "Manutenção: última semana", "then": "Nada muda.", "kcalChange": null },
+      { "id": "sem_mudanca", "if": "true", "ifLabel": "Nenhuma regra acima combinou", "then": "Nada muda.", "kcalChange": 0 }
     ],
     "badWeekOrder": ["Comida volta para manutenção.", "Corte a bicicleta depois da musculação.", "Corte uma corrida.", "Corte 30 a 50% das séries.", "Faça a sessão mínima.", "Nunca fique mais de 7 dias sem levantar peso."],
     "reviewTriggers": [
-      { "if": "Até o dia 41, a maioria das séries sem falha ainda termina exatamente em 10, ou menos de 2 âncoras ganharam 2 repetições.", "then": "Sem superávit. Ramo B fica em manutenção até o dia 70 e conserta o treino." },
-      { "if": "Algum intervalo acima de 7 dias, ou sessões em semanas de déficit abaixo de 85% das sessões em semanas de manutenção.", "then": "Fim do déficit. Manutenção até a data." },
-      { "if": "55 dias antes da data, 3 das 5 âncoras abaixo das repetições do dia 41 com sono de 7 horas ou mais, ou DXA em condições iguais mostrando perda de massa magra acima de 1,5 kg.", "then": "Vá para manutenção menos 250 kcal." },
+      { "if": "Até a véspera do bloco de festas, a maioria das séries sem falha ainda termina em um número pré-decidido, ou menos de 2 âncoras ganharam 2 repetições.", "then": "Sem superávit. Ramo B fica em manutenção até 14 dias depois do início do bloco principal e conserta o treino." },
+      { "if": "Intervalo acima de 7 dias sem doença, ou sessões em semanas de déficit abaixo de 85% das sessões em semanas de manutenção.", "then": "Fim do déficit. Manutenção até a data. Doença segue a regra de retorno: volte à manutenção e retome o déficit só depois de 7 dias limpos, se ainda couber antes do limite de início." },
+      { "if": "Na atualização do M2, 3 das 5 âncoras abaixo das repetições do M1 com sono de 7 horas ou mais, ou DXA em condições iguais mostrando perda de massa magra acima de 1,5 kg.", "then": "Vá para manutenção menos 250 kcal." },
       { "if": "M1 fora da faixa calculada com os coeficientes low e high.", "then": "Suspeite primeiro de registro quebrado ou dado de passos ruim, antes de acreditar no número." },
-      { "if": "Peso caiu 2,5 kg ou mais até 55 dias antes da data e a cintura caiu menos de 1,5 cm.", "then": "Refaça a fita, audite o registro, e considere DXA antes de cortar mais." }
+      { "if": "Peso caiu 2,5 kg ou mais até a atualização do M2 e a cintura caiu menos de 1,5 cm.", "then": "Refaça a fita, audite o registro, e considere DXA antes de cortar mais." }
     ],
     "neverChaseTheDate": "Nunca aumente o déficit para perseguir a data. Se a projeção ficar curta, aceite a cintura um pouco maior."
   },
@@ -565,148 +574,173 @@
       ]
     },
     "weeklySetTargets": [
-      { "muscle": "Peitoral", "id": "chest", "weeks1to4": 10, "weeks5to6": 10, "weeks9to13": 10, "ceilingPerWeek": 20 },
-      { "muscle": "Dorsais", "id": "lats", "weeks1to4": 9, "weeks5to6": 10, "weeks9to13": 10, "ceilingPerWeek": 20 },
-      { "muscle": "Parte alta das costas", "id": "upperBack", "weeks1to4": 7, "weeks5to6": 8, "weeks9to13": 9, "ceilingPerWeek": 20 },
+      { "muscle": "Peitoral", "id": "chest", "weeks1to4": 12, "weeks5to6": 12, "weeks9to13": 12, "ceilingPerWeek": 20 },
+      { "muscle": "Dorsais", "id": "lats", "weeks1to4": 9, "weeks5to6": 9, "weeks9to13": 9, "ceilingPerWeek": 20 },
+      { "muscle": "Parte alta das costas", "id": "upperBack", "weeks1to4": 8, "weeks5to6": 9, "weeks9to13": 10, "ceilingPerWeek": 20 },
       { "muscle": "Deltoide lateral", "id": "sideDelts", "weeks1to4": 7, "weeks5to6": 9, "weeks9to13": 11, "ceilingPerWeek": 20 },
-      { "muscle": "Deltoide posterior", "id": "rearDelts", "weeks1to4": 3, "weeks5to6": 4, "weeks9to13": 5, "ceilingPerWeek": 12 },
+      { "muscle": "Deltoide posterior", "id": "rearDelts", "weeks1to4": 4, "weeks5to6": 5, "weeks9to13": 6, "ceilingPerWeek": 12 },
       { "muscle": "Desenvolvimento acima da cabeça", "id": "overheadPress", "weeks1to4": 2, "weeks5to6": 2, "weeks9to13": 2, "ceilingPerWeek": 8 },
-      { "muscle": "Tríceps (direto)", "id": "triceps", "weeks1to4": 8, "weeks5to6": 8, "weeks9to13": 8, "ceilingPerWeek": 10 },
+      { "muscle": "Tríceps (direto)", "id": "triceps", "weeks1to4": 9, "weeks5to6": 9, "weeks9to13": 9, "ceilingPerWeek": 10 },
       { "muscle": "Bíceps (direto)", "id": "biceps", "weeks1to4": 8, "weeks5to6": 8, "weeks9to13": 8, "ceilingPerWeek": 10 },
       { "muscle": "Quadríceps", "id": "quads", "weeks1to4": 12, "weeks5to6": 12, "weeks9to13": 13, "ceilingPerWeek": 20 },
-      { "muscle": "Posteriores de coxa", "id": "hamstrings", "weeks1to4": 9, "weeks5to6": 10, "weeks9to13": 11, "ceilingPerWeek": 20 },
-      { "muscle": "Glúteos (direto)", "id": "glutes", "weeks1to4": 3, "weeks5to6": 3, "weeks9to13": 4, "ceilingPerWeek": 12 },
-      { "muscle": "Panturrilhas", "id": "calves", "weeks1to4": 7, "weeks5to6": 8, "weeks9to13": 8, "ceilingPerWeek": 16 }
+      { "muscle": "Posteriores de coxa", "id": "hamstrings", "weeks1to4": 8, "weeks5to6": 10, "weeks9to13": 10, "ceilingPerWeek": 20 },
+      { "muscle": "Glúteos (direto)", "id": "glutes", "weeks1to4": 3, "weeks5to6": 3, "weeks9to13": 3, "ceilingPerWeek": 12 },
+      { "muscle": "Panturrilhas", "id": "calves", "weeks1to4": 6, "weeks5to6": 6, "weeks9to13": 7, "ceilingPerWeek": 16 }
     ],
-    "setCountingRule": "Conte só séries terminadas com 0 a 3 repetições na reserva. Supino conta 0,5 para tríceps; puxadas e remadas contam 0,5 para bíceps. Agachamento, hack e leg press não contam para posterior de coxa. Teto de cerca de 25 séries fracionárias por músculo por semana.",
+    "setCountingRule": "Conte só séries terminadas com 0 a 3 repetições na reserva. Supino e desenvolvimento contam 0,5 para tríceps; puxadas e remadas contam 0,5 para bíceps; desenvolvimento conta 0,5 para deltoide lateral; remadas contam 0,5 para dorsais e puxadas contam 0,5 para parte alta das costas (esta última equivalência é extensão própria do método). Agachamento, hack e leg press não contam para posterior de coxa. Em exercício unilateral, o número de séries é por lado. Teto de cerca de 25 séries fracionárias por músculo por semana. A tabela mostra o ramo A: o ramo B repete a coluna das semanas 5 e 6 no bloco principal e o ramo C fica na coluna das semanas 1 a 4 até o fim. As semanas 1 e 2 entram abaixo da primeira coluna, pela rampa de cada exercício.",
     "mesocycles": [
       {
-        "id": "m1", "name": "Esforço e calibração", "weeks": { "from": 1, "to": 4 }, "setsPerWeek": { "min": 80, "max": 85 },
-        "focus": "Parar de decidir a repetição antes da série. Semana 1 com teste de falha nas máquinas e isoladores. Dobradiça em estágios, séries movidas de peito para posterior sentado, deltoides e panturrilhas.",
+        "id": "m1", "name": "Esforço e calibração", "weeks": { "from": 1, "to": 4 }, "branches": ["a", "b", "c"], "setsPerWeek": { "min": 82, "max": 88 },
+        "focus": "Parar de decidir a repetição antes da série. Semana 1 com 82 séries e teste de falha só nos exercícios liberados, semana 2 com 85, semanas 3 e 4 com 88. Dobradiça em estágios e rampa própria para posterior de coxa, panturrilha e barra fixa.",
         "changes": []
       },
       {
-        "id": "m2", "name": "Primeiro bloco", "weeks": { "from": 5, "to": 6 }, "setsPerWeek": { "min": 85, "max": 95 },
-        "focus": "Ramo C mantém 85. Demais adicionam 7 séries nos grupos que respondem pior ao volume atual.",
+        "id": "m2", "name": "Primeiro bloco", "weeks": { "from": 5, "to": 6 }, "branches": ["a", "b"], "setsPerWeek": { "min": 88, "max": 94 },
+        "focus": "Ramos A e B somam 6 séries, chegando a 94 antes de qualquer déficit. Ramo C fica em 88 e não recebe estas mudanças, porque já está em déficit.",
         "changes": [
           { "sessionId": "push_a", "hevyName": "Lateral Raise (Cable)", "deltaSets": 1 },
-          { "sessionId": "pull_a", "hevyName": "Iso-Lateral Row (Machine)", "deltaSets": 1 },
+          { "sessionId": "upper_c", "hevyName": "Lateral Raise (Dumbbell)", "deltaSets": 1 },
+          { "sessionId": "upper_c", "hevyName": "Chest Supported Incline Row (Dumbbell)", "deltaSets": 1 },
           { "sessionId": "pull_a", "hevyName": "Rear Delt Reverse Fly (Machine)", "deltaSets": 1 },
           { "sessionId": "legs_a", "hevyName": "Romanian Deadlift (Dumbbell)", "deltaSets": 1 },
-          { "sessionId": "legs_a", "hevyName": "Standing Calf Raise (Machine)", "deltaSets": 1 },
-          { "sessionId": "upper_c", "hevyName": "Pull Up", "deltaSets": 1 },
-          { "sessionId": "upper_c", "hevyName": "Lateral Raise (Dumbbell)", "deltaSets": 1 }
+          { "sessionId": "legs_b", "hevyName": "Seated Leg Curl (Machine)", "deltaSets": 1 }
         ]
       },
       {
-        "id": "m3", "name": "Semanas de festas", "weeks": { "from": 7, "to": 8 }, "setsPerWeek": { "min": 40, "max": 95 },
-        "focus": "Semana 7: metade das séries com cargas mantidas e 3 ou mais repetições na reserva. Semana 8: volume completo.",
+        "id": "m3", "name": "Semanas de festas", "weeks": { "from": null, "to": null }, "phaseIds": ["p3_festas"], "branches": ["a", "b", "c"], "setsPerWeek": { "min": 44, "max": 94 },
+        "setMultiplierFirstWeek": 0.5,
+        "focus": "Primeira semana: metade das séries de cada exercício, arredondando para cima, cargas mantidas e 3 ou mais repetições na reserva. Segunda semana: volume completo do ramo.",
         "changes": []
       },
       {
-        "id": "m4", "name": "Bloco principal", "weeks": { "from": 9, "to": 13 }, "setsPerWeek": { "min": 90, "max": 105 },
-        "focus": "Ramo A sobe para 95 a 105, ramos B e C ficam em 90 a 100. Em déficit o volume nunca sobe.",
+        "id": "m4", "name": "Bloco principal", "weeks": { "from": null, "to": null }, "phaseIds": ["p4_bloco_principal"], "branches": ["a"], "setsPerWeek": { "min": 88, "max": 105 },
+        "focus": "Ramo A sobe para 100 e, com âncoras subindo e sono médio acima de 7 horas, pode somar até 5 séries em posterior, glúteo, panturrilha e braços na segunda metade do bloco. Ramo B fica em 94 e ramo C em 88, porque em déficit o volume nunca sobe.",
         "changes": [
           { "sessionId": "push_a", "hevyName": "Lateral Raise (Cable)", "deltaSets": 1 },
           { "sessionId": "upper_c", "hevyName": "Lateral Raise (Dumbbell)", "deltaSets": 1 },
           { "sessionId": "pull_a", "hevyName": "Rear Delt Reverse Fly (Machine)", "deltaSets": 1 },
           { "sessionId": "upper_c", "hevyName": "Chest Supported Incline Row (Dumbbell)", "deltaSets": 1 },
           { "sessionId": "legs_a", "hevyName": "Leg Extension (Machine)", "deltaSets": 1 },
-          { "sessionId": "legs_b", "hevyName": "Seated Leg Curl (Machine)", "deltaSets": 1 },
-          { "sessionId": "legs_b", "hevyName": "Hip Thrust (Barbell)", "deltaSets": 1 }
+          { "sessionId": "legs_a", "hevyName": "Standing Calf Raise (Machine)", "deltaSets": 1 }
         ]
       },
       {
-        "id": "m5", "name": "Volume reduzido", "weeks": { "from": 14, "to": 14 }, "setsPerWeek": { "min": 40, "max": 50 },
-        "focus": "Volume reduzido ou 2 sessões de corpo inteiro se viajar.",
+        "id": "m5", "name": "Volume reduzido", "weeks": { "from": null, "to": null }, "phaseIds": ["p5_carnaval"], "branches": ["a", "b", "c"], "setsPerWeek": { "min": 44, "max": 50 },
+        "setMultiplier": 0.5,
+        "focus": "Metade das séries de cada exercício, arredondando para cima, ou 2 sessões de corpo inteiro se viajar.",
         "changes": []
       },
       {
-        "id": "m6", "name": "Bloco final", "weeks": { "from": 15, "to": 17 }, "setsPerWeek": { "min": 80, "max": 100 },
-        "focus": "Ramos B e C em 80 a 90, ramo A em 90 a 100. Cargas e esforço mantidos. Nenhum exercício novo nas 4 últimas semanas.",
-        "changes": []
+        "id": "m6", "name": "Bloco final", "weeks": { "from": null, "to": null }, "phaseIds": ["p6_bloco_final"], "branches": ["b"], "setsPerWeek": { "min": 88, "max": 100 },
+        "focus": "Ramo A fica em 100 e ramo C em 88. Ramo B sai de 94 para 88 tirando acessórios e preservando ombros e costas. Cargas e esforço mantidos. Nenhum exercício novo nos últimos 28 dias.",
+        "changes": [
+          { "sessionId": "legs_a", "hevyName": "Romanian Deadlift (Dumbbell)", "deltaSets": -1 },
+          { "sessionId": "legs_b", "hevyName": "Seated Leg Curl (Machine)", "deltaSets": -1 },
+          { "sessionId": "legs_a", "hevyName": "Leg Extension (Machine)", "deltaSets": -1 },
+          { "sessionId": "legs_b", "hevyName": "Hip Thrust (Barbell)", "deltaSets": -1 },
+          { "sessionId": "pull_a", "hevyName": "Pullover (Machine)", "deltaSets": -1 },
+          { "sessionId": "pull_a", "hevyName": "Preacher Curl (Machine)", "deltaSets": -1 }
+        ]
       },
       {
-        "id": "m7", "name": "Manutenção e pico", "weeks": { "from": 18, "to": 20 }, "setsPerWeek": { "min": 85, "max": 95 },
-        "focus": "85 a 95 séries até 6 dias antes da data. Última semana: 3 sessões, 40 a 50% das séries, sem falha.",
-        "changes": []
+        "id": "m7", "name": "Manutenção e pico", "weeks": { "from": null, "to": null }, "phaseIds": ["p7_manutencao_pico"], "branches": ["a"], "setsPerWeek": { "min": 85, "max": 95 },
+        "focus": "Até 6 dias antes da data: ramo A em 95, ramos B e C em 88. Última semana: 3 sessões, 40 a 50% das séries, sem falha.",
+        "changes": [
+          { "sessionId": "legs_a", "hevyName": "Leg Extension (Machine)", "deltaSets": -1 },
+          { "sessionId": "legs_a", "hevyName": "Standing Calf Raise (Machine)", "deltaSets": -1 },
+          { "sessionId": "upper_c", "hevyName": "Chest Supported Incline Row (Dumbbell)", "deltaSets": -1 },
+          { "sessionId": "pull_a", "hevyName": "Rear Delt Reverse Fly (Machine)", "deltaSets": -1 },
+          { "sessionId": "upper_c", "hevyName": "Lateral Raise (Dumbbell)", "deltaSets": -1 }
+        ]
       }
     ],
     "sessions": [
       {
-        "id": "push_a", "name": "Empurrar A: peito e ombros", "dayHint": "segunda", "estimatedMinutes": 67,
+        "id": "push_a", "name": "Empurrar A: peito e ombros", "dayHint": "segunda", "estimatedMinutes": 74,
         "exercises": [
-          { "name": "Supino inclinado com halteres", "hevyName": "Incline Bench Press (Dumbbell)", "sets": 4, "repsMin": 6, "repsMax": 10, "rir": "1-2", "restSeconds": 150, "cue": "Banco a cerca de 30 graus, escápulas presas, desça até alongar o peito com controle. Âncora.", "substitution": "Incline Chest Press (Machine)", "isAnchor": true },
-          { "name": "Supino na máquina", "hevyName": "Chest Press (Machine)", "sets": 3, "repsMin": 8, "repsMax": 12, "rir": "1", "restSeconds": 120, "cue": "Última série até a falha técnica. Ombros longe das orelhas.", "substitution": "Bench Press (Barbell) com 1-2 repetições na reserva", "lastSetToFailure": true },
-          { "name": "Elevação lateral no cabo", "hevyName": "Lateral Raise (Cable)", "sets": 4, "repsMin": 12, "repsMax": 20, "rir": "0-1", "restSeconds": 75, "cue": "Polia na altura da mão, cabo por trás do corpo, suba até a linha do ombro. Se o ombro incomodar, traga o braço um pouco à frente do corpo. Cada lado conta uma série.", "substitution": "Lateral Raise (Dumbbell)", "lastSetToFailure": true, "unilateral": true },
-          { "name": "Desenvolvimento na máquina", "hevyName": "Shoulder Press (Machine Plates)", "sets": 2, "repsMin": 8, "repsMax": 12, "rir": "1-2", "restSeconds": 120, "cue": "Encosto firme, punhos alinhados aos cotovelos.", "substitution": "Shoulder Press (Dumbbell)" },
+          { "name": "Supino inclinado com halteres", "hevyName": "Incline Bench Press (Dumbbell)", "sets": 4, "repsMin": 6, "repsMax": 12, "rir": "1-2", "restSeconds": 150, "rampSets": 3, "cue": "Três séries de rampa antes da primeira pesada; a primeira repetição de cada série pesada é teste. Banco a cerca de 30 graus, escápulas presas, desça até alongar o peito com controle. Âncora.", "substitution": "Incline Chest Press (Machine)", "isAnchor": true },
+          { "name": "Supino na máquina", "hevyName": "Chest Press (Machine)", "sets": 3, "repsMin": 8, "repsMax": 12, "rir": "1", "restSeconds": 120, "rampSets": 1, "cue": "Última série até a falha técnica. Ombros longe das orelhas.", "substitution": "Bench Press (Barbell) com 1-2 repetições na reserva", "lastSetToFailure": true },
+          { "name": "Crucifixo na máquina", "hevyName": "Butterfly (Pec Deck)", "sets": 2, "repsMin": 12, "repsMax": 15, "rir": "1", "restSeconds": 90, "cue": "Abra até alongar o peito com controle, sem passar do ponto em que o ombro fica confortável. Última série à falha técnica.", "substitution": "Chest Fly (Machine)", "lastSetToFailure": true },
+          { "name": "Elevação lateral no cabo", "hevyName": "Lateral Raise (Cable)", "sets": 4, "repsMin": 12, "repsMax": 20, "rir": "0-1", "restSeconds": 90, "cue": "Polia na altura da mão, cabo por trás do corpo, suba até a linha do ombro. Se o ombro incomodar, traga o braço um pouco à frente do corpo. As séries são por lado: faça um lado, emende o outro e descanse depois do par.", "substitution": "Lateral Raise (Dumbbell)", "lastSetToFailure": true, "unilateral": true },
+          { "name": "Desenvolvimento na máquina", "hevyName": "Shoulder Press (Machine Plates)", "sets": 2, "repsMin": 8, "repsMax": 12, "rir": "1-2", "restSeconds": 120, "rampSets": 1, "cue": "Encosto firme, punhos alinhados aos cotovelos. Sem falha.", "substitution": "Shoulder Press (Dumbbell)" },
           { "name": "Extensão de tríceps acima da cabeça no cabo", "hevyName": "Overhead Triceps Extension (Cable)", "sets": 3, "repsMin": 10, "repsMax": 15, "rir": "1", "restSeconds": 90, "cue": "Braços próximos da orelha, desça até alongar o tríceps. Se cotovelo ou ombro doer, troque a polia de altura ou passe para o cabo cruzado.", "substitution": "Triceps Pushdown", "lastSetToFailure": true },
-          { "name": "Tríceps no pulley", "hevyName": "Triceps Pushdown", "sets": 2, "repsMin": 10, "repsMax": 15, "rir": "0-1", "restSeconds": 75, "cue": "Cotovelos fixos, trave no final da extensão.", "substitution": "Triceps Rope Pushdown", "lastSetToFailure": true }
+          { "name": "Tríceps no pulley", "hevyName": "Triceps Pushdown", "sets": 2, "repsMin": 10, "repsMax": 15, "rir": "0-1", "restSeconds": 90, "cue": "Cotovelos fixos, trave no final da extensão.", "substitution": "Triceps Rope Pushdown", "lastSetToFailure": true }
         ]
       },
       {
-        "id": "pull_a", "name": "Puxar A: costas e bíceps", "dayHint": "terça", "estimatedMinutes": 69,
+        "id": "pull_a", "name": "Puxar A: costas e bíceps", "dayHint": "terça", "estimatedMinutes": 71,
         "exercises": [
-          { "name": "Puxada frontal", "hevyName": "Lat Pulldown (Cable)", "sets": 4, "repsMin": 8, "repsMax": 12, "rir": "1-2", "restSeconds": 150, "cue": "Peito alto, puxe o cotovelo em direção à costela. Sem jogar o tronco para trás. Âncora.", "substitution": "Single Arm Lat Pulldown", "isAnchor": true },
-          { "name": "Remada iso-lateral na máquina", "hevyName": "Iso-Lateral Row (Machine)", "sets": 4, "repsMin": 8, "repsMax": 12, "rir": "1-2", "restSeconds": 150, "cue": "Peito apoiado, sem tirar o tórax do apoio. Última série pode ir à falha. Âncora.", "substitution": "Chest Supported Incline Row (Dumbbell)", "isAnchor": true },
+          { "name": "Puxada frontal", "hevyName": "Lat Pulldown (Cable)", "sets": 4, "repsMin": 8, "repsMax": 12, "rir": "1-2", "restSeconds": 150, "rampSets": 3, "cue": "Três séries de rampa antes da primeira pesada. Deixe os ombros subirem em cima para alongar o dorsal, peito alto, puxe o cotovelo em direção à costela, sem jogar o tronco para trás. Use straps se a pegada falhar antes das costas. Anote qual máquina usou. Última série à falha técnica. Âncora.", "substitution": "Single Arm Lat Pulldown", "isAnchor": true, "lastSetToFailure": true },
+          { "name": "Remada iso-lateral na máquina", "hevyName": "Iso-Lateral Row (Machine)", "sets": 5, "repsMin": 8, "repsMax": 12, "rir": "1-2", "restSeconds": 150, "rampSets": 2, "cue": "Peito apoiado, sem tirar o tórax do apoio. Estique o braço e alongue as costas entre as repetições. Use straps se a pegada falhar antes das costas. Anote qual máquina usou. Última série à falha técnica. Âncora.", "substitution": "Chest Supported Incline Row (Dumbbell)", "isAnchor": true, "lastSetToFailure": true },
           { "name": "Pullover na máquina", "hevyName": "Pullover (Machine)", "sets": 2, "repsMin": 10, "repsMax": 15, "rir": "1", "restSeconds": 90, "cue": "Sinta o alongamento do dorsal em cima, cotovelos levemente flexionados.", "substitution": "Lat Pulldown - Close Grip (Cable)", "lastSetToFailure": true },
-          { "name": "Crucifixo inverso na máquina", "hevyName": "Rear Delt Reverse Fly (Machine)", "sets": 3, "repsMin": 12, "repsMax": 20, "rir": "0-1", "restSeconds": 75, "cue": "Peito no apoio, abra os braços até a linha dos ombros e pense em afastar as mãos.", "substitution": "Face Pull", "lastSetToFailure": true },
+          { "name": "Crucifixo inverso na máquina", "hevyName": "Rear Delt Reverse Fly (Machine)", "sets": 4, "repsMin": 12, "repsMax": 20, "rir": "0-1", "restSeconds": 90, "cue": "Semana 1: 3 séries. Peito no apoio, abra os braços até a linha dos ombros e pense em afastar as mãos.", "substitution": "Face Pull", "lastSetToFailure": true, "stageOverride": [{ "weeks": "1", "sets": 3 }] },
           { "name": "Rosca inclinada sentado", "hevyName": "Seated Incline Curl (Dumbbell)", "sets": 3, "repsMin": 10, "repsMax": 15, "rir": "1", "restSeconds": 90, "cue": "Banco inclinado, braço estendido atrás da linha do tronco no fundo.", "substitution": "Bicep Curl (Cable)", "lastSetToFailure": true },
-          { "name": "Rosca Scott na máquina", "hevyName": "Preacher Curl (Machine)", "sets": 2, "repsMin": 10, "repsMax": 15, "rir": "0-1", "restSeconds": 75, "cue": "Extensão completa embaixo, sem soltar o peso.", "substitution": "Preacher Curl (Barbell)", "lastSetToFailure": true }
+          { "name": "Rosca Scott na máquina", "hevyName": "Preacher Curl (Machine)", "sets": 2, "repsMin": 10, "repsMax": 15, "rir": "0-1", "restSeconds": 90, "cue": "Extensão completa embaixo, sem soltar o peso.", "substitution": "Preacher Curl (Barbell)", "lastSetToFailure": true }
         ]
       },
       {
-        "id": "legs_a", "name": "Pernas A: quadríceps e posterior", "dayHint": "quarta", "estimatedMinutes": 65,
+        "id": "legs_a", "name": "Pernas A: quadríceps e posterior", "dayHint": "quarta", "estimatedMinutes": 61,
         "exercises": [
-          { "name": "Hack squat", "hevyName": "Hack Squat (Machine)", "sets": 4, "repsMin": 8, "repsMax": 12, "rir": "1-2", "restSeconds": 180, "cue": "Lombar colada no encosto, desça até onde a pelve não enrola. Âncora.", "substitution": "Leg Press (Machine)", "isAnchor": true },
-          { "name": "Mesa flexora sentada", "hevyName": "Seated Leg Curl (Machine)", "sets": 4, "repsMin": 10, "repsMax": 15, "rir": "1", "restSeconds": 105, "cue": "Quadril preso no assento. Última série à falha. Âncora.", "substitution": "Lying Leg Curl (Machine)", "isAnchor": true, "lastSetToFailure": true },
-          { "name": "Levantamento terra romeno com halteres", "hevyName": "Romanian Deadlift (Dumbbell)", "sets": 2, "repsMin": 10, "repsMax": 12, "rir": "3", "restSeconds": 150, "cue": "Quadril para trás, costas neutras, halteres perto das pernas. Pare quando sentir o posterior alongar, sem buscar o chão. Nas 4 primeiras semanas nunca menos de 3 repetições na reserva.", "substitution": "Back Extension (Hyperextension)" },
+          { "name": "Hack squat", "hevyName": "Hack Squat (Machine)", "sets": 4, "repsMin": 8, "repsMax": 12, "rir": "1-2", "restSeconds": 180, "rampSets": 3, "cue": "Três séries de rampa antes da primeira pesada; a primeira repetição de cada série pesada é teste. Lombar colada no encosto, desça até onde a pelve não enrola. Sem falha, porque a carga passa pela coluna. Âncora.", "substitution": "Leg Press (Machine)", "isAnchor": true },
+          { "name": "Mesa flexora sentada", "hevyName": "Seated Leg Curl (Machine)", "sets": 4, "repsMin": 10, "repsMax": 15, "rir": "1", "restSeconds": 105, "rampSets": 1, "cue": "Semana 1: 2 séries com 3 repetições na reserva. Semana 2: 3 séries com 2 na reserva. Da semana 3 em diante, 4 séries e última à falha. Quadril preso no assento. Âncora.", "substitution": "Lying Leg Curl (Machine)", "isAnchor": true, "lastSetToFailure": true, "stageOverride": [{ "weeks": "1", "sets": 2, "rir": "3", "lastSetToFailure": false }, { "weeks": "2", "sets": 3, "rir": "2", "lastSetToFailure": false }] },
+          { "name": "Levantamento terra romeno com halteres", "hevyName": "Romanian Deadlift (Dumbbell)", "sets": 2, "repsMin": 10, "repsMax": 12, "rir": "3+", "restSeconds": 150, "rampSets": 2, "cue": "Semanas 1 e 2: troque por extensão lombar a 45 graus ou elevação pélvica sem carga, 2 séries com 3 ou mais repetições na reserva. Semanas 3 e 4: halteres leves, ainda com 3 ou mais na reserva. Da semana 5 em diante: 3 séries com 2 a 3 na reserva. Quadril para trás, costas neutras, halteres perto das pernas, pare quando sentir o posterior alongar.", "substitution": "Back Extension (Hyperextension)", "stageOverride": [{ "weeks": "1-2", "name": "Extensão lombar a 45 graus ou elevação pélvica sem carga", "hevyName": "Back Extension (Hyperextension)", "sets": 2, "rir": "3+" }, { "weeks": "3-4", "sets": 2, "rir": "3+" }, { "weeks": "5+", "sets": 3, "rir": "2-3" }] },
           { "name": "Cadeira extensora", "hevyName": "Leg Extension (Machine)", "sets": 3, "repsMin": 10, "repsMax": 15, "rir": "0-1", "restSeconds": 90, "cue": "Pausa de um segundo em extensão. Última série à falha.", "substitution": "Unilateral Leg Extension", "lastSetToFailure": true },
-          { "name": "Panturrilha em pé", "hevyName": "Standing Calf Raise (Machine)", "sets": 3, "repsMin": 12, "repsMax": 20, "rir": "0-1", "restSeconds": 75, "cue": "Pausa de dois segundos alongado embaixo, suba tudo.", "substitution": "Single Leg Standing Calf Raise (Machine)", "lastSetToFailure": true }
+          { "name": "Panturrilha em pé", "hevyName": "Standing Calf Raise (Machine)", "sets": 3, "repsMin": 12, "repsMax": 20, "rir": "1", "restSeconds": 90, "cue": "Semana 1: 2 séries com 2 repetições na reserva. Pausa de dois segundos alongado embaixo, suba tudo. A carga passa pela coluna, então fica sem falha; para ir à falha, faça no leg press a partir da semana 3.", "substitution": "Panturrilha no leg press (Calf Press)", "stageOverride": [{ "weeks": "1", "sets": 2, "rir": "2" }] }
         ]
       },
       {
-        "id": "upper_c", "name": "Superiores C: barra, inclinado, ombro e braços", "dayHint": "sexta", "estimatedMinutes": 64,
+        "id": "upper_c", "name": "Superiores C: barra, inclinado, ombro e braços", "dayHint": "sexta", "estimatedMinutes": 66,
         "exercises": [
-          { "name": "Barra fixa (negativa lenta ou assistida)", "hevyName": "Pull Up", "sets": 3, "repsMin": 5, "repsMax": 10, "rir": "1-2", "restSeconds": 150, "cue": "Se fizer menos de 5 repetições, salte e desça em 3 a 5 segundos. Marcador de força que não depende de máquina. Anote o peso corporal.", "substitution": "Single Arm Lat Pulldown" },
-          { "name": "Supino inclinado na máquina", "hevyName": "Incline Chest Press (Machine)", "sets": 3, "repsMin": 8, "repsMax": 12, "rir": "1", "restSeconds": 120, "cue": "Última série à falha. Mantenha escápulas estáveis.", "substitution": "Incline Bench Press (Barbell)", "lastSetToFailure": true },
-          { "name": "Remada apoiada no banco com halteres", "hevyName": "Chest Supported Incline Row (Dumbbell)", "sets": 3, "repsMin": 8, "repsMax": 12, "rir": "1-2", "restSeconds": 120, "cue": "Peito no banco inclinado, sem usar o tronco para balançar.", "substitution": "Iso-Lateral Row (Machine)" },
-          { "name": "Elevação lateral com halteres", "hevyName": "Lateral Raise (Dumbbell)", "sets": 3, "repsMin": 12, "repsMax": 20, "rir": "0-1", "restSeconds": 75, "cue": "Halteres dão saltos grandes de carga: suba repetições até 20 ou 25 antes de trocar de peso.", "substitution": "Lateral Raise (Cable)", "lastSetToFailure": true },
-          { "name": "Tríceps na corda", "hevyName": "Triceps Rope Pushdown", "sets": 3, "repsMin": 10, "repsMax": 15, "rir": "0-1", "restSeconds": 75, "cue": "Afaste a corda no final. Última série à falha.", "substitution": "Triceps Pushdown", "lastSetToFailure": true },
+          { "name": "Barra fixa (negativas lentas, depois repetições completas)", "hevyName": "Pull Up", "sets": 3, "repsMin": 3, "repsMax": 5, "rir": "1-2", "restSeconds": 150, "rampSets": 1, "cue": "Quem ainda não faz 5 repetições completas segue as negativas: suba com impulso de um banco e desça controlando. Semanas 1 e 2: 2 séries de 3 negativas de 3 segundos. Semanas 3 e 4: 3 séries de 3 negativas de 4 segundos. Da semana 5 em diante: 3 séries de 4 negativas de 5 segundos, tentando uma repetição completa no início. Na negativa, a série acaba pelo tempo: se a descida não chegar ao tempo-alvo ou o ombro doer, pare. Ao fazer 5 repetições completas com 2 na reserva, passe para 5 a 12 repetições. Anote o peso corporal.", "substitution": "Single Arm Lat Pulldown", "stageOverride": [{ "weeks": "1-2", "sets": 2, "reps": 3, "eccentricSeconds": 3 }, { "weeks": "3-4", "sets": 3, "reps": 3, "eccentricSeconds": 4 }, { "weeks": "5+", "sets": 3, "reps": 4, "eccentricSeconds": 5 }, { "when": "5 repetições completas com 2 na reserva", "sets": 3, "repsMin": 5, "repsMax": 12, "rir": "1-2" }] },
+          { "name": "Supino inclinado na máquina", "hevyName": "Incline Chest Press (Machine)", "sets": 3, "repsMin": 8, "repsMax": 12, "rir": "1", "restSeconds": 120, "rampSets": 2, "cue": "Última série à falha. Mantenha escápulas estáveis.", "substitution": "Incline Bench Press (Barbell)", "lastSetToFailure": true },
+          { "name": "Remada apoiada no banco com halteres", "hevyName": "Chest Supported Incline Row (Dumbbell)", "sets": 3, "repsMin": 8, "repsMax": 12, "rir": "1-2", "restSeconds": 120, "rampSets": 1, "cue": "Peito no banco inclinado, sem usar o tronco para balançar. Use straps se a pegada falhar antes das costas.", "substitution": "Iso-Lateral Row (Machine)" },
+          { "name": "Elevação lateral com halteres", "hevyName": "Lateral Raise (Dumbbell)", "sets": 3, "repsMin": 12, "repsMax": 20, "rir": "0-1", "restSeconds": 90, "cue": "Halteres dão saltos grandes de carga: suba repetições até 20 ou 25 antes de trocar de peso.", "substitution": "Lateral Raise (Cable)", "lastSetToFailure": true },
+          { "name": "Extensão de tríceps acima da cabeça no cabo", "hevyName": "Overhead Triceps Extension (Cable)", "sets": 2, "repsMin": 10, "repsMax": 15, "rir": "1", "restSeconds": 90, "cue": "Braços próximos da orelha, desça até alongar o tríceps. Se cotovelo ou ombro doer, troque a polia de altura.", "substitution": "Triceps Pushdown", "lastSetToFailure": true },
+          { "name": "Tríceps na corda", "hevyName": "Triceps Rope Pushdown", "sets": 2, "repsMin": 10, "repsMax": 15, "rir": "0-1", "restSeconds": 90, "cue": "Afaste a corda no final. Última série à falha.", "substitution": "Triceps Pushdown", "lastSetToFailure": true },
           { "name": "Rosca direta com barra", "hevyName": "Bicep Curl (Barbell)", "sets": 3, "repsMin": 8, "repsMax": 12, "rir": "1", "restSeconds": 90, "cue": "Cotovelos parados, sem balançar a lombar.", "substitution": "Bicep Curl (Cable)" }
         ]
       },
       {
-        "id": "legs_b", "name": "Pernas B: agachamento, posterior e glúteo", "dayHint": "sábado", "estimatedMinutes": 64,
+        "id": "legs_b", "name": "Pernas B: agachamento, posterior e glúteo", "dayHint": "sábado", "estimatedMinutes": 55,
         "exercises": [
-          { "name": "Agachamento livre", "hevyName": "Squat (Barbell)", "sets": 3, "repsMin": 6, "repsMax": 10, "rir": "2", "restSeconds": 180, "cue": "Séries de aquecimento em rampa, sem falha. Se a lombar reclamar, troque por agachamento no Smith ou leg press.", "substitution": "Leg Press (Machine)" },
-          { "name": "Mesa flexora sentada", "hevyName": "Seated Leg Curl (Machine)", "sets": 3, "repsMin": 10, "repsMax": 15, "rir": "1", "restSeconds": 105, "cue": "Mesma máquina da quarta. Última série à falha.", "substitution": "Lying Leg Curl (Machine)", "lastSetToFailure": true },
-          { "name": "Elevação pélvica com barra", "hevyName": "Hip Thrust (Barbell)", "sets": 3, "repsMin": 8, "repsMax": 12, "rir": "2", "restSeconds": 150, "cue": "Queixo levemente abaixado, pausa de um segundo no topo, costelas para baixo.", "substitution": "Hip Abduction (Machine)" },
-          { "name": "Agachamento búlgaro com halteres", "hevyName": "Bulgarian Split Squat", "sets": 2, "repsMin": 8, "repsMax": 12, "rir": "2-3", "restSeconds": 120, "cue": "Comece só com o peso do corpo nas primeiras semanas. Cada perna conta uma série.", "substitution": "Leg Press (Machine)", "unilateral": true },
-          { "name": "Panturrilha em pé", "hevyName": "Standing Calf Raise (Machine)", "sets": 4, "repsMin": 12, "repsMax": 20, "rir": "0-1", "restSeconds": 75, "cue": "Pausa de dois segundos alongado embaixo. Última série à falha.", "substitution": "Single Leg Standing Calf Raise (Machine)", "lastSetToFailure": true }
+          { "name": "Agachamento livre", "hevyName": "Squat (Barbell)", "sets": 3, "repsMin": 6, "repsMax": 12, "rir": "2", "restSeconds": 180, "rampSets": 3, "cue": "Três séries de rampa antes da primeira pesada; a primeira repetição de cada série pesada é teste. Sem falha. Se a coluna reclamar, troque por agachamento no Smith ou leg press.", "substitution": "Leg Press (Machine)" },
+          { "name": "Mesa flexora sentada", "hevyName": "Seated Leg Curl (Machine)", "sets": 2, "repsMin": 10, "repsMax": 15, "rir": "1", "restSeconds": 105, "rampSets": 1, "cue": "Semana 1: 3 repetições na reserva. Semana 2: 2 na reserva. Da semana 3 em diante, última série à falha. Mesma máquina da quarta.", "substitution": "Lying Leg Curl (Machine)", "lastSetToFailure": true, "stageOverride": [{ "weeks": "1", "sets": 2, "rir": "3", "lastSetToFailure": false }, { "weeks": "2", "sets": 2, "rir": "2", "lastSetToFailure": false }] },
+          { "name": "Elevação pélvica com barra", "hevyName": "Hip Thrust (Barbell)", "sets": 3, "repsMin": 8, "repsMax": 12, "rir": "2", "restSeconds": 150, "rampSets": 2, "cue": "Semanas 1 e 2: ponte de glúteo sem carga ou com halter, 3 ou mais repetições na reserva. Semanas 3 e 4: barra leve, ainda com 3 ou mais na reserva. Da semana 5 em diante: 2 na reserva. Queixo levemente abaixado, pausa de um segundo no topo, costelas para baixo.", "substitution": "Ponte de glúteo com halter (Glute Bridge)", "stageOverride": [{ "weeks": "1-2", "name": "Ponte de glúteo sem carga ou com halter", "hevyName": "Glute Bridge", "sets": 3, "rir": "3+" }, { "weeks": "3-4", "sets": 3, "rir": "3+" }, { "weeks": "5+", "sets": 3, "rir": "2" }] },
+          { "name": "Agachamento búlgaro com halteres", "hevyName": "Bulgarian Split Squat", "sets": 2, "repsMin": 8, "repsMax": 12, "rir": "2-3", "restSeconds": 120, "rampSets": 1, "cue": "Comece só com o peso do corpo nas primeiras semanas. As séries são por perna: faça as duas pernas e descanse depois do par.", "substitution": "Leg Press (Machine)", "unilateral": true },
+          { "name": "Panturrilha em pé", "hevyName": "Standing Calf Raise (Machine)", "sets": 3, "repsMin": 12, "repsMax": 20, "rir": "1", "restSeconds": 90, "cue": "Semanas 1 e 2: 2 séries com 2 repetições na reserva. Pausa de dois segundos alongado embaixo. A carga passa pela coluna, então fica sem falha; para ir à falha, faça no leg press a partir da semana 3.", "substitution": "Panturrilha no leg press (Calf Press)", "stageOverride": [{ "weeks": "1-2", "sets": 2, "rir": "2" }] }
         ]
       }
     ],
-    "sessionLengthNote": "Tempos das sessões com aquecimento, séries de rampa, trocas de aparelho e descanso integral. Com os acréscimos do bloco principal, as sessões ficam entre 70 e 80 minutos.",
+    "warmup": {
+      "general": "Cinco minutos de movimento leve.",
+      "ramp": [
+        { "pctLoad": 50, "reps": "6 a 8" },
+        { "pctLoad": 70, "reps": "4 a 5" },
+        { "pctLoad": 85, "reps": "2 a 3" }
+      ],
+      "firstRepRule": "A primeira repetição de toda série pesada é teste: se algo parecer errado, solte a carga e reveja.",
+      "evidence": "Protocolo prático, sem ensaio direto. rampSets em cada exercício diz quantas séries da rampa usar, contando a partir da mais pesada."
+    },
+    "sessionLengthNote": "Cada sessão indica o tempo das semanas 3 e 4, com aquecimento, séries de rampa, trocas de aparelho e descanso integral, calculado a 3,2 segundos por repetição. As somas do bloco principal levam as sessões do ramo A a algo entre 57 e 81 minutos. Treinar conversando ou com aparelho ocupado passa disso: acima de 85 minutos, corte a última série dos acessórios antes de encurtar o descanso dos exercícios principais.",
     "hevyNote": "Os nomes em hevyName seguem a biblioteca do Hevy. Se a busca não encontrar exatamente o nome, crie um exercício personalizado com ele para manter o histórico limpo.",
     "progression": {
       "name": "Progressão dupla com a última série aberta",
       "replaces": "A repetição pré-decidida antes da série. A série para pela proximidade da falha, e o número sai depois.",
       "rules": [
         "Toda série termina pelo critério de esforço do exercício, independentemente do número. Parar em uma repetição redonda que você escolheu antes de levantar é o erro que esta regra corrige.",
-        "Máquinas, cabos e isoladores: 1 repetição na reserva, com a última série levada à falha técnica.",
+        "Máquinas, cabos e isoladores: 1 repetição na reserva, com a última série levada à falha técnica. Ficam sem falha as máquinas que carregam a coluna ou o ombro em cima da cabeça: hack squat, leg press, panturrilha em pé e desenvolvimento.",
         "Compostos livres (agachamento, supino livre): 1 a 2 repetições na reserva, nunca falha.",
-        "Dobradiça de quadril (terra romeno): 2 a 3 repetições na reserva, nunca passe de 2.",
-        "Registre as repetições que aconteceram. Quando todas as séries da âncora chegarem a repsMax no critério de esforço, suba a carga na sessão seguinte no menor salto disponível.",
+        "Dobradiça de quadril (terra romeno): 2 a 3 repetições na reserva, e nunca termine com menos de 2 repetições na reserva.",
+        "Registre as repetições que aconteceram. Quando todas as séries da âncora chegarem a repsMax no critério de esforço, suba a carga na sessão seguinte no menor salto disponível. Se a série passar de repsMax, continue até o critério de esforço, registre o número real e suba a carga na sessão seguinte.",
         "Depois do aumento, é normal perder 1 a 3 repetições. Se cair abaixo de repsMin, volte para a carga anterior e continue subindo repetições.",
         "Halteres pesam em saltos percentuais grandes. Antes de subir o halter, suba as repetições até o topo da faixa, ou mais, ou passe para o cabo.",
         "Três sessões sem ganhar nem carga nem repetição: confira sono e comida, confira se é a mesma máquina, e aí mude a faixa de repetições ou o salto de carga. Não troque o exercício durante o bloco.",
-        "Trocas de exercício só em semanas de virada (semanas 7, 8 e 14) e só em acessórios."
+        "Trocas de exercício só em semanas de virada (bloco de festas e janela de Carnaval) e só em acessórios."
       ],
-      "firstWeek": "Semana 1: use a carga atual e leve a última série à falha nas máquinas e isoladores permitidos. Esse número mostra quantas repetições você vinha deixando na reserva e define o ponto de partida."
+      "firstWeek": "Semana 1: use a carga atual e leve a última série à falha nos exercícios liberados no teste da semana 1. Esse número mostra quantas repetições você vinha deixando na reserva e define o ponto de partida."
     },
     "deload": {
-      "planned": "Semana 7 (metade das séries, cargas mantidas, 3 ou mais repetições na reserva), semana 14 (mesma regra ou 2 sessões de corpo inteiro se viajar) e a última semana antes da data (3 sessões, 40 a 50% das séries, sem falha).",
+      "planned": "Primeira semana do bloco de festas (metade das séries, cargas mantidas, 3 ou mais repetições na reserva), janela de Carnaval (mesma regra ou 2 sessões de corpo inteiro se viajar) e a última semana antes da data (3 sessões, 40 a 50% das séries, sem falha).",
       "unplanned": "Se 2 ou mais âncoras caírem por 2 semanas com sono e comida em ordem, reduza as séries em 30 a 50% por uma semana, mantendo as cargas.",
       "rule": "Deload é ferramenta para fadiga e calendário. Uma semana inteira parada no meio de 9 semanas não custou hipertrofia, mas custou um pouco de força nas pernas (Coleman et al., 2024)."
     },
@@ -727,15 +761,35 @@
         { "name": "Leg press", "hevyName": "Leg Press (Machine)", "sets": 2, "rir": "2" },
         { "name": "Mesa flexora sentada", "hevyName": "Seated Leg Curl (Machine)", "sets": 2, "rir": "1" }
       ],
-      "rule": "É o que acontece em vez de zero. Vale para qualquer dia ruim, viagem curta ou agenda estourada."
+      "rule": "É o que acontece em vez de zero, em qualquer dia ruim ou agenda estourada, sempre que houver academia. Sem academia, use a versão sem equipamento.",
+      "noGym": {
+        "minutes": 25,
+        "exercises": [
+          { "name": "Flexão de braço", "sets": 3, "effort": "1 a 2 repetições antes da falha" },
+          { "name": "Agachamento búlgaro com o peso do corpo", "sets": 3, "effort": "1 a 2 repetições antes da falha, séries por perna" },
+          { "name": "Remada com mochila carregada", "sets": 3, "effort": "1 a 2 repetições antes da falha" },
+          { "name": "Elevação lateral com garrafas", "sets": 2, "effort": "Até perto da falha" }
+        ],
+        "rule": "Para viagem ou academia fechada. Duas destas por semana cumprem a regra de nunca passar 7 dias sem levantar peso."
+      }
+    },
+    "returnProtocol": {
+      "when": "Depois de 14 dias ou mais sem treinar, por qualquer motivo, ou ao voltar de doença.",
+      "rules": [
+        "Volte no dia seguinte, sem esperar segunda-feira.",
+        "Primeira semana: cerca de 90% das cargas e 30% menos séries.",
+        "Da segunda semana em diante, retome o bloco em que estiver e progrida normalmente.",
+        "Não compense com volume dobrado, jejum, déficit maior ou horas de cardio."
+      ],
+      "evidence": "Heurística, sem ensaio direto. Em pessoas não treinadas, o tamanho perdido voltou em cerca de 5 semanas de retorno (Halonen et al., 2024)."
     },
     "hingeStaging": {
       "evidence": "Protocolo prático, sem ensaio direto. A evidência mostra que dobradiça bem progressiva é tolerável, mas não valida este cronograma específico.",
       "stages": [
         { "weeks": "1-2", "exercise": "Extensão lombar no banco 45 graus ou elevação pélvica sem carga", "sets": 2, "rir": "3+" },
         { "weeks": "3-4", "exercise": "Terra romeno com halteres leves", "sets": 2, "rir": "3+" },
-        { "weeks": "5-8", "exercise": "Terra romeno com halteres, carga moderada", "sets": 3, "rir": "2-3" },
-        { "weeks": "9 em diante", "exercise": "Terra romeno com halteres ou barra, se a progressão estiver limpa", "sets": 3, "rir": "2-3" }
+        { "weeks": "5-8", "exercise": "Terra romeno com halteres, carga moderada", "sets": "3 (2 no ramo C)", "rir": "2-3" },
+        { "weeks": "9 em diante", "exercise": "Terra romeno com halteres ou barra, se a progressão estiver limpa", "sets": "3 (2 no ramo C)", "rir": "2-3" }
       ],
       "stopRule": "Dor que irradia para a perna, formigamento, perda de força ou piora da dor por mais de 48 horas: pare a dobradiça e procure avaliação."
     }
@@ -744,16 +798,16 @@
     "steps": {
       "target": 10000,
       "rule": "Fixe a média das duas primeiras semanas e mantenha, mirando 10.000. Sempre em caminhada real: depois do almoço, depois do jantar, em ligações. Em déficit, some até 2.000 antes de cortar comida, com teto de 12.000.",
-      "cost": "Cerca de 0,5 kcal por kg por km. Mil passos custam perto de 0,4 kcal por kg."
+      "cost": "Cerca de 0,5 kcal por kg por km. Mil passos custam perto de 0,35 a 0,42 kcal por kg, conforme a altura. Conte aqui só passos de caminhada."
     },
     "runs": {
       "frequency": 2,
-      "weeks1to4": "2 x 20 a 25 minutos leves",
+      "weeks1to4": "2 x 20 a 25 minutos leves. Nas semanas 1 e 2, bicicleta leve ou caminhada se as pernas estiverem doloridas",
       "weeks5to6": "2 x 25 a 30 minutos leves",
-      "weeks7to8": "1 ou 2 corridas leves ou bicicleta",
-      "weeks9to13": "2 x 30 a 35 minutos leves. Só o ramo A pode transformar uma delas em tiros de 1 a 2 minutos",
-      "weeks14": "Leve ou nenhum",
-      "weeks15to17": "2 corridas leves",
+      "holidays": "1 ou 2 corridas leves ou bicicleta",
+      "mainBlock": "2 x 30 a 35 minutos leves. Só o ramo A pode transformar uma delas em tiros de 1 a 2 minutos",
+      "carnival": "Leve ou nenhum",
+      "closingBlock": "2 corridas leves",
       "finalBlock": "Última corrida 4 dias antes da data"
     },
     "placement": {
@@ -765,7 +819,7 @@
         "Não troque sono por uma corrida de manhã: um dia sem musculação é melhor lugar para correr."
       ]
     },
-    "intensity": "Conversacional: dá para falar frases completas. Se a dor no joelho, tornozelo ou lombar aparecer, troque por bicicleta. Bicicleta não tem desvantagem para crescimento, e é o substituto oficial.",
+    "intensity": "Conversacional: dá para falar frases completas. Se aparecer dor em joelho, tornozelo ou coluna, troque por bicicleta. Bicicleta não tem desvantagem para crescimento, e é o substituto oficial.",
     "fatLossChanges": "Em déficit, a corrida continua leve e o volume não aumenta. Sobe os passos primeiro. Terceira sessão de cardio só com passos no teto e perda parada por 2 semanas.",
     "stopRule": "Se as repetições do primeiro exercício de pernas caírem 2 ou mais por 2 sessões seguidas dentro de 48 horas depois de uma corrida, troque a corrida anterior por bicicleta leve ou mova-a.",
     "evidence": "Treino concorrente com carga de corrida recreativa não reduziu hipertrofia (Held et al., 2026; Schumann et al., 2022). Sinal fraco em fibras tipo I com corrida vem de 3 estudos (Lundberg et al., 2022). A maior parte das regras de horário é prudência, não ensaio."
@@ -775,7 +829,7 @@
       {
         "name": "Creatina monoidratada",
         "dose": "5 g por dia. Carga opcional de 5 dias: 4 doses de 5 g ao dia. Nunca 10 g de uma vez.",
-        "timing": "Qualquer horário, com comida. Na fase de manutenção, todo dia, inclusive feriados.",
+        "timing": "Qualquer horário, com comida. Todo dia, inclusive feriados e até o dia da data: parar antes mudaria a água intramuscular e o peso na reta final.",
         "evidence": "Forte para desempenho e cerca de 1 kg de massa magra em treinos (parte é água). Efeito pequeno em músculo por imagem direta. Funciona se as repetições extras realmente acontecerem.",
         "note": "A carga termina a saturação em uma semana. Sem carga, 3 a 4 semanas. Com histórico familiar forte de calvície precoce, prefira a dose diária sem carga: a única alta de DHT veio de 25 g por dia e não foi replicada."
       },
@@ -803,10 +857,11 @@
     ],
     "doNotBuy": [
       { "name": "Pré-treinos com estimulantes e queimadores de gordura", "reason": "Prateleira de maior risco de DMAA e estimulantes ocultos." },
-      { "name": "Testosterona booster, ashwagandha, tribulus", "reason": "Ashwagandha é proibida como suplemento no Brasil. Nenhum funciona de forma útil em homem saudável." },
+      { "name": "Testosterona booster, ashwagandha, tribulus", "reason": "Ashwagandha é proibida como suplemento no Brasil. Em levantamento de boosters vendidos, a maioria dos ingredientes não tinha dados de eficácia (Clemesha et al., 2019)." },
       { "name": "Anabolizantes, SARMs e prohormônios", "reason": "Fora dos limites deste plano. Uma empresa que vende isso também perde a confiança para qualquer outro produto." },
       { "name": "BCAA e EAA", "reason": "Nada a acrescentar com proteína suficiente." },
-      { "name": "Glutamina, HMB, ZMA, beta-alanina, citrulina", "reason": "Sem efeito relevante para hipertrofia em quem come bem." },
+      { "name": "HMB", "reason": "Sem efeito relevante em massa magra em quem treina (Jakubowski et al., 2019)." },
+      { "name": "Glutamina, ZMA, beta-alanina, citrulina", "reason": "Não entraram na evidência verificada deste plano. Sem dado levantado aqui que justifique o gasto." },
       { "name": "Gomas e bebidas com creatina", "reason": "Dose difícil de controlar. Anvisa já suspendeu lotes por falha de conteúdo." },
       { "name": "Importados sem notificação na Anvisa", "reason": "Sem nenhuma rastreabilidade." }
     ],
@@ -822,12 +877,12 @@
   },
   "meals": {
     "dayTemplate": {
-      "note": "Quatro refeições. Percentuais do total do dia. A meta de proteína se distribui igualmente.",
+      "note": "Quatro refeições. Percentuais do total do dia. A meta de proteína se distribui igualmente. Troque o atum por sardinha uma ou duas vezes por semana para variar as fontes de gordura.",
       "feedings": [
-        { "id": "cafe", "name": "Café da manhã", "kcalPct": 22, "proteinPct": 25, "carbsPct": 20, "fatPct": 30, "proteinGExpr": "proteinTargetG * 0.25" },
-        { "id": "almoco", "name": "Almoço", "kcalPct": 30, "proteinPct": 25, "carbsPct": 30, "fatPct": 30, "proteinGExpr": "proteinTargetG * 0.25" },
-        { "id": "pre_treino", "name": "Refeição pré-treino", "kcalPct": 20, "proteinPct": 25, "carbsPct": 25, "fatPct": 10, "proteinGExpr": "proteinTargetG * 0.25", "timing": "1 a 3 horas antes do treino" },
-        { "id": "jantar", "name": "Jantar pós-treino", "kcalPct": 28, "proteinPct": 25, "carbsPct": 25, "fatPct": 30, "proteinGExpr": "proteinTargetG * 0.25", "timing": "Até 2 horas depois do treino, perto de dormir" }
+        { "id": "cafe", "name": "Café da manhã", "kcalPct": 23, "proteinPct": 25, "carbsPct": 20, "fatPct": 30, "proteinGExpr": "proteinTargetG * 0.25" },
+        { "id": "almoco", "name": "Almoço", "kcalPct": 29, "proteinPct": 25, "carbsPct": 30, "fatPct": 30, "proteinGExpr": "proteinTargetG * 0.25" },
+        { "id": "pre_treino", "name": "Refeição pré-treino", "kcalPct": 22, "proteinPct": 25, "carbsPct": 25, "fatPct": 10, "proteinGExpr": "proteinTargetG * 0.25", "timing": "1 a 3 horas antes do treino" },
+        { "id": "jantar", "name": "Jantar pós-treino", "kcalPct": 26, "proteinPct": 25, "carbsPct": 25, "fatPct": 30, "proteinGExpr": "proteinTargetG * 0.25", "timing": "Até 2 horas depois do treino, perto de dormir" }
       ]
     },
     "foodsPer100g": [
@@ -903,14 +958,14 @@
     },
     "dayExamples": {
       "inputs": ["proteinTargetG", "carbsTargetG", "fatTargetG"],
-      "note": "Exemplos gerados pelas metas. gramsExpr em gramas, pesando cru. Whey considerado com 64% de proteína por grama de pó, depois do desconto de 20%. Ajuste pelo rótulo. Salada e legumes entram à vontade no almoço e no jantar, contam pouco e entregam fibra.",
+      "note": "Exemplos gerados pelas metas. trainingDay e restDay valem em manutenção ou superávit; deficitTrainingDay e deficitRestDay valem em dias de déficit, quando arroz e feijão encolhem e as fontes de proteína crescem. Cada alimento está no estado indicado pelo nome: cru quando diz cru, cozido quando diz cozido. Whey considerado com 64% de proteína por grama de pó, depois do desconto de 20%. Ajuste pelo rótulo. Os exemplos acertam a proteína com margem de cerca de 5%; nos extremos de calorias, ajuste o frango e o patinho. Salada e legumes entram à vontade no almoço e no jantar, contam pouco e entregam fibra.",
       "trainingDay": [
         {
           "feedingId": "cafe",
           "items": [
-            { "foodId": "ovo_cozido", "gramsExpr": "proteinTargetG * 0.25 * 0.35 / 0.133" },
-            { "foodId": "whey", "gramsExpr": "proteinTargetG * 0.25 * 0.30 / 0.64" },
-            { "foodId": "aveia", "gramsExpr": "carbsTargetG * 0.20 * 0.55 / 0.666" },
+            { "foodId": "ovo_cozido", "gramsExpr": "proteinTargetG * 0.1826 * 0.60 / 0.133" },
+            { "foodId": "whey", "gramsExpr": "proteinTargetG * 0.1826 * 0.40 / 0.64" },
+            { "foodId": "aveia", "gramsExpr": "carbsTargetG * 0.20 * 0.57 / 0.666" },
             { "foodId": "banana_prata", "gramsExpr": "carbsTargetG * 0.20 * 0.35 / 0.26" },
             { "foodId": "mel", "gramsExpr": "carbsTargetG * 0.20 * 0.08 / 0.84" }
           ]
@@ -918,28 +973,28 @@
         {
           "feedingId": "almoco",
           "items": [
-            { "foodId": "peito_cru", "gramsExpr": "proteinTargetG * 0.25 * 0.62 / 0.215" },
-            { "foodId": "arroz_cru", "gramsExpr": "carbsTargetG * 0.30 * 0.78 / 0.788" },
+            { "foodId": "peito_cru", "gramsExpr": "proteinTargetG * 0.1436 / 0.215" },
+            { "foodId": "arroz_cru", "gramsExpr": "carbsTargetG * 0.30 * 0.80 / 0.788" },
             { "foodId": "feijao_carioca_cozido", "gramsExpr": "carbsTargetG * 0.30 * 0.20 / 0.136" },
-            { "foodId": "azeite", "gramsExpr": "fatTargetG * 0.30 * 0.85" }
+            { "foodId": "azeite", "gramsExpr": "fatTargetG * 0.2331" }
           ]
         },
         {
           "feedingId": "pre_treino",
           "items": [
-            { "foodId": "pao_frances", "gramsExpr": "carbsTargetG * 0.25 * 0.55 / 0.586" },
-            { "foodId": "banana_prata", "gramsExpr": "carbsTargetG * 0.25 * 0.40 / 0.26" },
-            { "foodId": "atum_oleo", "gramsExpr": "proteinTargetG * 0.25 * 0.25 / 0.262" },
-            { "foodId": "whey", "gramsExpr": "proteinTargetG * 0.25 * 0.45 / 0.64" }
+            { "foodId": "pao_frances", "gramsExpr": "carbsTargetG * 0.25 * 0.58 / 0.586" },
+            { "foodId": "banana_prata", "gramsExpr": "carbsTargetG * 0.25 * 0.42 / 0.26" },
+            { "foodId": "atum_oleo", "gramsExpr": "proteinTargetG * 0.1882 * 0.40 / 0.262" },
+            { "foodId": "whey", "gramsExpr": "proteinTargetG * 0.1882 * 0.60 / 0.64" }
           ]
         },
         {
           "feedingId": "jantar",
           "items": [
-            { "foodId": "patinho_cru", "gramsExpr": "proteinTargetG * 0.25 * 0.65 / 0.217" },
-            { "foodId": "macarrao_cru", "gramsExpr": "carbsTargetG * 0.25 * 0.80 / 0.779" },
+            { "foodId": "patinho_cru", "gramsExpr": "proteinTargetG * 0.15 / 0.217" },
+            { "foodId": "macarrao_cru", "gramsExpr": "carbsTargetG * 0.25 * 0.85 / 0.779" },
             { "foodId": "feijao_carioca_cozido", "gramsExpr": "carbsTargetG * 0.25 * 0.15 / 0.136" },
-            { "foodId": "azeite", "gramsExpr": "fatTargetG * 0.30 * 0.80" }
+            { "foodId": "azeite", "gramsExpr": "fatTargetG * 0.2331" }
           ]
         }
       ],
@@ -947,39 +1002,118 @@
         {
           "feedingId": "cafe",
           "items": [
-            { "foodId": "ovo_cozido", "gramsExpr": "proteinTargetG * 0.25 * 0.35 / 0.133" },
-            { "foodId": "whey", "gramsExpr": "proteinTargetG * 0.25 * 0.30 / 0.64" },
-            { "foodId": "aveia", "gramsExpr": "carbsTargetG * 0.20 * 0.55 / 0.666" },
-            { "foodId": "banana_prata", "gramsExpr": "carbsTargetG * 0.20 * 0.35 / 0.26" }
+            { "foodId": "ovo_cozido", "gramsExpr": "proteinTargetG * 0.1783 * 0.70 / 0.133" },
+            { "foodId": "whey", "gramsExpr": "proteinTargetG * 0.1783 * 0.30 / 0.64" },
+            { "foodId": "aveia", "gramsExpr": "carbsTargetG * 0.20 * 0.60 / 0.666" },
+            { "foodId": "banana_prata", "gramsExpr": "carbsTargetG * 0.20 * 0.40 / 0.26" }
           ]
         },
         {
           "feedingId": "almoco",
           "items": [
-            { "foodId": "peito_cru", "gramsExpr": "proteinTargetG * 0.25 * 0.62 / 0.215" },
-            { "foodId": "arroz_cru", "gramsExpr": "carbsTargetG * 0.30 * 0.78 / 0.788" },
+            { "foodId": "peito_cru", "gramsExpr": "proteinTargetG * 0.1436 / 0.215" },
+            { "foodId": "arroz_cru", "gramsExpr": "carbsTargetG * 0.30 * 0.80 / 0.788" },
             { "foodId": "feijao_carioca_cozido", "gramsExpr": "carbsTargetG * 0.30 * 0.20 / 0.136" },
-            { "foodId": "azeite", "gramsExpr": "fatTargetG * 0.30 * 0.85" }
+            { "foodId": "azeite", "gramsExpr": "fatTargetG * 0.1871" }
           ]
         },
         {
           "feedingId": "pre_treino",
           "name": "Lanche da tarde",
           "items": [
-            { "foodId": "whey", "gramsExpr": "proteinTargetG * 0.25 * 0.55 / 0.64" },
-            { "foodId": "iogurte_natural", "gramsExpr": "proteinTargetG * 0.25 * 0.10 / 0.041" },
+            { "foodId": "whey", "gramsExpr": "proteinTargetG * 0.1895 * 0.75 / 0.64" },
+            { "foodId": "iogurte_natural", "gramsExpr": "proteinTargetG * 0.1895 * 0.25 / 0.041" },
             { "foodId": "aveia", "gramsExpr": "carbsTargetG * 0.25 * 0.35 / 0.666" },
-            { "foodId": "banana_prata", "gramsExpr": "carbsTargetG * 0.25 * 0.45 / 0.26" },
-            { "foodId": "mel", "gramsExpr": "carbsTargetG * 0.25 * 0.10 / 0.84" }
+            { "foodId": "banana_prata", "gramsExpr": "carbsTargetG * 0.25 * 0.50 / 0.26" },
+            { "foodId": "mel", "gramsExpr": "carbsTargetG * 0.25 * 0.15 / 0.84" }
           ]
         },
         {
           "feedingId": "jantar",
           "items": [
-            { "foodId": "patinho_cru", "gramsExpr": "proteinTargetG * 0.25 * 0.65 / 0.217" },
-            { "foodId": "macarrao_cru", "gramsExpr": "carbsTargetG * 0.25 * 0.80 / 0.779" },
+            { "foodId": "patinho_cru", "gramsExpr": "proteinTargetG * 0.15 / 0.217" },
+            { "foodId": "macarrao_cru", "gramsExpr": "carbsTargetG * 0.25 * 0.85 / 0.779" },
             { "foodId": "feijao_carioca_cozido", "gramsExpr": "carbsTargetG * 0.25 * 0.15 / 0.136" },
-            { "foodId": "azeite", "gramsExpr": "fatTargetG * 0.30 * 0.80" }
+            { "foodId": "azeite", "gramsExpr": "fatTargetG * 0.1871" }
+          ]
+        }
+      ],
+      "deficitTrainingDay": [
+        {
+          "feedingId": "cafe",
+          "items": [
+            { "foodId": "ovo_cozido", "gramsExpr": "proteinTargetG * 0.204 * 0.60 / 0.133" },
+            { "foodId": "whey", "gramsExpr": "proteinTargetG * 0.204 * 0.40 / 0.64" },
+            { "foodId": "aveia", "gramsExpr": "carbsTargetG * 0.20 * 0.57 / 0.666" },
+            { "foodId": "banana_prata", "gramsExpr": "carbsTargetG * 0.20 * 0.35 / 0.26" },
+            { "foodId": "mel", "gramsExpr": "carbsTargetG * 0.20 * 0.08 / 0.84" }
+          ]
+        },
+        {
+          "feedingId": "almoco",
+          "items": [
+            { "foodId": "peito_cru", "gramsExpr": "proteinTargetG * 0.1774 / 0.215" },
+            { "foodId": "arroz_cru", "gramsExpr": "carbsTargetG * 0.30 * 0.80 / 0.788" },
+            { "foodId": "feijao_carioca_cozido", "gramsExpr": "carbsTargetG * 0.30 * 0.20 / 0.136" },
+            { "foodId": "azeite", "gramsExpr": "fatTargetG * 0.1686" }
+          ]
+        },
+        {
+          "feedingId": "pre_treino",
+          "items": [
+            { "foodId": "pao_frances", "gramsExpr": "carbsTargetG * 0.25 * 0.58 / 0.586" },
+            { "foodId": "banana_prata", "gramsExpr": "carbsTargetG * 0.25 * 0.42 / 0.26" },
+            { "foodId": "atum_oleo", "gramsExpr": "proteinTargetG * 0.2078 * 0.40 / 0.262" },
+            { "foodId": "whey", "gramsExpr": "proteinTargetG * 0.2078 * 0.60 / 0.64" }
+          ]
+        },
+        {
+          "feedingId": "jantar",
+          "items": [
+            { "foodId": "patinho_cru", "gramsExpr": "proteinTargetG * 0.1818 / 0.217" },
+            { "foodId": "macarrao_cru", "gramsExpr": "carbsTargetG * 0.25 * 0.85 / 0.779" },
+            { "foodId": "feijao_carioca_cozido", "gramsExpr": "carbsTargetG * 0.25 * 0.15 / 0.136" },
+            { "foodId": "azeite", "gramsExpr": "fatTargetG * 0.1686" }
+          ]
+        }
+      ],
+      "deficitRestDay": [
+        {
+          "feedingId": "cafe",
+          "items": [
+            { "foodId": "ovo_cozido", "gramsExpr": "proteinTargetG * 0.2011 * 0.70 / 0.133" },
+            { "foodId": "whey", "gramsExpr": "proteinTargetG * 0.2011 * 0.30 / 0.64" },
+            { "foodId": "aveia", "gramsExpr": "carbsTargetG * 0.20 * 0.60 / 0.666" },
+            { "foodId": "banana_prata", "gramsExpr": "carbsTargetG * 0.20 * 0.40 / 0.26" }
+          ]
+        },
+        {
+          "feedingId": "almoco",
+          "items": [
+            { "foodId": "peito_cru", "gramsExpr": "proteinTargetG * 0.1774 / 0.215" },
+            { "foodId": "arroz_cru", "gramsExpr": "carbsTargetG * 0.30 * 0.80 / 0.788" },
+            { "foodId": "feijao_carioca_cozido", "gramsExpr": "carbsTargetG * 0.30 * 0.20 / 0.136" },
+            { "foodId": "azeite", "gramsExpr": "fatTargetG * 0.1117" }
+          ]
+        },
+        {
+          "feedingId": "pre_treino",
+          "name": "Lanche da tarde",
+          "items": [
+            { "foodId": "whey", "gramsExpr": "proteinTargetG * 0.2087 * 0.75 / 0.64" },
+            { "foodId": "iogurte_natural", "gramsExpr": "proteinTargetG * 0.2087 * 0.25 / 0.041" },
+            { "foodId": "aveia", "gramsExpr": "carbsTargetG * 0.25 * 0.35 / 0.666" },
+            { "foodId": "banana_prata", "gramsExpr": "carbsTargetG * 0.25 * 0.50 / 0.26" },
+            { "foodId": "mel", "gramsExpr": "carbsTargetG * 0.25 * 0.15 / 0.84" }
+          ]
+        },
+        {
+          "feedingId": "jantar",
+          "items": [
+            { "foodId": "patinho_cru", "gramsExpr": "proteinTargetG * 0.1818 / 0.217" },
+            { "foodId": "macarrao_cru", "gramsExpr": "carbsTargetG * 0.25 * 0.85 / 0.779" },
+            { "foodId": "feijao_carioca_cozido", "gramsExpr": "carbsTargetG * 0.25 * 0.15 / 0.136" },
+            { "foodId": "azeite", "gramsExpr": "fatTargetG * 0.1117" }
           ]
         }
       ]
@@ -998,7 +1132,7 @@
       ],
       "christmas": [
         "Alcance a proteína da ceia antes dos doces: a carne é a parte fácil.",
-        "Uma noite com álcool, até 0,5 g de álcool por kg, e nada mais. Não pule refeições do dia para compensar.",
+        "No Natal, uma noite com álcool, até 0,5 g de álcool por kg. No Ano-Novo, até cerca de 1 g/kg, com jantar completo antes. Fora dessas noites, zero. Não pule refeições do dia para compensar.",
         "Sessões marcadas antes das festas, e dieta volta ao normal no dia seguinte sem punição.",
         "Peso ignorado na janela das festas e na semana seguinte."
       ],
@@ -1006,28 +1140,29 @@
         "Em manutenção, sem déficit.",
         "No máximo 2 dias com bebida entre 4 dias de festa, e nunca no dia de pernas ou na véspera.",
         "Três refeições com proteína em dia de bloco, mesmo que seja frango desfiado e pão.",
-        "Peso ignorado até 9 dias depois do início da janela."
+        "Peso ignorado até 8 dias depois do início da janela."
       ]
     }
   },
   "timeline": [
-    { "id": "t_inicio_medidas", "daysFromStart": 0, "category": "medidas", "title": "Medição inicial", "detail": "Peso em jejum, cintura no umbigo, pescoço, ombros, peito, quadril, coxa, braço e fotos de base. Consulta opcional para exames e DXA." },
-    { "id": "t_alfaiate_prazo", "daysFromStart": 0, "category": "alfaiataria", "title": "Prazo do alfaiate por escrito", "detail": "Peça prazo, margem de costura e datas de folga no Carnaval. Se o prazo passar de 8 semanas, adiante o pedido e confie nos ajustes." },
+    { "id": "t_inicio_medidas", "daysFromStart": 0, "category": "medidas", "title": "Medição inicial", "detail": "Peso em jejum, cintura no umbigo, pescoço, ombros, peito, quadril, coxa, braço e fotos de base. Consulta opcional para exames." },
+    { "id": "t_dxa_base", "daysFromStart": 14, "category": "medidas", "title": "Janela para o DXA de base", "detail": "A fita erra cerca de 7 pontos para cada lado, então um DXA é a medida que mais rende se você puder pagar uma. Faça a partir daqui, com a creatina já saturada, para o estado ficar igual ao do exame final." },
+    { "id": "t_prazo_roupa", "daysFromStart": 0, "category": "roupa", "title": "Prazo da roupa sob medida", "detail": "Se a data pedir roupa feita sob medida, peça por escrito o prazo, a margem de costura e os dias em que o ateliê não abre. Se o prazo passar de 8 semanas, adiante o pedido e confie nos ajustes." },
     { "id": "t_fita2", "daysFromStart": 27, "category": "medidas", "title": "Segunda fita e decisão de ramo", "detail": "Fita em jejum. O ramo vale a partir do dia seguinte." },
     { "id": "t_fotos1", "daysFromStart": 27, "category": "fotos", "title": "Fotos do primeiro mês", "detail": "Mesmo lugar, luz e horário." },
-    { "id": "t_reteste_ramo", "daysFromStart": 62, "category": "medidas", "title": "Reteste do ramo", "detail": "Fita em jejum, primeiro domingo limpo depois das festas. Pode mudar um ramo." },
-    { "id": "t_pedido_terno", "daysBeforeTarget": 63, "category": "alfaiataria", "title": "Pedido do terno sob medida", "detail": "Encomende cerca de 9 semanas antes, salvo se o alfaiate indicar outro prazo. Faça a prova do molde 2 a 3 semanas depois." },
-    { "id": "t_gate_a", "daysBeforeTarget": 55, "category": "medidas", "title": "Portão de cintura e M2", "detail": "Ramo A: confere cintura contra o dia 27. Todos: atualização de manutenção." },
+    { "id": "t_reteste_ramo", "anchor": "holidayStart", "daysFromAnchor": 20, "category": "medidas", "title": "Reteste do ramo", "detail": "Fita em jejum, primeiro domingo limpo depois das festas. Pode mudar um ramo." },
+    { "id": "t_pedido_roupa", "daysBeforeTarget": 63, "category": "roupa", "title": "Pedido da roupa sob medida", "detail": "Se fizer sentido para a data, encomende cerca de 9 semanas antes, salvo se o ateliê indicar outro prazo. Faça a prova do molde 2 a 3 semanas depois." },
+    { "id": "t_gate_a", "anchor": "carnivalStart", "daysFromAnchor": -6, "category": "medidas", "title": "Portão de cintura e M2", "detail": "Ramo A: confere cintura contra o dia 27. Todos: atualização de manutenção." },
     { "id": "t_sem_exercicio_novo", "daysBeforeTarget": 28, "category": "treino", "title": "Nenhum exercício novo", "detail": "A partir daqui, só movimentos conhecidos." },
     { "id": "t_fim_deficit", "daysBeforeTarget": 21, "category": "nutricao", "title": "Último dia de déficit e M3", "detail": "Atualize a manutenção. No dia seguinte começa a manutenção." },
     { "id": "t_noites_excecao", "daysBeforeTarget": 21, "category": "nutricao", "title": "Limite para qualquer noite de exceção", "detail": "Se houver uma noite de bebida marcada no calendário, deve acontecer até aqui. Depois disso, zero álcool nas 2 semanas finais." },
-    { "id": "t_prova_final", "daysBeforeTarget": 14, "category": "alfaiataria", "title": "Prova final", "detail": "Faça a prova depois da primeira semana de manutenção, quando o peso voltou a estabilizar." },
+    { "id": "t_prova_final", "daysBeforeTarget": 14, "category": "roupa", "title": "Prova final da roupa", "detail": "Faça a prova depois da primeira semana de manutenção, quando o peso voltou a estabilizar." },
     { "id": "t_zero_alcool", "daysBeforeTarget": 14, "category": "nutricao", "title": "Zero álcool", "detail": "Duas semanas finais sem álcool, para proteger o sono." },
     { "id": "t_foto_comparacao", "daysBeforeTarget": 7, "category": "fotos", "title": "Fotos finais", "detail": "Compare com as de base. Nenhuma decisão de comida sai daqui." },
     { "id": "t_ultima_perna", "daysBeforeTarget": 6, "category": "treino", "title": "Última sessão pesada de pernas ou dobradiça", "detail": "Depois disso, só pump leve." },
     { "id": "t_ultima_corrida", "daysBeforeTarget": 4, "category": "treino", "title": "Última corrida", "detail": "Daqui em diante só caminhada." },
     { "id": "t_ultimo_pump", "daysBeforeTarget": 2, "category": "treino", "title": "Último pump de superiores", "detail": "Faça 2 ou 3 dias antes. Sem falha e sem exercícios novos." },
-    { "id": "t_terno_pronto", "daysBeforeTarget": 2, "category": "alfaiataria", "title": "Terno pronto em mãos", "detail": "Confirme feriados próximos à data antes de marcar a retirada." },
+    { "id": "t_roupa_pronta", "daysBeforeTarget": 2, "category": "roupa", "title": "Roupa pronta em mãos", "detail": "Confirme feriados próximos à data antes de marcar a retirada." },
     { "id": "t_vespera", "daysBeforeTarget": 1, "category": "treino", "title": "Véspera sem treino", "detail": "Comida igual, água igual, sal igual, sono em primeiro lugar." },
     {
       "id": "t_semana_final",
@@ -1045,17 +1180,17 @@
     }
   ],
   "levers": [
-    { "rank": 1, "name": "Treinar sem interromper", "why": "Cada semana parada é semana perdida de uma janela que não aumenta, e nenhuma escolha de calorias recupera isso." },
+    { "rank": 1, "name": "Treinar sem interromper", "why": "O tamanho perdido volta rápido depois de uma pausa, mas a janela não aumenta: cada semana parada sai do total de semanas de treino (Halonen et al., 2024)." },
     { "rank": 2, "name": "Levar as séries perto da falha", "why": "A hipertrofia aumenta à medida que as séries terminam mais perto da falha, cerca de 0,5% de crescimento a menos para cada repetição deixada na reserva (Robinson et al., 2024)." },
     { "rank": 3, "name": "Comer o suficiente todo dia", "why": "Calorias regulares, sem pular refeição, sustentam qualidade de treino e tornam a manutenção mensurável." },
-    { "rank": 4, "name": "Decidir déficit pelo espelho e pela fita", "why": "A gordura foi o preditor mais forte de como o corpo masculino é avaliado (Xia et al., 2025), e um déficit moderado no bloco certo traz o maior ganho visual." },
+    { "rank": 4, "name": "Decidir déficit pela fita e pela tendência da cintura", "why": "A gordura foi o preditor mais forte de como o corpo masculino é avaliado (Xia et al., 2025), e um déficit moderado no bloco certo traz o maior ganho visual." },
     { "rank": 5, "name": "Bater a proteína", "why": "Ganhos achatam perto de 1,6 g/kg com incerteza até 2,2 (Morton et al., 2018), e abaixo disso a massa magra fica em risco." },
-    { "rank": 6, "name": "Treinar o que você não treina", "why": "Dobradiça de quadril, posterior, deltoide posterior e panturrilha partem de quase zero e respondem bem ao primeiro volume real." },
+    { "rank": 6, "name": "Treinar o que costuma ficar de fora", "why": "Dobradiça de quadril, posterior de coxa, deltoide posterior e panturrilha são os grupos mais esquecidos em programas de academia. Músculo com pouco volume anterior tende a responder bem ao primeiro volume real (heurística, sem ensaio direto)." },
     { "rank": 7, "name": "Progressão registrada", "why": "Sem número registrado na série seguinte não existe progressão, e a sensação de esforço engana." },
-    { "rank": 8, "name": "Dormir 7,5 horas ou mais", "why": "Sono curto em déficit deslocou perda de gordura para perda de massa magra (Nedeltcheva et al., 2010) e sessões pioram quando você dorme pouco." },
+    { "rank": 8, "name": "Dormir 7 horas ou mais", "why": "Sono curto em déficit deslocou perda de gordura para perda de massa magra (Nedeltcheva et al., 2010) e sessões pioram quando você dorme pouco." },
     { "rank": 9, "name": "Distribuir o volume", "why": "Músculos prioritários crescem bem entre 12 e 20 séries por semana, e o ganho por série cai depois disso (Pelland et al., 2024)." },
     { "rank": 10, "name": "Creatina monoidratada", "why": "É o suplemento com a melhor evidência de ganho de massa magra e desempenho, e custa pouco." },
-    { "rank": 11, "name": "Comer antes de treinar", "why": "Sessões acima de 45 minutos rendem mais com carboidrato (King et al., 2022), e treinar de estômago vazio depois de um dia sem comer é o pior cenário." },
+    { "rank": 11, "name": "Comer antes de treinar", "why": "Sessões acima de 45 minutos rendem mais com carboidrato do que com placebo ou água, e o ganho se repete em quem chega de 8 horas ou mais de jejum (King et al., 2022)." },
     { "rank": 12, "name": "Largar o álcool", "why": "O álcool reduz sono REM mesmo em doses baixas (Gardiner et al., 2025) e doses altas derrubam a síntese proteica (Parr et al., 2014)." }
   ],
   "faq": [
@@ -1066,7 +1201,6 @@
     { "q": "O relógio mostra quanto eu gastei?", "a": "Uma meta-análise de 56 estudos encontrou erro médio de 28% em gasto energético. Passos valem, calorias não.", "sourceUrl": "https://olemiss.edu/news/2025/06/apple-watch-accuracy-study/index.html" },
     { "q": "Mifflin-St Jeor é a melhor equação para quem levanta?", "a": "Em atletas, Mifflin entrou na lista a evitar; Ten-Haaf foi a equação com mais pessoas dentro de 10% do valor medido, em poucos estudos.", "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10687135/" },
     { "q": "Só dá para absorver 30 g de proteína por refeição?", "a": "Não. Depois de 100 g de proteína, a síntese seguiu elevada por mais de 12 horas. Quatro refeições continuam o padrão sensato, mas uma dose grande não se perde.", "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10772463/" },
-    { "q": "Preciso tomar whey em 30 minutos depois do treino?", "a": "O efeito de timing some quando se ajusta pelo total diário de proteína. A meta do dia é o que importa.", "sourceUrl": "https://pubmed.ncbi.nlm.nih.gov/24299050/" },
     { "q": "Mais de 2,2 g/kg de proteína dá mais músculo?", "a": "Em homens treinados, 3,2 e 1,6 g/kg deram ganho parecido em 16 semanas, em um ensaio pequeno. Gaste calorias em carboidrato.", "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11349518/" },
     { "q": "Proteína alta destrói o rim?", "a": "Em adultos sem doença renal, dietas ricas em proteína não mudaram a taxa de filtração em ensaios curtos. Dados de longo prazo são limitados.", "sourceUrl": "https://news.mcmaster.ca/myth-busted-researchers-show-that-a-high-protein-diet-does-not-affect-kidney-function/" },
     { "q": "Mais de 10 séries por músculo é volume lixo?", "a": "O crescimento segue subindo além de 10 séries, com retorno decrescente. Entre 12 e 20 séries fracionárias o investimento ainda compensa.", "sourceUrl": "https://sportrxiv.org/index.php/server/preprint/download/460/967/908" },
@@ -1074,14 +1208,14 @@
     { "q": "As pessoas sabem quantas repetições faltam?", "a": "Erramos por cerca de 1 repetição em média. Calibrar exige séries reais à falha.", "sourceUrl": "https://pubmed.ncbi.nlm.nih.gov/34542869/" },
     { "q": "Parciais na parte alongada são melhores que repetição completa?", "a": "Em dois ensaios com pessoas treinadas, os resultados foram parecidos. O padrão continua sendo repetição completa com alongamento controlado.", "sourceUrl": "https://doi.org/10.1080/02640414.2025.2567805" },
     { "q": "Hipertrofia só acontece entre 8 e 12 repetições?", "a": "Pesos altos e leves até a falha geraram crescimento parecido. A faixa ampla funciona; carga leve sem falha não funciona.", "sourceUrl": "https://pubmed.ncbi.nlm.nih.gov/31895290/" },
-    { "q": "Cardio mata o ganho?", "a": "Em 17 meta-análises, a diferença em hipertrofia foi quase nula (Held et al., 2026). O custo aparece em potência e, quando o cardio pesado vem logo antes de pernas, em força.", "sourceUrl": "https://link.springer.com/10.1007/s40279-026-02401-y" },
+    { "q": "Cardio mata o ganho?", "a": "Na parte de hipertrofia, com 5 meta-análises e 33 estudos, a diferença foi quase nula (Held et al., 2026). O custo aparece em potência e, quando o cardio pesado vem logo antes de pernas, em força.", "sourceUrl": "https://link.springer.com/10.1007/s40279-026-02401-y" },
     { "q": "Creatina deixa calvo?", "a": "Um estudo de 2009, com 20 jogadores, mediu DHT e não mediu cabelo. Um ensaio de 12 semanas com homens treinados, a 5 g por dia, não encontrou mudança em DHT ou cabelo.", "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12020143/" },
     { "q": "Creatina estraga o rim?", "a": "Sem evidência convincente de dano em pessoas saudáveis, com doses de até 30 g por dia estudadas por até 5 anos. Pode elevar a creatinina sem perda de função.", "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5469049/" },
     { "q": "A marca grande garante whey limpo?", "a": "Não. Uma pesquisa da indústria encontrou sinais de spiking em 39% de 124 produtos, em uma lista disputada e já antiga. Nenhuma lista protege um lote específico.", "sourceUrl": "https://www.opovo.com.br/noticias/saude/2025/06/04/whey-protein-relembre-marcas-reprovadas-na-ultima-analise-do-suplemento.html" },
     { "q": "Uma noite ruim destrói o ganho?", "a": "Uma noite curta custa pouca força e mais em resistência. O risco são noites curtas repetidas.", "sourceUrl": "https://www.strongerbyscience.com/research-spotlight-sleep-loss/" },
     { "q": "Uma bebida ajuda a dormir?", "a": "O sono REM é atrasado e reduzido mesmo em doses baixas. Dormir mais rápido só aparece em doses altas, e piora a segunda metade da noite.", "sourceUrl": "https://nutrition-evidence.com/article/515734/the-effect-of-alcohol-on-subsequent-sleep-in-healthy-adults-a-systematic-review-and-meta-analysis" },
     { "q": "Bioimpedância da academia mostra minha gordura?", "a": "Em adultos ativos, InBody 770 teve cerca de 21% de erro médio contra DXA e leu gordura abaixo do real. Se for o único recurso, use só para tendência e sempre na mesma máquina.", "sourceUrl": "https://www.frontiersin.org/articles/10.3389/fspor.2025.1644082/full" },
-    { "q": "Carga de carboidrato faz o músculo saltar?", "a": "Em homens muito magros, a carga subiu a espessura muscular cerca de 2%, abaixo do erro de medida. Não vale o risco antes de uma data importante.", "sourceUrl": "https://rke.abertay.ac.uk/ws/files/81860666/Jukic_TheEffectOfABodybuilding_Published_2024.pdf" },
+    { "q": "Carga de carboidrato faz o músculo saltar?", "a": "Em homens muito magros, a carga subiu a espessura muscular cerca de 2%, e os autores notaram que isso pode não ultrapassar o erro de medida. Não vale o risco antes de uma data importante.", "sourceUrl": "https://rke.abertay.ac.uk/ws/files/81860666/Jukic_TheEffectOfABodybuilding_Published_2024.pdf" },
     { "q": "Tomar água e sal diferente na semana final funciona?", "a": "Não há estratégia de água ou sódio com evidência sólida, e os riscos incluem hiponatremia e alterações de potássio. Mantenha igual.", "sourceUrl": "https://www.nsca.com/globalassets/events/pdf/nat22/escalante-guillermo.pdf" }
   ]
 }

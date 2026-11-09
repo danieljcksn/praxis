@@ -1,12 +1,12 @@
 ## 14. Quando a vida atrapalha: viagem, festas, doença e semana perdida
 
-Todo plano bonito no papel quebra em algum momento. Viagem, festa, gripe, reunião que estoura e noite mal dormida vão acontecer. O que diferencia quem chega ao fim é ter decidido de antemão o que fazer quando isso acontecer. Este capítulo define a resposta para cada caso.
+Viagem, festa, gripe, reunião que estoura e noite mal dormida vão acontecer durante o plano. Decidir de antemão o que fazer em cada caso custa cinco minutos, e este capítulo define a resposta para cada um.
 
 ### Por que semanas perdidas custam tanto
 
 Pausa em si não destrói o que foi construído. Em um ensaio com 55 pessoas não treinadas, quem parou por 10 semanas e voltou terminou igual a quem treinou direto, e o ganho perdido voltou nas primeiras 5 semanas do retorno (Halonen et al., 2024). Um ensaio anterior mostrou resultado parecido com pausas de 3 semanas (Ogasawara et al., 2013). Em ambos, os participantes eram iniciantes.
 
-Num projeto com data marcada, o custo de uma pausa é o tempo. Uma pausa de 8 semanas, por exemplo, tira 40% de uma janela de 20. Pode ser que o músculo volte rápido, porém as semanas não voltam.
+Num projeto com data marcada, o custo de uma pausa é o tempo. Uma pausa de 4 semanas, por exemplo, tira um quinto de uma janela de 20. Pode ser que o músculo volte rápido, porém as semanas não voltam.
 
 **Regra do plano: nunca mais de 7 dias sem levantar peso.** Se uma pausa acontecer, volte no dia seguinte, sem esperar segunda-feira.
 
@@ -22,7 +22,7 @@ Escreva 5 planos no próprio Hevy antes de começar. Exemplos:
 - Se viajei, faço 2 sessões de corpo inteiro na semana.
 - Se a agenda do sábado encheu, levanto peso primeiro.
 
-Dê a si mesmo uma pequena recompensa concreta sempre que voltar depois de uma falta, e só nesse caso.
+Dê a si mesmo uma pequena recompensa concreta sempre que voltar depois de uma falta, e só nesse caso. E avise uma pessoa no dia de cada sessão perdida; é heurística, sem ensaio, e funciona como alarme barato.
 
 ### A ordem de corte em uma semana ruim
 
@@ -40,9 +40,11 @@ Musculação vem por último.
 
 Vinte e cinco minutos, com 2 séries em 4 exercícios: puxada, supino na máquina, leg press e mesa flexora, todas com 1 a 2 repetições na reserva. Pode ser feita em qualquer dia estourado. Serve para manter hábito e estímulo em dias em que a alternativa é zero. O número exato de séries é escolha prática, sem ensaio direto.
 
+Sem academia, use a versão sem equipamento: 3 séries de flexão, 3 de agachamento búlgaro com o peso do corpo (por perna) e 3 de remada com mochila carregada, todas com 1 a 2 repetições antes da falha, mais 2 séries de elevação lateral com garrafas até perto da falha. Dá 25 minutos, e duas por semana cumprem a regra dos 7 dias.
+
 ### Viagem
 
-Antes de sair, confira onde vai treinar. Com academia no destino, o plano segue, ajustando exercícios. Sem academia, 2 sessões de corpo inteiro com o que houver: flexões, agachamentos, remada com mochila, elevação lateral com garrafas, para a sessão mínima fazer sentido. Se a viagem for curta, um deload programado cai bem.
+Antes de sair, confira onde vai treinar. Com academia no destino, o plano segue, ajustando exercícios. Sem academia, 2 sessões por semana da versão sem equipamento acima. Se a viagem for curta, um deload programado cai bem.
 
 Comida em viagem segue uma regra só: bater a proteína. Whey e creatina em doses medidas previamente, em porta-comprimidos, resolvem metade do problema.
 
@@ -62,17 +64,17 @@ Pausas de 7 dias em manutenção no meio de déficits reduziram fome e desejo de
 
 ### Carnaval
 
-Se a sua agenda inclui Carnaval, trate como uma janela curta: manutenção, sem déficit, com regras simples. No máximo 2 dias com bebida em 4 de festa, nunca no dia de pernas nem na véspera. Coma proteína em todas as refeições que der, ainda que seja frango com pão. Peso ignorado até uma semana depois do fim.
+Se a sua agenda inclui Carnaval, trate como uma janela curta: manutenção, sem déficit, com regras simples. No máximo 2 dias com bebida em 4 de festa, nunca no dia de pernas nem na véspera. Coma proteína em todas as refeições que der, ainda que seja frango com pão. Peso ignorado até 4 dias depois do fim da festa.
 
 ### Doença
 
-Febre, dor no corpo, doença que afeta o peito ou diarreia persistente pedem descanso. Com sintomas leves acima do pescoço, sem febre, costuma dar para fazer uma sessão leve. Nenhum estudo aqui testa protocolo específico; é prudência comum. Ao voltar, retome com cerca de 90% das cargas e 30% menos séries na primeira semana. Se a pausa for acima de 14 dias, faça o mesmo e progrida normalmente depois disso.
+Febre, dor no corpo, doença que afeta o peito ou diarreia persistente pedem descanso. Com sintomas leves acima do pescoço, sem febre, costuma dar para fazer uma sessão leve. Nenhum estudo aqui testa protocolo específico; é prudência comum. Ao voltar, retome com cerca de 90% das cargas e 30% menos séries na primeira semana.
 
-Se estiver em déficit, volte para manutenção durante a doença e reinicie o déficit só depois de 7 dias limpos.
+Se estiver em déficit, volte para manutenção durante a doença e retome o déficit só depois de 7 dias limpos, se ainda couber antes do limite de início. Doença não encerra o déficit por si só; um intervalo acima de 7 dias sem doença encerra.
 
 ### Semana perdida
 
-Aconteceu. Duas regras cobrem o caso. Volte a treinar imediatamente com sessões normais, e cargas levemente reduzidas se a pausa foi longa. E mantenha o plano original. Não compense com volume dobrado, jejum, déficit maior ou horas de cardio. Semana ruim dentro de um plano bom é parte do plano.
+Duas regras cobrem o caso. Volte a treinar no dia seguinte, sem esperar segunda-feira, e depois de 14 dias ou mais sem treinar aplique a mesma volta: cerca de 90% das cargas e 30% menos séries na primeira semana. E mantenha o plano original: nada de compensar com volume dobrado, jejum, déficit maior ou horas de cardio.
 
 ### Fontes
 

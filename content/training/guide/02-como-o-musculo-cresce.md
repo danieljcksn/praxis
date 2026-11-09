@@ -10,9 +10,9 @@ Essa lógica explica por que cargas leves e pesadas podem igualar crescimento qu
 
 Isso também explica o problema de parar em um número pré-decidido. Se você escolhe a repetição antes de começar e a série termina com 4 repetições na reserva, a parte mais produtiva da série nunca aconteceu.
 
-### Da tensão à proteína: o ciclo de 48 horas
+### Da tensão à proteína
 
-A tensão ativa sensores celulares (a via que passa pela mTOR é a mais estudada), e a síntese de proteína miofibrilar sobe por cerca de 24 a 48 horas depois da sessão. A quebra de proteína também sobe. O ganho líquido só aparece quando há aminoácidos disponíveis e energia, o que explica por que a proteína total do dia pesa mais do que qualquer shake isolado.
+A tensão ativa sensores celulares (a via que passa pela mTOR é a mais estudada), e a síntese de proteína miofibrilar sobe por horas a cerca de dois dias depois da sessão. Esse prazo é número de livro-texto, sem fonte verificada nesta pesquisa, e serve só para explicar por que o músculo volta a ser treinado em 2 ou 3 dias. A quebra de proteína também sobe. O ganho líquido só aparece quando há aminoácidos disponíveis e energia, o que explica por que a proteína total do dia pesa mais do que qualquer shake isolado.
 
 Músculo também tem custo de tecido baixo: cada quilo guarda cerca de 1.200 kcal e custa entre 1.450 e 1.780 kcal incluindo a síntese (Slater et al., 2019). Dois quilos de músculo em 20 semanas representam pouco mais de 3.000 kcal no total, ou cerca de 25 kcal por dia. O limite do crescimento mora no estímulo e no tempo, e a energia extra só precisa evitar a falta.
 
@@ -30,7 +30,7 @@ O pico de hormônios depois do treino não prevê crescimento. Em 49 homens trei
 
 Músculos longos não crescem igual em toda a sua extensão. Treinar em posição alongada parece ajudar em certos músculos. A mesa flexora sentada, que trabalha o posterior com o quadril flexionado e portanto alongado, gerou crescimento de 14,1% contra 9,3% da mesa deitada em 12 semanas (Maeo et al., 2021). A extensão de tríceps acima da cabeça superou a mesma extensão com o braço ao lado do corpo, especialmente na porção longa (Maeo et al., 2023).
 
-Parciais na parte alongada, porém, não bateram repetições completas em estudos grandes com pessoas treinadas (Gschneidner et al., 2025). O efeito provavelmente é pequeno e o teste de equivalência daquele estudo não fechou com rigor. Traduzindo: use amplitude completa, controle o alongamento e escolha, quando possível, variações que alonguem o músculo sob carga.
+Parciais na parte alongada, porém, não bateram repetições completas em um ensaio com pessoas treinadas (Gschneidner et al., 2025). O efeito provavelmente é pequeno e o teste de equivalência daquele estudo não fechou com rigor. Traduzindo: use amplitude completa, controle o alongamento e escolha, quando possível, variações que alonguem o músculo sob carga.
 
 ### Fadiga e recuperação
 

@@ -10,7 +10,7 @@ Em atletas de elite treinando força por 8 a 12 semanas, quem comeu cerca de 600
 
 Superávit maior ajuda um pouco em quem é menos treinado, e o custo em gordura sobe mais rápido do que o ganho em músculo (Ribeiro et al., 2019; Slater et al., 2019). Uma revisão recente, lida apenas em resumo, aponta 0,1 a 0,25% do peso por semana para quem prioriza físico (Trexler et al., 2026).
 
-**Regra:** superávit só para quem é realmente magro, e no máximo 150 a 250 kcal acima da manutenção medida, com ganho de 0,15 a 0,3% do peso por semana.
+**Regra:** superávit só para quem é realmente magro, e no máximo 150 a 250 kcal acima da manutenção medida, com ganho de 0,15 a 0,3% do peso por semana. Quando o peso fica parado por semanas nesse superávit, a conclusão é que a manutenção medida estava baixa: você soma 150 kcal e corrige a própria manutenção, e o teto de 250 kcal continua valendo sobre o novo número.
 
 ### Manutenção: legítima, às vezes a melhor
 
@@ -26,11 +26,13 @@ Decisão do plano para o tamanho do déficit:
 
 | Situação | Tamanho do déficit | Ritmo no peso médio de 7 dias |
 |---|---|---|
-| Bloco principal, gordura moderada | 400 a 500 kcal | 0,4 a 0,65% por semana |
-| Bloco principal, gordura alta | 500 a 650 kcal | 0,5 a 0,8% por semana |
+| Bloco principal, gordura moderada | 400 a 500 kcal | 0,3 a 0,65% por semana |
+| Bloco principal, gordura alta | 500 a 650 kcal | 0,4 a 0,8% por semana |
 | Bloco final | 400 a 450 kcal | 0,3 a 0,6% por semana |
 
-Nunca ultrapasse 650 kcal abaixo da manutenção medida, e mantenha piso de 27,6 kcal por kg de peso corporal, com proteína, gordura e carboidrato dentro dos pisos do capítulo 6. Esse limite é decisão do plano, e passa um pouco do teto de 300 a 400 kcal que a evidência em sedentários sugere; a justificativa é a gordura corporal mais alta e os dados de perda lenta em atletas. O ajuste semanal fica por conta das regras do capítulo 8.
+Nunca ultrapasse 650 kcal abaixo da manutenção medida, e mantenha piso de 27,5 kcal por kg de peso corporal, com proteína, gordura e carboidrato dentro dos pisos do capítulo 6. Quando manutenção menos 650 ficar abaixo do piso, vale o piso. Os tamanhos de déficit, as faixas de ritmo e os cortes de gordura são heurísticas do plano, sem ensaio que teste este cronograma.
+
+Esse limite também fica de 100 a 350 kcal acima do teto de 300 a 400 kcal que a evidência em sedentários sugere. A justificativa é a gordura corporal mais alta de quem está nesses ramos e os dados de perda lenta em atletas, e o custo é real: nesse tamanho de déficit a expectativa é manter massa magra, com pouco ou nenhum ganho. O ajuste semanal fica por conta das regras do capítulo 8.
 
 **Dietas radicais estão fora de questão.** Protocolos com menos de 20 kcal por kg, jejum prolongado, cortar um grupo inteiro de macronutriente, ou qualquer método que entregue quilos em poucos dias destroem treino, massa magra e sono, e ficam fora deste plano em qualquer circunstância.
 
@@ -45,7 +47,7 @@ Um plano que maximizasse ao mesmo tempo músculo e secagem em cerca de 20 semana
 | Fase | Ramo A (abaixo de 16%) | Ramo B (16 a 24%) | Ramo C (acima de 24%) |
 |---|---|---|---|
 | Semanas 5 e 6 | M + 200 | M | M - 500 |
-| Festas | M | M | M - 500 e depois M |
+| Festas | M | M | M - 500 nos 3 primeiros dias, depois M, e M - 650 nos 2 últimos |
 | Bloco principal | M + 250 | M - 500 (ou -400 na metade inferior da faixa) | M - 650 |
 | Janela de Carnaval | M | M | M |
 | Bloco final | M | M - 400 | M - 450 |

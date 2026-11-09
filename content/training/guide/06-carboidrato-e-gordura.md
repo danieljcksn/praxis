@@ -4,11 +4,11 @@ Depois de bater a proteína, carboidrato e gordura decidem como você treina, co
 
 ### O que o carboidrato faz na musculação
 
-Séries de 10 repetições próximas da falha gastam glicogênio. Com o estoque razoável, uma sessão normal não acaba com ele, e a musculação não exige carga de carboidrato. Mesmo assim, sessões longas com carboidrato disponível rendem mais volume. Em meta-análise de 21 estudos, carboidrato antes ou durante o treino melhorou o desempenho em relação a placebo ou água, com efeito global de 0,61, de 1,02 em sessões acima de 45 minutos e de 0,39 quando a pessoa vinha de 8 horas ou mais de jejum (King et al., 2022). A dose de carboidrato não moderou o efeito, ou seja, mais não foi melhor, e o número de séries máximas moderou positivamente.
+Séries de 8 a 15 repetições próximas da falha gastam glicogênio. Com o estoque razoável, uma sessão normal não acaba com ele, e a musculação não exige carga de carboidrato. Mesmo assim, sessões longas com carboidrato disponível rendem mais volume. Em meta-análise de 21 estudos, carboidrato antes ou durante o treino melhorou o desempenho em relação a placebo ou água, com efeito global de 0,61, de 1,02 em sessões acima de 45 minutos e de 0,39 quando a pessoa vinha de 8 horas ou mais de jejum (King et al., 2022). A dose de carboidrato não moderou o efeito, ou seja, mais não foi melhor, e o número de séries máximas moderou positivamente.
 
-Uma revisão posterior do mesmo grupo, em tese de doutorado, indica que esses efeitos podem ser menores, então não pague por precisão. O comparador em todos esses estudos é placebo ou água, e nenhum desses trabalhos mostra hipertrofia. Em termos práticos, a evidência diz que treinar pesado depois de 8 horas sem comer é pior do que treinar com uma refeição normal, e que dobrar a dose antes do treino não adianta.
+Uma revisão posterior do mesmo grupo, em tese de doutorado, indica que esses efeitos podem ser menores, então não pague por precisão. O comparador em todos esses estudos é placebo ou água, e nenhum desses trabalhos mostra hipertrofia. Em termos práticos, a evidência diz que carboidrato antes ou durante a sessão rende mais do que placebo ou água, inclusive em quem vem de 8 horas ou mais de jejum, e que dobrar a dose antes do treino não adianta.
 
-**Regra: refeição com carboidrato e proteína 1 a 3 horas antes de sessões longas.** Em dias sem almoço, a refeição pré-treino resolve; se chegar com mais de 8 horas de jejum, coma ao menos banana e whey antes de treinar, e treine mesmo assim.
+**Regra: refeição com carboidrato e proteína 1 a 3 horas antes de sessões longas.** Depois de um jejum longo, a refeição pré-treino resolve; se chegar à academia com mais de 8 horas sem comer, coma ao menos banana e whey antes de treinar, e treine mesmo assim.
 
 ### Quanto de carboidrato no dia
 
@@ -26,13 +26,17 @@ Depois do treino não existe urgência: reposição agressiva de glicogênio só
 
 Dietas de gordura baixa reduziram modestamente a testosterona. Em seis estudos cruzados com 206 homens, dietas com cerca de 19,5% de energia em gordura baixaram a testosterona total (SMD -0,38; IC de -0,75 a -0,01) em relação a dietas com 39,6%; a redução foi maior em homens europeus e norte-americanos, -0,52 (Whittaker e Wu, 2021, com correção de 2026). A média de idade era 46 anos, só um dos seis estudos foi cruzado totalmente randomizado, e nenhum estudo mediu músculo ou força. Os autores pedem ensaios maiores antes de qualquer recomendação prática.
 
-Isso não prova que menos gordura custa músculo, e o efeito dentro de faixas normais pode nem ser relevante. Mesmo assim, é barato não testar o limite: o piso do plano é **20% das calorias e nunca abaixo de 0,75 g por kg**, o que já evita o terreno com pior evidência. Em manutenção ou superávit a gordura fica perto de 0,95 g/kg, e em déficit, perto de 0,8 g/kg.
+Isso não prova que menos gordura custa músculo, e o efeito dentro de faixas normais pode nem ser relevante. Mesmo assim, é barato não testar o limite: o piso do plano é **20% das calorias e nunca abaixo de 0,75 g por kg**, o que já evita o terreno com pior evidência. Em manutenção ou superávit a gordura fica entre 0,9 e 1,0 g/kg, e em déficit, perto de 0,8 g/kg.
 
-Vale notar o tipo de gordura. Trabalhos com substituição de manteiga por azeite aumentaram testosterona em homens não atletas em cerca de 17 a 20%, e os autores tratam isso como possível mecanismo, ao nível de hipótese (citado em Whittaker e Wu, 2021). Como hipótese, isso não justifica trocar tudo. Ainda assim, inclina a escolha para azeite, ovos e carnes na hora de completar a meta de calorias, mesmo com o óleo de soja sendo o mais barato.
+Vale notar o tipo de gordura. Trabalhos com substituição de manteiga por azeite aumentaram testosterona em homens não atletas em cerca de 17 a 20%, e os autores tratam isso como possível mecanismo, ao nível de hipótese (citado em Whittaker e Wu, 2021). Como hipótese, isso não justifica trocar tudo. Ainda assim, inclina a escolha para azeite, ovos e carnes na hora de completar a meta de calorias, mesmo com o óleo de soja sendo o mais barato. Na prática: azeite como gordura de panela, ovos e carnes dentro da conta de proteína, sardinha ou outro peixe gordo uma ou duas vezes por semana, e manteiga, queijo e fritura dentro da meta de gordura, sem ocupar a maior parte dela. Essa distribuição é opinião prática, sem ensaio em quem treina.
 
 ### Fibra
 
-Nenhuma fonte verificada nesta pesquisa define meta de fibra para quem treina. A referência usual de 14 g a cada 1.000 kcal funciona como meta prática, o que dá 30 a 45 g por dia conforme as calorias. Arroz com feijão já resolve quase tudo: 100 g de feijão cozido entregam cerca de 8,5 g de fibra. Na semana final, o plano limita a fibra a 14 g por 1.000 kcal nos últimos dois dias, como no protocolo de Homer et al. (2024), para reduzir desconforto.
+Nenhuma fonte verificada nesta pesquisa define meta de fibra para quem treina. A referência usual de 14 g a cada 1.000 kcal funciona como mínimo prático, o que dá 34 a 49 g por dia entre 2.400 e 3.500 kcal, e dá para passar disso. Arroz com feijão já resolve quase tudo: 100 g de feijão cozido entregam cerca de 8,5 g de fibra. Nos últimos dois dias antes da data, o mesmo número vira teto, como no protocolo de Homer et al. (2024), para reduzir desconforto. Se o seu dia normal já fica abaixo desse valor, não há nada a reduzir.
+
+### Água, sódio e micronutrientes
+
+A pesquisa deste guia não buscou evidência sobre hidratação, sódio ou micronutrientes em quem treina, então tudo o que segue é heurística sem fonte. Beba o bastante para a urina ficar clara na maior parte do dia, o que costuma dar de 35 a 45 ml por kg de peso, e some mais em dia de calor ou corrida. Mantenha o sal parecido de um dia para o outro, porque variações bruscas movem a balança em centenas de gramas e sujam a média de 7 dias. Arroz, feijão, ovos, carnes, frutas e verduras cobrem a maior parte das vitaminas e minerais; em déficit, com menos comida, mantenha frutas e vegetais todos os dias. Multivitamínico só faz sentido se um exame apontar falta.
 
 ### Divisão prática
 
@@ -40,15 +44,15 @@ Uma divisão comum em manutenção:
 
 | Macronutriente | Faixa | Observação |
 |---|---|---|
-| Proteína | 1,95 g/kg | Calcule primeiro |
-| Gordura | 0,92 a 0,98 g/kg | Pelo menos 20% das calorias |
+| Proteína | 2,0 g/kg | Calcule primeiro |
+| Gordura | 0,9 a 1,0 g/kg | Pelo menos 20% das calorias |
 | Carboidrato | O resto | Nunca abaixo de 3 g/kg |
 
-Em déficit, a proteína sobe para 2,18 g/kg e a gordura vai para 0,8 g/kg, deixando o carboidrato com o que sobrar acima do piso. Em todas as fases, a origem do superávit importa pouco se os mínimos estiverem cobertos (Slater et al., 2019). Priorize o que mais rende comida de verdade e facilita bater as metas.
+Em déficit, a proteína sobe para 2,2 g/kg e a gordura vai para 0,8 g/kg, deixando o carboidrato com o que sobrar acima do piso. Em todas as fases, a origem do superávit importa pouco se os mínimos estiverem cobertos (Slater et al., 2019). Priorize o que mais rende comida de verdade e facilita bater as metas.
 
 ### Treino e digestão
 
-Uma refeição muito gordurosa perto do treino pesa no estômago e atrasa digestão. A saída é simples: deixe gordura para o almoço e para o jantar, e use refeições pré-treino ricas em carboidrato e proteína com pouca gordura. Se você treina à noite, comer no jantar pós-treino com menos volume que o almoço ajuda a dormir melhor, pois refeições grandes perto do sono atrapalham (Walsh et al., 2021).
+Uma refeição muito gordurosa perto do treino pesa no estômago e atrasa digestão. A saída é simples: deixe gordura para o almoço e para o jantar, e use refeições pré-treino ricas em carboidrato e proteína com pouca gordura. Se você treina à noite, o jantar pós-treino fica com cerca de 26% das calorias do dia, menos que o almoço, porque refeições grandes perto do sono atrapalham (Walsh et al., 2021). Se ainda pesar, passe parte do carboidrato do jantar para a refeição pré-treino e termine de comer pelo menos 2 horas antes de deitar.
 
 ### Fontes
 
