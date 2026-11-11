@@ -25,7 +25,7 @@ Em déficit a meta sobe porque a perda de massa magra fica mais provável confor
 
 ### Conte tudo, e o que dá para chamar de núcleo
 
-Conte toda a proteína do dia, incluindo arroz e feijão. Na prática, arroz e feijão trazem bastante; uma dieta de 400 g de carboidrato baseada em arroz já soma cerca de 37 g de proteína vegetal. Construa 130 a 140 g a partir de frango, ovos, carne e whey, e o resto vem naturalmente. Esse núcleo animal vale porque proteínas vegetais de comida inteira têm digestibilidade menor (van Loon, 2025).
+Conte toda a proteína do dia, incluindo arroz e feijão. Na prática, arroz e feijão trazem bastante; uma dieta de 400 g de carboidrato baseada em arroz já soma cerca de 37 g de proteína vegetal. Construa 130 a 140 g a partir de frango, bife, carne moída e whey, e o resto vem naturalmente. Esse núcleo animal vale porque proteínas vegetais de comida inteira têm digestibilidade menor (van Loon, 2025).
 
 Se o seu núcleo animal já bate o total sozinho, o dia termina perto de 200 g e isso está tudo bem.
 

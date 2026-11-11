@@ -28,7 +28,7 @@ Dietas de gordura baixa reduziram modestamente a testosterona. Em seis estudos c
 
 Isso não prova que menos gordura custa músculo, e o efeito dentro de faixas normais pode nem ser relevante. Mesmo assim, é barato não testar o limite: o piso do plano é **20% das calorias e nunca abaixo de 0,75 g por kg**, o que já evita o terreno com pior evidência. Em manutenção ou superávit a gordura fica entre 0,9 e 1,0 g/kg, e em déficit, perto de 0,8 g/kg.
 
-Vale notar o tipo de gordura. Trabalhos com substituição de manteiga por azeite aumentaram testosterona em homens não atletas em cerca de 17 a 20%, e os autores tratam isso como possível mecanismo, ao nível de hipótese (citado em Whittaker e Wu, 2021). Como hipótese, isso não justifica trocar tudo. Ainda assim, inclina a escolha para azeite, ovos e carnes na hora de completar a meta de calorias, mesmo com o óleo de soja sendo o mais barato. Na prática: azeite como gordura de panela, ovos e carnes dentro da conta de proteína, sardinha ou outro peixe gordo uma ou duas vezes por semana, e manteiga, queijo e fritura dentro da meta de gordura, sem ocupar a maior parte dela. Essa distribuição é opinião prática, sem ensaio em quem treina.
+Vale notar o tipo de gordura. Trabalhos com substituição de manteiga por azeite aumentaram testosterona em homens não atletas em cerca de 17 a 20%, e os autores tratam isso como possível mecanismo, ao nível de hipótese (citado em Whittaker e Wu, 2021). Como hipótese, isso não justifica trocar tudo. Na prática, a maior parte da sua gordura já vem do bife, da carne moída e da calabresa, dentro da conta de proteína. O resto é gordura de panela, e fritura fica dentro da meta de gordura, sem ocupar a maior parte dela. Essa distribuição é opinião prática, sem ensaio em quem treina.
 
 ### Fibra
 
@@ -36,7 +36,7 @@ Nenhuma fonte verificada nesta pesquisa define meta de fibra para quem treina. A
 
 ### Água, sódio e micronutrientes
 
-A pesquisa deste guia não buscou evidência sobre hidratação, sódio ou micronutrientes em quem treina, então tudo o que segue é heurística sem fonte. Beba o bastante para a urina ficar clara na maior parte do dia, o que costuma dar de 35 a 45 ml por kg de peso, e some mais em dia de calor ou corrida. Mantenha o sal parecido de um dia para o outro, porque variações bruscas movem a balança em centenas de gramas e sujam a média de 7 dias. Arroz, feijão, ovos, carnes, frutas e verduras cobrem a maior parte das vitaminas e minerais; em déficit, com menos comida, mantenha frutas e vegetais todos os dias. Multivitamínico só faz sentido se um exame apontar falta.
+A pesquisa deste guia não buscou evidência sobre hidratação, sódio ou micronutrientes em quem treina, então tudo o que segue é heurística sem fonte. Beba o bastante para a urina ficar clara na maior parte do dia, o que costuma dar de 35 a 45 ml por kg de peso, e some mais em dia de calor ou corrida. Mantenha o sal parecido de um dia para o outro, porque variações bruscas movem a balança em centenas de gramas e sujam a média de 7 dias. Arroz, feijão, carnes, banana, outras frutas e verduras cobrem a maior parte das vitaminas e minerais; em déficit, com menos comida, mantenha frutas e vegetais todos os dias. Multivitamínico só faz sentido se um exame apontar falta.
 
 ### Divisão prática
 
