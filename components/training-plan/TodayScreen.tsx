@@ -277,7 +277,7 @@ export function TodayScreen({
   const weekLabel =
     snapshot.started && today <= profile.targetDay ? `, semana ${snapshot.weekNumber} de ${snapshot.totalWeeks}` : "";
   const remaining =
-    snapshot.daysLeft > 1 ? ` Faltam ${snapshot.daysLeft} dias.` : snapshot.daysLeft === 1 ? " Falta 1 dia." : "";
+    snapshot.daysLeft > 1 ? ` Faltam ${snapshot.daysLeft}\u00a0dias.` : snapshot.daysLeft === 1 ? " Falta 1 dia." : "";
 
   const anchors = calendarAnchors(profile);
   const events = timeline

@@ -138,6 +138,13 @@ const RUN_KEY_BY_PHASE: Record<string, string> = {
   p7_manutencao_pico: "finalBlock",
 };
 
+/** The plan states runs per week ("2 x 20 a 25 minutos"); a day shows one run. */
+function runForToday(weekly: string): string {
+  const text = weekly.replace(/^\d+\s*x\s*/i, "");
+  const sentence = text.charAt(0).toUpperCase() + text.slice(1);
+  return /[.!?]$/.test(sentence) ? sentence : `${sentence}.`;
+}
+
 export function planForDay(
   day: string,
   program: Program,
@@ -190,7 +197,7 @@ export function planForDay(
   if (slot?.note?.startsWith("Corrida") && daysLeft >= LAST_RUN_DAYS_LEFT) {
     const key = week <= 4 ? "weeks1to4" : RUN_KEY_BY_PHASE[snapshot.current.phase.id];
     const detail = key ? cardio.runs[key] : null;
-    return { kind: "run", label: "Corrida", detail: typeof detail === "string" ? detail : null };
+    return { kind: "run", label: "Corrida", detail: typeof detail === "string" ? runForToday(detail) : null };
   }
   return { kind: "rest", label: "Descanso", message: DEFAULT_REST };
 }
